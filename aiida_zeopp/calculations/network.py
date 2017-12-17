@@ -36,13 +36,13 @@ class NetworkCalculation(JobCalculation):
                 'valid_types': NetworkParameters,
                 'additional_parameter': None,
                 'linkname': 'parameters',
-                'docstring': "specifies command line parameters",
+                'docstring': "add command line parameters",
             },
-            "file": {
+            "input_structure": {
                 'valid_types': SinglefileData,
-                'additional_parameter': "linkname",
-                'linkname': cls._get_linkname_file,
-                'docstring': "input file",
+                'additional_parameter': None,
+                'linkname': 'input_structure',
+                'docstring': "add input structure to be analyzed",
             },
         })
         return use_dict

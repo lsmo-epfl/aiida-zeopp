@@ -30,7 +30,7 @@ calc.set_computer(computer)
 calc.set_withmpi(False)
 calc.set_resources({"num_machines": 1})
 calc.use_parameters(parameters)
-calc.use_file(inputfile)
+calc.use_input_structure(inputfile)
 
 calc.store_all()
 calc.submit()
