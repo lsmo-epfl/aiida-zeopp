@@ -14,7 +14,7 @@
             "zeopp.network = aiida_zeopp.calculations.network:NetworkCalculation"
         ],
         "aiida.parsers": [
-            "zeopp.product = aiida_zeopp.parsers.multiply:MultiplyParser"
+            "zeopp.network = aiida_zeopp.parsers.network:NetworkParser"
         ],
         "aiida.data": [
             "zeopp.parameters = aiida_zeopp.data.parameters:NetworkParameters"
