@@ -67,7 +67,7 @@ class NetworkCalculation(JobCalculation):
             raise InputValidationError("No code specified for calculation")
 
         try:
-            inputfile = inputdict.pop(self.get_linkname('file'))
+            inputfile = inputdict.pop(self.get_linkname('input_structure'))
         except KeyError:
             raise InputValidationError(
                 "No input file specified for calculation")
@@ -95,9 +95,9 @@ class NetworkCalculation(JobCalculation):
         # Prepare CalcInfo to be returned to aiida
         calcinfo = CalcInfo()
         calcinfo.uuid = self.uuid
-        calcinfo.local_copy_list = [
+        calcinfo.local_copy_list = [[
             inputfile.get_file_abs_path(), inputfile.filename
-        ]
+        ]]
         calcinfo.remote_copy_list = []
         calcinfo.retrieve_list = parameters.output_files
 

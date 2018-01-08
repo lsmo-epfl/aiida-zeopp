@@ -23,8 +23,10 @@ class NetworkParameters(ParameterData):
         'r': Any(basestring, bool),
     })
 
+    _OUTPUT_FILE_PREFIX = "out.{}"
+
     # pylint: disable=redefined-builtin, too-many-function-args
-    def __init__(self, dict, **kwargs):
+    def __init__(self, dict=None, **kwargs):
         """
         Constructor for the data class
 
@@ -40,13 +42,11 @@ class NetworkParameters(ParameterData):
             # set dictionary of ParameterData
             super(NetworkParameters, self).__init__(dict=dict, **kwargs)
             dict = self.validate(dict)
-            self._OUTPUT_FILE_NAME = "out.{}"
 
     def validate(self, parameters_dict):
         """validate parameters"""
         return NetworkParameters.schema(parameters_dict)
 
-    @property
     def cmdline_params(self, input_file_name=None):
         """Synthesize command line parameters
         
@@ -65,12 +65,14 @@ class NetworkParameters(ParameterData):
             else:
                 parameter += [v]
 
-            # specify output file name (except for -r)
+            # add output file name (except for -r)
             if k != 'r':
-                parameter += " {}".format(self.OUTPUT_FILE_NAME.format(k))
+                parameter += [self._OUTPUT_FILE_PREFIX.format(k)]
+
+            parameters += parameter
 
         if input_file_name is not None:
-            parameters.append([input_file_name])
+            parameters += [input_file_name]
 
         return parameters
 
@@ -81,6 +83,6 @@ class NetworkParameters(ParameterData):
 
         output_list = []
         for k in pm_dict.keys():
-            output_list.append(self.OUTPUT_FILE_NAME.format(k))
+            output_list.append(self._OUTPUT_FILE_PREFIX.format(k))
 
         return output_list

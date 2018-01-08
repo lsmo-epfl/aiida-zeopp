@@ -3,7 +3,6 @@
 #import json
 from aiida.parsers.parser import Parser
 from aiida.parsers.exceptions import OutputParsingError
-#from aiida.orm.data.parameter import ParameterData
 from aiida_zeopp.calculations.network import NetworkCalculation
 
 

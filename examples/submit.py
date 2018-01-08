@@ -12,7 +12,7 @@ code = Code.get_from_string('zeopp@localhost')
 
 # Prepare input parameters
 NetworkParameters = DataFactory('zeopp.parameters')
-parameters = NetworkParameters({'cssr': True})
+parameters = NetworkParameters(dict={'cssr': True})
 SinglefileData = DataFactory('singlefile')
 structure = SinglefileData(file=os.path.abspath('HKUST-1.cif'))
 
@@ -28,5 +28,6 @@ calc.use_input_structure(structure)
 
 calc.store_all()
 calc.submit()
+#calc.submit_test()
 print("submitted calculation; calc=Calculation(uuid='{}') # ID={}"\
         .format(calc.uuid,calc.dbnode.pk))
