@@ -92,7 +92,7 @@ class NetworkParser(Parser):
             list of parsers to be used for each output file
             list element is None, if parser not implemented
         """
-        import aiida_zeopp.parsers.parsers as ps
+        import aiida_zeopp.parsers.plain as ps
 
         pm_dict = parameters.get_dict()
         parsers = []
