@@ -16,6 +16,7 @@ class NetworkParameters(ParameterData):
         'axs': float,
         'sa': ExactSequence([float, float, int]),
         'vol': ExactSequence([float, float, int]),
+        'volpo': ExactSequence([float, float, int]),
         'block': ExactSequence([float, int]),
         'psd': ExactSequence([float, float, int]),
         'chan': float,
@@ -83,6 +84,7 @@ class NetworkParameters(ParameterData):
 
         output_list = []
         for k in pm_dict.keys():
-            output_list.append(self._OUTPUT_FILE_PREFIX.format(k))
+            if k != 'r':
+                output_list += [self._OUTPUT_FILE_PREFIX.format(k)]
 
         return output_list
