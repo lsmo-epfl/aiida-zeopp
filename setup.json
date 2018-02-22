@@ -32,7 +32,10 @@
         "aiida >= 0.10.0"
     ],
     "extras_require": {
-        "precommit": [
+        "testing": [
+            "aiida-core[testing]"
+        ],
+        "pre-commit": [
             "pre-commit",
             "yapf",
             "prospector",
