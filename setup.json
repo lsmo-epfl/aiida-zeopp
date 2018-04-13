@@ -29,7 +29,7 @@
     ],
     "reentry_register": true,
     "install_requires": [
-        "aiida >= 0.10.0"
+        "aiida >= 0.11.4"
     ],
     "extras_require": {
         "testing": [
