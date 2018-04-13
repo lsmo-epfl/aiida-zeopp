@@ -1,11 +1,11 @@
 from aiida.orm.calculation.job import JobCalculation
-from aiida.orm.data.singlefile import SinglefileData
 from aiida.common.utils import classproperty
 from aiida.common.exceptions import (InputValidationError, ValidationError)
 from aiida.common.datastructures import (CalcInfo, CodeInfo)
 from aiida.orm import DataFactory
 
 NetworkParameters = DataFactory('zeopp.parameters')
+CifData = DataFactory('cif')
 
 
 class NetworkCalculation(JobCalculation):
@@ -39,7 +39,7 @@ class NetworkCalculation(JobCalculation):
                 'docstring': "add command line parameters",
             },
             "input_structure": {
-                'valid_types': SinglefileData,
+                'valid_types': CifData,
                 'additional_parameter': None,
                 'linkname': 'input_structure',
                 'docstring': "add input structure to be analyzed",
@@ -71,8 +71,8 @@ class NetworkCalculation(JobCalculation):
         except KeyError:
             raise InputValidationError(
                 "No input file specified for calculation")
-        if not isinstance(inputfile, SinglefileData):
-            raise InputValidationError("file not of type SinglefileData")
+        if not isinstance(inputfile, CifData):
+            raise InputValidationError("file not of type CifData")
 
         # Check that nothing is left unparsed
         if inputdict:

@@ -63,8 +63,9 @@ class TestNetwork(PluginTestCase):
         from aiida.orm import DataFactory
         NetworkParameters = DataFactory('zeopp.parameters')
         parameters = NetworkParameters(dict={'cssr': True})
-        SinglefileData = DataFactory('singlefile')
-        structure = SinglefileData(file=os.path.join(TEST_DIR, 'HKUST-1.cif'))
+        CifData = DataFactory('cif')
+        structure = CifData(
+            file=os.path.join(TEST_DIR, 'HKUST-1.cif'), parse_policy='lazy')
 
         # set up calculation
         calc = code.new_calc()
