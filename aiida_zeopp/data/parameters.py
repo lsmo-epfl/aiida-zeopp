@@ -31,7 +31,7 @@ class NetworkParameters(ParameterData):
         """
         Constructor for the data class
 
-        Usage: ``MultiplyParameters(x1=3, x2=4)``
+        Usage: ``NetworkParameters(dict={'cssr': True})``
 
         .. note:: As of 2017-09, the constructor must also support a single dbnode
           argument (to reconstruct the object from a database node).

@@ -29,7 +29,9 @@
     ],
     "reentry_register": true,
     "install_requires": [
-        "aiida >= 0.11.4"
+        "aiida >= 0.11.4",
+        "pycifrw >= 4.2",
+        "pymatgen >= 2016.1.0"
     ],
     "extras_require": {
         "testing": [

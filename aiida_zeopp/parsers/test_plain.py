@@ -13,7 +13,7 @@ class VolpoParserTestCase(unittest.TestCase):
         PONAV_A^3: 0 PONAV_Volume_fraction: 0 PONAV_cm^3/g: 0
         """
 
-        parser = parsers.POVolumeParser()
+        parser = parsers.PoreVolumeParser
         parser.parse(string)
 
 
@@ -32,7 +32,7 @@ class SaParserTestCase(unittest.TestCase):
         Pocket_surface_area_A^2: 
         """
 
-        parser = parsers.SurfaceAreaParser()
+        parser = parsers.SurfaceAreaParser
         parser.parse(string)
 
 
@@ -43,5 +43,5 @@ class ResParserTestCase(unittest.TestCase):
         HKUST-1.res    13.19937 6.74621  13.19937
         """
 
-        parser = parsers.ResParser()
+        parser = parsers.ResParser
         parser.parse(string)

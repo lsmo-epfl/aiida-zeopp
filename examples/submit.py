@@ -13,8 +13,8 @@ code = Code.get_from_string('zeopp@localhost')
 # Prepare input parameters
 NetworkParameters = DataFactory('zeopp.parameters')
 parameters = NetworkParameters(dict={'cssr': True})
-SinglefileData = DataFactory('singlefile')
-structure = SinglefileData(file=os.path.abspath('HKUST-1.cif'))
+CifData = DataFactory('cif')
+structure = CifData(file=os.path.abspath('HKUST-1.cif'))
 
 # set up calculation
 calc = code.new_calc()

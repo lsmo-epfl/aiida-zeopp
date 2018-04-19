@@ -65,6 +65,7 @@ class NetworkParser(Parser):
                 continue
 
             try:
+                print(parser)
                 with open(out_folder.get_abs_path(fname)) as f:
                     parsed_dict = parser.parse(f.read())
             except ValueError:
@@ -92,20 +93,23 @@ class NetworkParser(Parser):
             list of parsers to be used for each output file
             list element is None, if parser not implemented
         """
-        import aiida_zeopp.parsers.plain as ps
+        import aiida_zeopp.parsers.plain as pp
+        import aiida_zeopp.parsers.structure as sp
 
         pm_dict = parameters.get_dict()
         parsers = []
 
         for k in pm_dict.keys():
             if k == 'vol':
-                parsers += [ps.AVolumeParser]
+                parsers += [pp.AVolumeParser]
             elif k == 'volpo':
-                parsers += [ps.POVolumeParser]
+                parsers += [pp.PoreVolumeParser]
             elif k == 'sa':
-                parsers += [ps.SurfaceAreaParser]
+                parsers += [pp.SurfaceAreaParser]
             elif k == 'res':
-                parsers += [ps.ResParser]
+                parsers += [pp.ResParser]
+            elif k == 'cssr':
+                parsers += [sp.CssrParser]
             else:
                 parsers += [None]
 

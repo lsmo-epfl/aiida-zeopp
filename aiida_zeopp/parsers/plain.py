@@ -10,7 +10,8 @@ class KeywordParser(object):
         'keyword2': int,
     }
 
-    def parse(self, string):
+    @classmethod
+    def parse(cls, string):
         """ Parse zeo++ keyword format
 
         Example string:
@@ -30,7 +31,7 @@ class KeywordParser(object):
         results = {}
 
         regex = "{}: ([\d\.]*)"
-        for keyword, ktype in six.iteritems(self.keywords):
+        for keyword, ktype in six.iteritems(cls.keywords):
             regex_rep = regex.format(re.escape(keyword))
             match = re.search(regex_rep, string)
             if match is None:
@@ -46,7 +47,7 @@ class KeywordParser(object):
         return results
 
 
-class POVolumeParser(KeywordParser):
+class PoreVolumeParser(KeywordParser):
 
     keywords = {
         'Unitcell_volume': float,
@@ -59,7 +60,8 @@ class POVolumeParser(KeywordParser):
         'PONAV_cm^3/g': float,
     }
 
-    def parse(self, string):
+    @classmethod
+    def parse(cls, string):
         """ Parse zeo++ .volpo format
 
         Example volpo string:
@@ -78,7 +80,7 @@ class POVolumeParser(KeywordParser):
         results: dict
           dictionary of output values
         """
-        return super(POVolumeParser, self).parse(string)
+        return super(PoreVolumeParser, cls).parse(string)
 
 
 class AVolumeParser(KeywordParser):
@@ -94,7 +96,8 @@ class AVolumeParser(KeywordParser):
         'NAV_cm^3/g': float,
     }
 
-    def parse(self, string):
+    @classmethod
+    def parse(cls, string):
         """ Parse zeo++ .vol format
 
         Example vol string:
@@ -113,7 +116,7 @@ class AVolumeParser(KeywordParser):
         results: dict
           dictionary of output values
         """
-        return super(AVolumeParser, self).parse(string)
+        return super(AVolumeParser, cls).parse(string)
 
 
 class SurfaceAreaParser(KeywordParser):
@@ -133,7 +136,8 @@ class SurfaceAreaParser(KeywordParser):
         'Pocket_surface_area_A^2': float,
     }
 
-    def parse(self, string):
+    @classmethod
+    def parse(cls, string):
         """ Parse zeo++ .sa format
 
         Example sa string:
@@ -154,10 +158,10 @@ class SurfaceAreaParser(KeywordParser):
         results: dict
           dictionary of output values
         """
-        return super(SurfaceAreaParser, self).parse(string)
+        return super(SurfaceAreaParser, cls).parse(string)
 
 
-class ResParser(KeywordParser):
+class ResParser(object):
 
     keywords = (
         'Largest_included_sphere',
@@ -165,7 +169,8 @@ class ResParser(KeywordParser):
         'Largest_included_free_sphere',
     )
 
-    def parse(self, string):
+    @classmethod
+    def parse(cls, string):
         """ Parse zeo++ .res format
 
         Example res string:
@@ -195,6 +200,6 @@ class ResParser(KeywordParser):
             raise ValueError("Found more than 4 fields in .res format")
 
         for i in (0, 1, 2):
-            res[self.keywords[i]] = float(values[i + 1])
+            res[cls.keywords[i]] = float(values[i + 1])
 
         return res
