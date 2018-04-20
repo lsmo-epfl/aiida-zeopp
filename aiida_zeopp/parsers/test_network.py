@@ -3,14 +3,10 @@
 """
 import os
 
-from aiida.utils.fixtures import PluginTestCase
 import aiida_zeopp.tests as zt
 
 
-class TestNetwork(PluginTestCase):
-
-    BACKEND = zt.get_backend()
-
+class TestNetwork(zt.PluginTestCase):
     def setUp(self):
 
         # set up test computer

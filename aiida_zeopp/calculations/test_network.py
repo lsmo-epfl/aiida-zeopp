@@ -2,52 +2,16 @@
 
 """
 import os
-import tempfile
 
-from aiida.utils.fixtures import PluginTestCase
-from aiida_zeopp.tests import get_backend, get_zeopp_binary
+import aiida_zeopp.tests as zt
 
 
-class TestNetwork(PluginTestCase):
-
-    # load the backend to be tested from the environment variable:
-    # TEST_AIIDA_BACKEND=django python -m unittest discover
-    # TEST_AIIDA_BACKEND=sqlalchemy python -m unittest discover
-    BACKEND = get_backend()
-
-    def get_localhost(self):
-        """Setup localhost computer"""
-        from aiida.orm import Computer
-        computer = Computer(
-            name='localhost',
-            description='my computer',
-            hostname='localhost',
-            workdir=tempfile.mkdtemp(),
-            transport_type='local',
-            scheduler_type='direct',
-            enabled_state=True)
-        return computer
-
-    def get_code(self):
-        """Setup code on localhost computer"""
-        from aiida.orm import Code
-
-        executable = get_zeopp_binary()
-
-        code = Code(
-            files=[executable],
-            input_plugin_name='zeopp.network',
-            local_executable='network')
-        code.label = 'zeopp'
-        code.description = 'zeo++'
-
-        return code
-
+class TestNetwork(zt.PluginTestCase):
     def setUp(self):
 
         # set up test computer
-        self.computer = self.get_localhost().store()
-        self.code = self.get_code().store()
+        self.computer = zt.get_localhost_computer().store()
+        self.code = zt.get_network_code().store()
 
     def test_submit(self):
         """Test submitting a calculation"""

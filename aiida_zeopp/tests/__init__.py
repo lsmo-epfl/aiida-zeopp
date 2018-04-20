@@ -1,5 +1,8 @@
-""" Sample data needed for tests"""
+""" Helper functions and classes for tests
+"""
 import os
+import aiida.utils.fixtures
+import unittest
 
 TEST_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -34,6 +37,7 @@ def get_localhost_computer():
         transport_type='local',
         scheduler_type='direct',
         enabled_state=True)
+
     return computer
 
 
@@ -51,3 +55,44 @@ def get_network_code():
     code.description = 'zeo++'
 
     return code
+
+
+fixture_manager = aiida.utils.fixtures.FixtureManager()
+fixture_manager.backend = get_backend()
+
+
+class PluginTestCase(unittest.TestCase):
+    """
+    Set up a complete temporary AiiDA environment for plugin tests
+
+    Filesystem:
+
+        * temporary config (``.aiida``) folder
+        * temporary repository folder
+
+    Database:
+
+        * temporary database cluster via the ``pgtest`` package
+        * with aiida database user
+        * with aiida_db database
+
+    AiiDA:
+
+        * set to use the temporary config folder
+        * create and configure a profile
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        from aiida.utils.capturing import Capturing
+        cls.fixture_manager = fixture_manager
+        if not fixture_manager.has_profile_open():
+            with Capturing():
+                cls.fixture_manager.create_profile()
+
+    def tearDown(self):
+        self.fixture_manager.reset_db()
+
+    #@classmethod
+    #def tearDownClass(cls):
+    #    cls.fixture_manager.destroy_all()

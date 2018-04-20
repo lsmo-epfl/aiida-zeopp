@@ -1,10 +1,9 @@
 import os
 import aiida_zeopp.parsers.structure as parsers
 import aiida_zeopp.tests as zt
-from aiida.utils.fixtures import PluginTestCase
 
 
-class CssrParserTestCase(PluginTestCase):
+class CssrParserTestCase(zt.PluginTestCase):
 
     BACKEND = zt.get_backend()
 

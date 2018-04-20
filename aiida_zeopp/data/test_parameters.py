@@ -1,11 +1,7 @@
-from aiida.utils.fixtures import PluginTestCase
-from aiida_zeopp.tests import get_backend
+from aiida_zeopp.tests import PluginTestCase
 
 
 class TestNetworkParameters(PluginTestCase):
-
-    BACKEND = get_backend()
-
     def test_cssr(self):
         from aiida_zeopp.data.parameters import NetworkParameters
 
