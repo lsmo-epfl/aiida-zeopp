@@ -1,28 +1,30 @@
 from voluptuous import Schema, Any, ExactSequence
 from aiida.orm.data.parameter import ParameterData
 
+input_dict = {
+    'cssr': (bool, 'structure_cssr'),
+    'v1': (bool, 'structure_v1'),
+    'xyz': (bool, 'structure_xyz'),
+    'nt2': (bool, 'network_nt2'),
+    'res': (bool, 'free_sphere_res'),
+    'zvis': (bool, 'network_zvis'),
+    'axs': (float, 'nodes_axs'),
+    'sa': (ExactSequence([float, float, int]), 'surface_area_sa'),
+    'vol': (ExactSequence([float, float, int]), 'volume_vol'),
+    'volpo': (ExactSequence([float, float, int]), 'pore_volume_volpo'),
+    'block': (ExactSequence([float, int]), 'block'),
+    'psd': (ExactSequence([float, float, int]), 'psd'),
+    'chan': (float, 'channels_chan'),
+    # radfile is optional
+    'r': (Any(basestring, bool), 'radii_rad'),
+}
+
 
 class NetworkParameters(ParameterData):
     """ Command line parameters for zeo++ network binary
     """
 
-    schema = Schema({
-        'cssr': bool,
-        'v1': bool,
-        'xyz': bool,
-        'nt2': bool,
-        'res': bool,
-        'zvis': bool,
-        'axs': float,
-        'sa': ExactSequence([float, float, int]),
-        'vol': ExactSequence([float, float, int]),
-        'volpo': ExactSequence([float, float, int]),
-        'block': ExactSequence([float, int]),
-        'psd': ExactSequence([float, float, int]),
-        'chan': float,
-        # radfile is optional
-        'r': Any(basestring, bool),
-    })
+    schema = Schema({k: input_dict[k][0] for k in input_dict})
 
     _OUTPUT_FILE_PREFIX = "out.{}"
 
@@ -51,7 +53,7 @@ class NetworkParameters(ParameterData):
     def cmdline_params(self, input_file_name=None):
         """Synthesize command line parameters
         
-        e.g. [['-r'], ['-axs', 0.4, 'out.axs']]
+        e.g. [['-r'], ['-axs', '0.4', 'out.axs']]
         """
         pm_dict = self.get_dict()
 
@@ -75,7 +77,7 @@ class NetworkParameters(ParameterData):
         if input_file_name is not None:
             parameters += [input_file_name]
 
-        return parameters
+        return map(str, parameters)
 
     @property
     def output_files(self):
@@ -105,7 +107,7 @@ class NetworkParameters(ParameterData):
             List element is None, if parser is not implemented.
         """
         import aiida_zeopp.parsers.plain as pp
-        import aiida_zeopp.parsers.structure as sp
+        #import aiida_zeopp.parsers.structure as sp
 
         pm_dict = self.get_dict()
         parsers = []
@@ -119,9 +121,21 @@ class NetworkParameters(ParameterData):
                 parsers += [pp.SurfaceAreaParser]
             elif k == 'res':
                 parsers += [pp.ResParser]
-            elif k == 'cssr':
-                parsers += [sp.CssrParser]
+            #elif k == 'cssr':
+            #    parsers += [sp.CssrParser]
             else:
                 parsers += [None]
 
         return parsers
+
+    @property
+    def output_links(self):
+        """Return list of output link names"""
+        pm_dict = self.get_dict()
+
+        output_links = []
+        for k in pm_dict.keys():
+            if k != 'r':
+                output_links += [input_dict[k][1]]
+
+        return output_links

@@ -13,7 +13,7 @@ class TestNetworkParameters(PluginTestCase):
     def test_output_parsers(self):
         from aiida_zeopp.data.parameters import NetworkParameters
         from aiida_zeopp.parsers.plain import SurfaceAreaParser, PoreVolumeParser
-        from aiida_zeopp.parsers.structure import CssrParser
+        #from aiida_zeopp.parsers.structure import CssrParser
 
         d = {
             'cssr': True,
@@ -23,4 +23,4 @@ class TestNetworkParameters(PluginTestCase):
         p = NetworkParameters(d)
 
         self.assertEqual(p.output_parsers,
-                         [CssrParser, SurfaceAreaParser, PoreVolumeParser])
+                         [None, SurfaceAreaParser, PoreVolumeParser])

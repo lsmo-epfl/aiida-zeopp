@@ -12,9 +12,11 @@ code = Code.get_from_string('zeopp@localhost')
 
 # Prepare input parameters
 NetworkParameters = DataFactory('zeopp.parameters')
-parameters = NetworkParameters(dict={'cssr': True})
+d = {'cssr': True, 'sa': [1.82, 1.82, 1000], 'volpo': [1.82, 1.82, 1000]}
+parameters = NetworkParameters(dict=d)
 CifData = DataFactory('cif')
-structure = CifData(file=os.path.abspath('HKUST-1.cif'))
+this_dir = os.path.dirname(os.path.realpath(__file__))
+structure = CifData(file=os.path.join(this_dir, 'HKUST-1.cif'))
 
 # set up calculation
 calc = code.new_calc()

@@ -1,8 +1,6 @@
 import unittest
 import aiida_zeopp.parsers.plain as parsers
 
-pocket_sa_bug_fixed = False
-
 
 class VolpoParserTestCase(unittest.TestCase):
     def test_parse_hkust(self):
@@ -18,12 +16,7 @@ class VolpoParserTestCase(unittest.TestCase):
 
 
 class SaParserTestCase(unittest.TestCase):
-    @unittest.skipIf(not pocket_sa_bug_fixed,
-                     "Bug in .sa format not yet fixed")
     def test_parse_hkust(self):
-        # note: in zeo++ output there is currently no value for pocket surface area
-        # (should be zero?)
-        # this is a bug.
         string = """
         HKUST-1.sa Unitcell_volume: 18280.8   Density: 0.879097
         ASA_A^2: 3545.59 ASA_m^2/cm^3: 1939.51 ASA_m^2/g: 2206.26 

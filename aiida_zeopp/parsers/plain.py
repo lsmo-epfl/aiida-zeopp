@@ -39,8 +39,10 @@ class KeywordParser(object):
 
             value = match.group(1)
             if value == "":
-                raise ValueError(
-                    "No value specified for keyword {}".format(keyword))
+                value = 0
+                # uncomment this when #1 is fixed
+                #raise ValueError(
+                #    "No value specified for keyword {}".format(keyword))
 
             results[keyword] = ktype(value)
 
