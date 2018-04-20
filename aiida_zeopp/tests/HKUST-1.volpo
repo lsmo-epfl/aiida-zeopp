@@ -1,0 +1,3 @@
+@ HKUST-1.volpo Unitcell_volume: 18280.8   Density: 0.879097   POAV_A^3: 12207.2 POAV_Volume_fraction: 0.66776 POAV_cm^3/g: 0.759598 PONAV_A^3: 0 PONAV_Volume_fraction: 0 PONAV_cm^3/g: 0
+PROBE_OCCUPIABLE_VOL_CALC: filename| density(g/cm3)| probe rad| N points| probe ctr A fract| probe ctr NA fract| A fract| NA fract| narrow fract |ovlp fract.
+PROBE_OCCUPIABLE___RESULT: HKUST-1.volpo	0.879097	1.82	100000	0.26666	0	0.66776	0	0.05457	0.27767

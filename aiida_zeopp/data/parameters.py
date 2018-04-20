@@ -88,3 +88,40 @@ class NetworkParameters(ParameterData):
                 output_list += [self._OUTPUT_FILE_PREFIX.format(k)]
 
         return output_list
+
+    @property
+    def output_parsers(self):
+        """Return list of output parsers to use.
+
+        parameters
+        ----------
+        parameters: aiida_zeopp.data.parameters.NetworkParameters object
+            the parameters object used to generate the cmdline parameters
+
+        returns
+        -------
+        parsers: list
+            List of parsers to be used for each output file.
+            List element is None, if parser is not implemented.
+        """
+        import aiida_zeopp.parsers.plain as pp
+        import aiida_zeopp.parsers.structure as sp
+
+        pm_dict = self.get_dict()
+        parsers = []
+
+        for k in pm_dict.keys():
+            if k == 'vol':
+                parsers += [pp.AVolumeParser]
+            elif k == 'volpo':
+                parsers += [pp.PoreVolumeParser]
+            elif k == 'sa':
+                parsers += [pp.SurfaceAreaParser]
+            elif k == 'res':
+                parsers += [pp.ResParser]
+            elif k == 'cssr':
+                parsers += [sp.CssrParser]
+            else:
+                parsers += [None]
+
+        return parsers

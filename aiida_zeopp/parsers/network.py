@@ -3,7 +3,6 @@
 #import json
 from aiida.parsers.parser import Parser
 from aiida.parsers.exceptions import OutputParsingError
-from aiida.orm.data.parameter import ParameterData
 from aiida_zeopp.calculations.network import NetworkCalculation
 
 
@@ -46,71 +45,36 @@ class NetworkParser(Parser):
             self.logger.error("No retrieved folder found")
             return success, node_list
 
-        # Check what is inside the folder
+        # Check the folder content is what we expect
         list_of_files = out_folder.get_folder_list()
         output_files = self._calc.inp.parameters.output_files
-        if set(output_files) < set(list_of_files):
+        # Note: set(A) <= set(B) checks whether A is a subset of B
+        if set(output_files) <= set(list_of_files):
             pass
         else:
             self.logger.error(
-                "Not all output files {} were found".format(output_files))
+                "Not all expected output files {} were found".format(
+                    output_files))
             return success, node_list
-        output_parsers = self.output_parsers(self._calc.inp.parameters)
 
-        # parse output files
+        # Parse output files
+        output_parsers = self._calc.inp.parameters.output_parsers
         node_list = []
         link_name = self.get_linkname_outparams()
         for fname, parser in list(zip(output_files, output_parsers)):
+
             if parser is None:
                 continue
 
             try:
-                print(parser)
                 with open(out_folder.get_abs_path(fname)) as f:
-                    parsed_dict = parser.parse(f.read())
+                    parsed = parser.parse_aiida(f.read())
             except ValueError:
                 self.logger.error(
                     "Error parsing file {} with parser {}".format(
                         fname, parser))
-                return success, node_list
 
-            node_list.append((link_name, ParameterData(dict=parsed_dict)))
+            node_list.append((link_name, parsed))
 
         success = True
         return success, node_list
-
-    def output_parsers(self, parameters):
-        """ Determine parser objects to use
-
-        parameters
-        ----------
-        parameters: aiida_zeopp.data.parameters.NetworkParameters object
-            the parameters object used to generate the cmdline parameters
-
-        returns
-        -------
-        parsers: list
-            list of parsers to be used for each output file
-            list element is None, if parser not implemented
-        """
-        import aiida_zeopp.parsers.plain as pp
-        import aiida_zeopp.parsers.structure as sp
-
-        pm_dict = parameters.get_dict()
-        parsers = []
-
-        for k in pm_dict.keys():
-            if k == 'vol':
-                parsers += [pp.AVolumeParser]
-            elif k == 'volpo':
-                parsers += [pp.PoreVolumeParser]
-            elif k == 'sa':
-                parsers += [pp.SurfaceAreaParser]
-            elif k == 'res':
-                parsers += [pp.ResParser]
-            elif k == 'cssr':
-                parsers += [sp.CssrParser]
-            else:
-                parsers += [None]
-
-        return parsers

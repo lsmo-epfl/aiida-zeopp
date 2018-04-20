@@ -46,6 +46,11 @@ class KeywordParser(object):
 
         return results
 
+    @classmethod
+    def parse_aiida(cls, string):
+        from aiida.orm.data.parameter import ParameterData
+        return ParameterData(dict=cls.parse(string))
+
 
 class PoreVolumeParser(KeywordParser):
 
@@ -161,7 +166,7 @@ class SurfaceAreaParser(KeywordParser):
         return super(SurfaceAreaParser, cls).parse(string)
 
 
-class ResParser(object):
+class ResParser(KeywordParser):
 
     keywords = (
         'Largest_included_sphere',
