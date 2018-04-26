@@ -57,6 +57,17 @@ def get_network_code():
     return code
 
 
+def get_temp_folder():
+    """Returns AiiDA folder object.
+    
+    Useful for calculation.submit_test()
+    """
+    from aiida.common.folders import Folder
+    import tempfile
+
+    return Folder(tempfile.mkdtemp())
+
+
 fixture_manager = aiida.utils.fixtures.FixtureManager()
 fixture_manager.backend = get_backend()
 

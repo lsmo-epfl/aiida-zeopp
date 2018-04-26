@@ -42,7 +42,8 @@ class TestNetwork(zt.PluginTestCase):
         calc.use_input_structure(structure)
 
         calc.store_all()
-        calc.submit()
+        #calc.submit()
+        calc.submit_test(folder=zt.get_temp_folder())
         #print("submitted calculation; calc=Calculation(uuid='{}') # ID={}"\
         #        .format(calc.uuid,calc.dbnode.pk))
 
@@ -80,6 +81,7 @@ class TestNetwork(zt.PluginTestCase):
         calc.use_atomic_radii(atomic_radii)
 
         calc.store_all()
-        calc.submit()
+        #calc.submit()
+        calc.submit_test(folder=zt.get_temp_folder())
         #print("submitted calculation; calc=Calculation(uuid='{}') # ID={}"\
         #        .format(calc.uuid,calc.dbnode.pk))
