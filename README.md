@@ -88,7 +88,7 @@ Daemon started
 
 $ cd examples
 
-$ verdi run submit.py
+$ ./cli.py aiida_zeopp@localhost --submit
 submitted calculation; calc=Calculation(uuid='ac86b1a4-ccf1-489d-80ba-17c4e3304cb0') # ID=76
 
 $ verdi calculation list -a
@@ -129,30 +129,39 @@ Link label       PK  Type
 -------------  ----  ----------
 remote_folder    77  RemoteData
 retrieved        78  FolderData
+structure_cssr   79  SinglefileData
+surface_area_sa  80  ParameterData
+channels_chan    81  SinglefileData
+pore_volume_volpo82  ParameterData
 
 $ verdi calculation outputls 76
 _scheduler-stderr.txt
 _scheduler-stdout.txt
+out.chan
 out.cssr
+out.sa
+out.volpo
 
-$ verdi calculation outputcat 76 -p _scheduler-stdout.txtOpening File: HKUST-1.cif
-Starting Voronoi decomposition
-Box dimensions:
-  va=(26.343000 0 0)
-  vb=(0.000000 26.343000 0)
-  vc=(0.000000 0.000000 26.343000)
+verdi calculation outputcat 76 -p out.sa
+@ out.sa Unitcell_volume: 18280.8   Density: 0.879097   ASA_A^2: 3532.09 ASA_m^2/cm^3: 1932.13 ASA_m^2/g: 2197.86 NASA_A^2: 0 NASA_m^2/cm^3: 0 NASA_m^2/g: 0
+Number_of_channels: 1 Channel_surface_area_A^2: 3532.09
+Number_of_pockets: 0 Pocket_surface_area_A^2:
 
-Total particles = 624
+verdi calculation outputcat 76 -p out.sa
 
-Internal grid size = (5 5 5)
+$ verdi data parameter show 80
+{
+  "ASA_A^2": 3532.09,
+  "ASA_m^2/cm^3": 1932.13,
+  "ASA_m^2/g": 2197.86,
+  "Channel_surface_area_A^2": 3532.09,
+  "Density": 0.879097,
+  "NASA_A^2": 0.0,
+  "NASA_m^2/cm^3": 0.0,
+  "NASA_m^2/g": 0.0,
+  "Number_of_channels": 1,
+  "Number_of_pockets": 0,
+  "Pocket_surface_area_A^2": 0.0,
+  "Unitcell_volume": 18280.8
+}
 
-Using voro++ with radii for particles.
-Performing Voronoi decomposition.
-Volume check:
-  Total domain volume  = 18280.820976
-  Total Voronoi volume = 18280.820976
-Voronoi decomposition finished. Rerouting Voronoi network information.
-Finished rerouting information.
-Finished Voronoi decomposition
-Command 0  -cssr
-Writing atom network information to out.cssr

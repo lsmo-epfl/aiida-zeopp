@@ -18,15 +18,20 @@ def main(codelabel, submit):
 
     # set up calculation
     calc = code.new_calc()
-    calc.label = "aiida_zeopp format conversion"
-    calc.description = "Test converting .cif to .cssr format"
+    calc.label = "aiida_zeopp example calculation"
+    calc.description = "Converts .cif to .cssr format, computes surface area, pore volume and channels"
     calc.set_max_wallclock_seconds(1 * 60)
     calc.set_withmpi(False)
     calc.set_resources({"num_machines": 1})
 
     # Prepare input parameters
     NetworkParameters = DataFactory('zeopp.parameters')
-    d = {'cssr': True, 'sa': [1.82, 1.82, 1000], 'volpo': [1.82, 1.82, 1000]}
+    d = {
+        'cssr': True,
+        'sa': [1.82, 1.82, 1000],
+        'volpo': [1.82, 1.82, 1000],
+        'chan': 1.2,
+    }
     parameters = NetworkParameters(dict=d)
     calc.use_parameters(parameters)
 

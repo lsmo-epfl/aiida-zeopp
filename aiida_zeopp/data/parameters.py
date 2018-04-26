@@ -1,6 +1,7 @@
 from voluptuous import Schema, ExactSequence
 from aiida.orm.data.parameter import ParameterData
 
+# key : [ accepted values, label ]
 output_options = {
     'cssr': (bool, 'structure_cssr'),
     'v1': (bool, 'structure_v1'),
@@ -59,12 +60,13 @@ class NetworkParameters(ParameterData):
         
         e.g. [ ['-axs', '0.4', 'out.axs'], ['structure.cif']]
         """
-        pm_dict = self.get_dict()
         parameters = []
 
         if radii_file_name is not None:
             parameters += ['-r', radii_file_name]
 
+        pm_dict = self.get_dict()
+        output_keys = self.output_keys
         for k, v in pm_dict.iteritems():
 
             parameter = ['-{}'.format(k)]
@@ -76,7 +78,8 @@ class NetworkParameters(ParameterData):
                 parameter += [v]
 
             # add output file name
-            parameter += [self._OUTPUT_FILE_PREFIX.format(k)]
+            if k in output_keys:
+                parameter += [self._OUTPUT_FILE_PREFIX.format(k)]
 
             parameters += parameter
 
@@ -86,12 +89,15 @@ class NetworkParameters(ParameterData):
         return map(str, parameters)
 
     @property
+    def output_keys(self):
+        """Return list of keys of options """
+        return [k for k in self.get_dict() if k in output_options.keys()]
+
+    @property
     def output_files(self):
         """Return list of output files to be retrieved"""
-        pm_dict = self.get_dict()
-
         output_list = []
-        for k in pm_dict.keys():
+        for k in self.output_keys:
             output_list += [self._OUTPUT_FILE_PREFIX.format(k)]
 
         return output_list
@@ -114,10 +120,8 @@ class NetworkParameters(ParameterData):
         import aiida_zeopp.parsers.plain as pp
         #import aiida_zeopp.parsers.structure as sp
 
-        pm_dict = self.get_dict()
         parsers = []
-
-        for k in pm_dict.keys():
+        for k in self.output_keys:
             if k == 'vol':
                 parsers += [pp.AVolumeParser]
             elif k == 'volpo':
@@ -136,10 +140,8 @@ class NetworkParameters(ParameterData):
     @property
     def output_links(self):
         """Return list of output link names"""
-        pm_dict = self.get_dict()
-
         output_links = []
-        for k in pm_dict.keys():
+        for k in self.output_keys:
             output_links += [output_options[k][1]]
 
         return output_links
