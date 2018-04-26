@@ -38,7 +38,7 @@ def main(codelabel, submit):
     CifData = DataFactory('cif')
     this_dir = os.path.dirname(os.path.realpath(__file__))
     structure = CifData(file=os.path.join(this_dir, 'HKUST-1.cif'))
-    calc.use_input_structure(structure)
+    calc.use_structure(structure)
 
     if submit:
         calc.store_all()

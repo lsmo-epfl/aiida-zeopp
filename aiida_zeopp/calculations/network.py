@@ -39,10 +39,10 @@ class NetworkCalculation(JobCalculation):
                 'linkname': 'parameters',
                 'docstring': "add command line parameters",
             },
-            "input_structure": {
+            "structure": {
                 'valid_types': CifData,
                 'additional_parameter': None,
-                'linkname': 'input_structure',
+                'linkname': 'structure',
                 'docstring': "add input structure to be analyzed",
             },
             "atomic_radii": {
@@ -76,11 +76,9 @@ class NetworkCalculation(JobCalculation):
         # Check input files
 
         try:
-            input_structure = inputdict.pop(
-                self.get_linkname('input_structure'))
-            if not isinstance(input_structure, CifData):
-                raise InputValidationError(
-                    "input_structure not of type CifData")
+            structure = inputdict.pop(self.get_linkname('structure'))
+            if not isinstance(structure, CifData):
+                raise InputValidationError("structure not of type CifData")
         except KeyError:
             raise InputValidationError(
                 "No input structure specified for calculation")
@@ -95,7 +93,7 @@ class NetworkCalculation(JobCalculation):
         if inputdict:
             raise ValidationError("Unrecognized inputs: {}".format(inputdict))
 
-        return parameters, code, input_structure, atomic_radii
+        return parameters, code, structure, atomic_radii
 
     def _prepare_for_submission(self, tempfolder, inputdict):
         """
@@ -107,14 +105,14 @@ class NetworkCalculation(JobCalculation):
                 be returned by get_inputs_dict
         """
 
-        parameters, code, input_structure, atomic_radii = \
+        parameters, code, structure, atomic_radii = \
                 self._validate_inputs(inputdict)
 
         # Prepare CalcInfo to be returned to aiida
         calcinfo = CalcInfo()
         calcinfo.uuid = self.uuid
         calcinfo.local_copy_list = [[
-            input_structure.get_file_abs_path(), input_structure.filename
+            structure.get_file_abs_path(), structure.filename
         ]]
 
         if atomic_radii is not None:
@@ -129,7 +127,7 @@ class NetworkCalculation(JobCalculation):
 
         codeinfo = CodeInfo()
         codeinfo.cmdline_params = parameters.cmdline_params(
-            structure_file_name=input_structure.filename,
+            structure_file_name=structure.filename,
             radii_file_name=radii_file_name)
         codeinfo.code_uuid = code.uuid
         calcinfo.codes_info = [codeinfo]

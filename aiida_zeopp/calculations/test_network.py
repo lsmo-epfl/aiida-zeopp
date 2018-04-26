@@ -39,7 +39,7 @@ class TestNetwork(zt.PluginTestCase):
         calc.set_withmpi(False)
         calc.set_resources({"num_machines": 1, "num_mpiprocs_per_machine": 1})
         calc.use_parameters(parameters)
-        calc.use_input_structure(structure)
+        calc.use_structure(structure)
 
         calc.store_all()
         #calc.submit()
@@ -82,7 +82,7 @@ class TestNetwork(zt.PluginTestCase):
         CifData = DataFactory('cif')
         structure = CifData(
             file=os.path.join(TEST_DIR, 'MgO.cif'), parse_policy='lazy')
-        calc.use_input_structure(structure)
+        calc.use_structure(structure)
 
         SinglefileData = DataFactory('singlefile')
         atomic_radii = SinglefileData(file=os.path.join(TEST_DIR, 'MgO.rad'))
