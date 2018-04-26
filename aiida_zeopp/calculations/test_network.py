@@ -68,7 +68,15 @@ class TestNetwork(zt.PluginTestCase):
         # Prepare input parameters
         from aiida.orm import DataFactory
         NetworkParameters = DataFactory('zeopp.parameters')
-        parameters = NetworkParameters(dict={'cssr': True})
+        parameters = NetworkParameters(
+            dict={
+                'cssr': True,
+                'res': True,
+                'sa': [1.82, 1.82, 5000],
+                'volpo': [1.82, 1.82, 5000],
+                'chan': 1.2,
+                'ha': True,
+            })
         calc.use_parameters(parameters)
 
         CifData = DataFactory('cif')

@@ -1,7 +1,7 @@
 from voluptuous import Schema, ExactSequence
 from aiida.orm.data.parameter import ParameterData
 
-input_dict = {
+output_options = {
     'cssr': (bool, 'structure_cssr'),
     'v1': (bool, 'structure_v1'),
     'xyz': (bool, 'structure_xyz'),
@@ -17,12 +17,18 @@ input_dict = {
     'chan': (float, 'channels_chan'),
 }
 
+modifier_options = {
+    'ha': (bool, 'high_res'),
+}
+
+all_options = dict(output_options.items() + modifier_options.items())
+
 
 class NetworkParameters(ParameterData):
     """ Command line parameters for zeo++ network binary
     """
 
-    schema = Schema({k: input_dict[k][0] for k in input_dict})
+    schema = Schema({k: all_options[k][0] for k in all_options})
 
     _OUTPUT_FILE_PREFIX = "out.{}"
 
@@ -134,6 +140,6 @@ class NetworkParameters(ParameterData):
 
         output_links = []
         for k in pm_dict.keys():
-            output_links += [input_dict[k][1]]
+            output_links += [output_options[k][1]]
 
         return output_links
