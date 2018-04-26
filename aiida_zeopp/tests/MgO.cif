@@ -1,0 +1,42 @@
+data_Mg4O8_2017-11-17_15:37:20
+#******************************************
+#
+# CIF file created by Zeo++
+# Zeo++ is an open source package to
+# analyze microporous materials
+#
+#*******************************************
+
+_cell_length_a		4.8982   
+_cell_length_b		4.8982   
+_cell_length_c		4.8982   
+_cell_angle_alpha		90   
+_cell_angle_beta		90   
+_cell_angle_gamma		90   
+
+_symmetry_space_group_name_H-M		'P1'
+_symmetry_Int_Tables_number		1
+_symmetry_cell_setting		Isometric
+
+loop_
+_symmetry_equiv_pos_as_xyz
+'+x,+y,+z'
+
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+1	Mg	0	0.5	0.5
+2	Mg	0.5	0.5	0
+3	Mg	0.5	0	0.5
+4	Mg	0	0	0
+5	O	0.4112	0.0888	0.9112
+6	O	0.0888	0.9112	0.4112
+7	O	0.9112	0.4112	0.0888
+8	O	0.5888	0.5888	0.5888
+9	O	0.4112	0.4112	0.4112
+10	O	0.0888	0.5888	0.9112
+11	O	0.9112	0.0888	0.5888
+12	O	0.5888	0.9112	0.0888

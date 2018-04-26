@@ -1,4 +1,4 @@
-from voluptuous import Schema, Any, ExactSequence
+from voluptuous import Schema, ExactSequence
 from aiida.orm.data.parameter import ParameterData
 
 input_dict = {
@@ -15,8 +15,6 @@ input_dict = {
     'block': (ExactSequence([float, int]), 'block'),
     'psd': (ExactSequence([float, float, int]), 'psd'),
     'chan': (float, 'channels_chan'),
-    # radfile is optional
-    'r': (Any(basestring, bool), 'radii_rad'),
 }
 
 
@@ -50,14 +48,17 @@ class NetworkParameters(ParameterData):
         """validate parameters"""
         return NetworkParameters.schema(parameters_dict)
 
-    def cmdline_params(self, input_file_name=None):
+    def cmdline_params(self, structure_file_name=None, radii_file_name=None):
         """Synthesize command line parameters
         
-        e.g. [['-r'], ['-axs', '0.4', 'out.axs']]
+        e.g. [ ['-axs', '0.4', 'out.axs'], ['structure.cif']]
         """
         pm_dict = self.get_dict()
-
         parameters = []
+
+        if radii_file_name is not None:
+            parameters += ['-r', radii_file_name]
+
         for k, v in pm_dict.iteritems():
 
             parameter = ['-{}'.format(k)]
@@ -68,14 +69,13 @@ class NetworkParameters(ParameterData):
             else:
                 parameter += [v]
 
-            # add output file name (except for -r)
-            if k != 'r':
-                parameter += [self._OUTPUT_FILE_PREFIX.format(k)]
+            # add output file name
+            parameter += [self._OUTPUT_FILE_PREFIX.format(k)]
 
             parameters += parameter
 
-        if input_file_name is not None:
-            parameters += [input_file_name]
+        if structure_file_name is not None:
+            parameters += [structure_file_name]
 
         return map(str, parameters)
 
@@ -86,8 +86,7 @@ class NetworkParameters(ParameterData):
 
         output_list = []
         for k in pm_dict.keys():
-            if k != 'r':
-                output_list += [self._OUTPUT_FILE_PREFIX.format(k)]
+            output_list += [self._OUTPUT_FILE_PREFIX.format(k)]
 
         return output_list
 
@@ -135,7 +134,6 @@ class NetworkParameters(ParameterData):
 
         output_links = []
         for k in pm_dict.keys():
-            if k != 'r':
-                output_links += [input_dict[k][1]]
+            output_links += [input_dict[k][1]]
 
         return output_links

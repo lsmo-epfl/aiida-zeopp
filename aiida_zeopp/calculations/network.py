@@ -6,6 +6,7 @@ from aiida.orm import DataFactory
 
 NetworkParameters = DataFactory('zeopp.parameters')
 CifData = DataFactory('cif')
+SinglefileData = DataFactory('singlefile')
 
 
 class NetworkCalculation(JobCalculation):
@@ -44,6 +45,12 @@ class NetworkCalculation(JobCalculation):
                 'linkname': 'input_structure',
                 'docstring': "add input structure to be analyzed",
             },
+            "atomic_radii": {
+                'valid_types': SinglefileData,
+                'additional_parameter': None,
+                'linkname': 'atomic_radii',
+                'docstring': "file specifying atomic radii",
+            },
         })
         return use_dict
 
@@ -66,19 +73,31 @@ class NetworkCalculation(JobCalculation):
         except KeyError:
             raise InputValidationError("No code specified for calculation")
 
+        # Check input files
+
         try:
-            inputfile = inputdict.pop(self.get_linkname('input_structure'))
+            input_structure = inputdict.pop(
+                self.get_linkname('input_structure'))
+            structure_file_name = input_structure.filename
+            if not isinstance(input_structure, CifData):
+                raise InputValidationError(
+                    "input_structure not of type CifData")
         except KeyError:
             raise InputValidationError(
-                "No input file specified for calculation")
-        if not isinstance(inputfile, CifData):
-            raise InputValidationError("file not of type CifData")
+                "No input structure specified for calculation")
+
+        try:
+            atomic_radii = inputdict.pop(self.get_linkname('atomic_radii'))
+            radii_file_name = atomic_radii.filename
+        except KeyError:
+            # this will use internally defined atomic radii
+            atomic_radii = None
 
         # Check that nothing is left unparsed
         if inputdict:
-            raise ValidationError("Unknown inputs")
+            raise ValidationError("Unrecognized inputs: {}".format(inputdict))
 
-        return parameters, code, inputfile
+        return parameters, code, structure_file_name, radii_file_name
 
     def _prepare_for_submission(self, tempfolder, inputdict):
         """
@@ -90,20 +109,25 @@ class NetworkCalculation(JobCalculation):
                 be returned by get_inputs_dict
         """
 
-        parameters, code, inputfile = self._validate_inputs(inputdict)
+        parameters, code, structure_file_name, radii_file_name = \
+                self._validate_inputs(inputdict)
 
         # Prepare CalcInfo to be returned to aiida
         calcinfo = CalcInfo()
         calcinfo.uuid = self.uuid
-        calcinfo.local_copy_list = [[
-            inputfile.get_file_abs_path(), inputfile.filename
-        ]]
+        calcinfo.local_copy_list = []
+        if structure_file_name is not None:
+            calcinfo.local_copy_list.append(structure_file_name)
+        if radii_file_name is not None:
+            calcinfo.local_copy_list.append(radii_file_name)
+
         calcinfo.remote_copy_list = []
         calcinfo.retrieve_list = parameters.output_files
 
         codeinfo = CodeInfo()
         codeinfo.cmdline_params = parameters.cmdline_params(
-            input_file_name=inputfile.filename)
+            structure_file_name=structure_file_name,
+            radii_file_name=radii_file_name)
         codeinfo.code_uuid = code.uuid
         calcinfo.codes_info = [codeinfo]
 
