@@ -11,6 +11,7 @@ output_options = {
     'zvis': (bool, 'network_zvis'),
     'axs': (float, 'nodes_axs'),
     'sa': (ExactSequence([float, float, int]), 'surface_area_sa'),
+    'vsa': (ExactSequence([float, float, int]), 'surface_sample_vsa'),
     'vol': (ExactSequence([float, float, int]), 'volume_vol'),
     'volpo': (ExactSequence([float, float, int]), 'pore_volume_volpo'),
     'block': (ExactSequence([float, int]), 'block'),

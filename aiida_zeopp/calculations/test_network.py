@@ -73,6 +73,7 @@ class TestNetwork(zt.PluginTestCase):
                 'cssr': True,
                 'res': True,
                 'sa': [1.82, 1.82, 5000],
+                'vsa': [1.82, 1.82, 5000],
                 'volpo': [1.82, 1.82, 5000],
                 'chan': 1.2,
                 'ha': True,
