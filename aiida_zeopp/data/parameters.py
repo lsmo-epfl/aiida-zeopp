@@ -49,8 +49,8 @@ class NetworkParameters(ParameterData):
             super(NetworkParameters, self).__init__(**kwargs)
         else:
             # set dictionary of ParameterData
-            super(NetworkParameters, self).__init__(dict=dict, **kwargs)
             dict = self.validate(dict)
+            super(NetworkParameters, self).__init__(dict=dict, **kwargs)
 
     def validate(self, parameters_dict):
         """validate parameters"""

@@ -15,14 +15,13 @@ def get_backend():
 
 
 def get_zeopp_binary():
-    env = os.environ.get('ZEOPP')
-    if not env:
-        raise ValueError(
-            "Provide path to 'network' binary in ZEOPP environment variable before running tests."
-        )
-    elif not os.path.isfile(env):
-        raise ValueError("ZEOPP binary '{}' does not exist.".format(env))
-    return env
+    import distutils.spawn
+
+    binary = 'network'
+    path = distutils.spawn.find_executable(binary)
+    if path is None:
+        raise ValueError("{} binary not found in PATH.".format(binary))
+    return path
 
 
 def get_localhost_computer():
@@ -41,16 +40,16 @@ def get_localhost_computer():
     return computer
 
 
-def get_network_code():
-    """Setup code on localhost computer"""
+def get_network_code(computer):
+    """Setup code on computer"""
     from aiida.orm import Code
 
-    executable = get_zeopp_binary()
+    path = get_zeopp_binary()
 
     code = Code(
-        files=[executable],
         input_plugin_name='zeopp.network',
-        local_executable='network')
+        remote_computer_exec=[computer, path],
+    )
     code.label = 'zeopp'
     code.description = 'zeo++'
 

@@ -11,13 +11,12 @@ class TestNetwork(zt.PluginTestCase):
 
         # set up test computer
         self.computer = zt.get_localhost_computer().store()
-        self.code = zt.get_network_code().store()
+        self.code = zt.get_network_code(self.computer).store()
 
     def test_submit_HKUST1(self):
         """Test submitting a calculation"""
         from aiida_zeopp.tests import TEST_DIR
 
-        computer = self.computer
         code = self.code
 
         # Prepare input parameters
@@ -33,9 +32,6 @@ class TestNetwork(zt.PluginTestCase):
         calc.label = "aiida_zeopp format conversion"
         calc.description = "Test converting .cif to .cssr format"
         calc.set_max_wallclock_seconds(30)
-        # This line is only needed for local codes, otherwise the computer is
-        # automatically set from the code
-        calc.set_computer(computer)
         calc.set_withmpi(False)
         calc.set_resources({"num_machines": 1, "num_mpiprocs_per_machine": 1})
         calc.use_parameters(parameters)
@@ -59,9 +55,6 @@ class TestNetwork(zt.PluginTestCase):
         calc.label = "aiida_zeopp format conversion"
         calc.description = "Test converting .cif to .cssr format"
         calc.set_max_wallclock_seconds(30)
-        # This line is only needed for local codes, otherwise the computer is
-        # automatically set from the code
-        calc.set_computer(self.computer)
         calc.set_withmpi(False)
         calc.set_resources({"num_machines": 1, "num_mpiprocs_per_machine": 1})
 

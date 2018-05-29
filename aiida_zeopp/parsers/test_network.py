@@ -11,7 +11,7 @@ class TestNetwork(zt.PluginTestCase):
 
         # set up test computer
         self.computer = zt.get_localhost_computer().store()
-        self.code = zt.get_network_code().store()
+        self.code = zt.get_network_code(self.computer).store()
 
     def get_calc(self, parameters):
         """Set up a simple calculation
@@ -31,9 +31,6 @@ class TestNetwork(zt.PluginTestCase):
         calc = self.code.new_calc()
         calc.label = "aiida_zeopp format conversion"
         calc.set_max_wallclock_seconds(30)
-        # This line is only needed for local codes, otherwise the computer is
-        # automatically set from the code
-        calc.set_computer(self.computer)
         calc.set_withmpi(False)
         calc.set_resources({"num_machines": 1, "num_mpiprocs_per_machine": 1})
         calc.use_parameters(parameters)
