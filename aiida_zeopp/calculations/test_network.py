@@ -8,10 +8,7 @@ import aiida_zeopp.tests as zt
 
 class TestNetwork(zt.PluginTestCase):
     def setUp(self):
-
-        # set up test computer
-        self.computer = zt.get_localhost_computer().store()
-        self.code = zt.get_network_code(self.computer).store()
+        self.code = zt.get_code(entry_point='zeopp.network')
 
     def test_submit_HKUST1(self):
         """Test submitting a calculation"""

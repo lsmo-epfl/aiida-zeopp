@@ -5,6 +5,9 @@ import aiida.utils.fixtures
 import unittest
 
 TEST_DIR = os.path.dirname(os.path.realpath(__file__))
+executables = {
+    'zeopp.network': 'network',
+}
 
 
 def get_backend():
@@ -14,44 +17,56 @@ def get_backend():
     return BACKEND_DJANGO
 
 
-def get_zeopp_binary():
+def get_path_to_executable(executable):
     import distutils.spawn
-
-    binary = 'network'
-    path = distutils.spawn.find_executable(binary)
+    path = distutils.spawn.find_executable(executable)
     if path is None:
-        raise ValueError("{} binary not found in PATH.".format(binary))
+        raise ValueError("{} executable not found in PATH.".format(executable))
+
     return path
 
 
-def get_localhost_computer():
+def get_computer(name='localhost'):
     """Setup localhost computer"""
     from aiida.orm import Computer
-    import tempfile
-    computer = Computer(
-        name='localhost',
-        description='my computer',
-        hostname='localhost',
-        workdir=tempfile.mkdtemp(),
-        transport_type='local',
-        scheduler_type='direct',
-        enabled_state=True)
+    from aiida.common.exceptions import NotExistent
+
+    try:
+        computer = Computer.get(name)
+    except NotExistent:
+
+        import tempfile
+        computer = Computer(
+            name=name,
+            description='localhost computer set up by aiida_gudhi tests',
+            hostname='localhost',
+            workdir=tempfile.mkdtemp(),
+            transport_type='local',
+            scheduler_type='direct',
+            enabled_state=True)
+        computer.store()
 
     return computer
 
 
-def get_network_code(computer):
-    """Setup code on computer"""
+def get_code(entry_point, computer_name='localhost'):
+    """Setup code on localhost computer"""
     from aiida.orm import Code
+    from aiida.common.exceptions import NotExistent
 
-    path = get_zeopp_binary()
+    computer = get_computer(computer_name)
+    executable = executables[entry_point]
 
-    code = Code(
-        input_plugin_name='zeopp.network',
-        remote_computer_exec=[computer, path],
-    )
-    code.label = 'zeopp'
-    code.description = 'zeo++'
+    try:
+        code = Code.get_from_string('{}@{}'.format(executable, computer_name))
+    except NotExistent:
+        path = get_path_to_executable(executable)
+        code = Code(
+            input_plugin_name=entry_point,
+            remote_computer_exec=[computer, path],
+        )
+        code.label = executable
+        code.store()
 
     return code
 
