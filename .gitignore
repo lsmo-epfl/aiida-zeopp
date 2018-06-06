@@ -7,3 +7,5 @@
 .project
 *.egg*
 .DS_Store
+build/
+dist/

@@ -1,7 +1,6 @@
 """ Helper functions and classes for tests
 """
 import os
-import aiida.utils.fixtures
 import unittest
 
 TEST_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -82,10 +81,7 @@ def get_temp_folder():
     return Folder(tempfile.mkdtemp())
 
 
-fixture_manager = aiida.utils.fixtures.FixtureManager()
-fixture_manager.backend = get_backend()
-
-
+#TODO: Replace this class by aiida.utils.fixtures.PluginTestCase when aiida-core v0.12.1 is released
 class PluginTestCase(unittest.TestCase):
     """
     Set up a complete temporary AiiDA environment for plugin tests
@@ -109,15 +105,8 @@ class PluginTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        from aiida.utils.capturing import Capturing
-        cls.fixture_manager = fixture_manager
-        if not fixture_manager.has_profile_open():
-            with Capturing():
-                cls.fixture_manager.create_profile()
+        from aiida.utils.fixtures import _PYTEST_FIXTURE_MANAGER
+        cls.fixture_manager = _PYTEST_FIXTURE_MANAGER
 
     def tearDown(self):
         self.fixture_manager.reset_db()
-
-    #@classmethod
-    #def tearDownClass(cls):
-    #    cls.fixture_manager.destroy_all()
