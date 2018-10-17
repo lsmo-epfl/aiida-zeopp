@@ -21,6 +21,9 @@
         ],
         "console_scripts": [
             "aiida-template-factors = aiida_zeopp.console_scripts.data_cli:cli"
+        ],
+        "aiida.workflows": [
+            "zeopp.geometry= aiida_zeopp.workflows:ZeoppGeometryWorkChain"
         ]
     },
     "setup_requires": [
