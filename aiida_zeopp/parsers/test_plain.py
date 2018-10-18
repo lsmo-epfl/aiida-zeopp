@@ -39,3 +39,22 @@ class ResParserTestCase(unittest.TestCase):
 
         parser = parsers.ResParser
         parser.parse(string)
+
+
+class ChannelParserTestCase(unittest.TestCase):
+    def test_parse_p8bal_p1(self):
+
+        string = """
+        P8bal_P1.chan   2 channels identified of dimensionality 3 3
+        Channel  0  9.92223  3.85084  9.92223
+        Channel  1  9.92222  3.85084  9.92222
+        P8bal_P1.chan summary(Max_of_columns_above)   9.92223 3.85084  9.92223  probe_rad: 1.8  probe_diam: 3.6
+
+        """
+
+        parser = parsers.ChannelParser
+        channel_list = parser.parse(string)
+
+        self.assertEquals(channel_list['Dimensionalities'][1], 3)
+        self.assertAlmostEquals(channel_list['Largest_included_spheres'][1],
+                                9.92222)
