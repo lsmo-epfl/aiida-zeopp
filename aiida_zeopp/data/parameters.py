@@ -1,5 +1,8 @@
+from __future__ import absolute_import
 from voluptuous import Schema, ExactSequence
 from aiida.orm.data.parameter import ParameterData
+import six
+from six.moves import map
 
 # key : [ accepted values, label ]
 output_options = {
@@ -23,7 +26,8 @@ modifier_options = {
     'ha': (bool, 'high_res'),
 }
 
-all_options = dict(output_options.items() + modifier_options.items())
+all_options = dict(
+    list(output_options.items()) + list(modifier_options.items()))
 
 
 class NetworkParameters(ParameterData):
@@ -68,7 +72,7 @@ class NetworkParameters(ParameterData):
 
         pm_dict = self.get_dict()
         output_keys = self.output_keys
-        for k, v in pm_dict.iteritems():
+        for k, v in six.iteritems(pm_dict):
 
             parameter = ['-{}'.format(k)]
             if isinstance(v, bool):
@@ -87,12 +91,12 @@ class NetworkParameters(ParameterData):
         if structure_file_name is not None:
             parameters += [structure_file_name]
 
-        return map(str, parameters)
+        return list(map(str, parameters))
 
     @property
     def output_keys(self):
         """Return list of keys of options """
-        return [k for k in self.get_dict() if k in output_options.keys()]
+        return [k for k in self.get_dict() if k in list(output_options.keys())]
 
     @property
     def output_files(self):

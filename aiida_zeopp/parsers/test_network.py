@@ -1,9 +1,11 @@
 """ Tests for parsers
 
 """
+from __future__ import absolute_import
 import os
 
 import aiida_zeopp.tests as zt
+from six.moves import zip
 
 
 class TestNetwork(zt.PluginTestCase):

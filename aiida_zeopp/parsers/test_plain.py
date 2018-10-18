@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import unittest
 import aiida_zeopp.parsers.plain as parsers
 

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from aiida.orm.calculation.job import JobCalculation
 from aiida.common.utils import classproperty
 from aiida.common.exceptions import (InputValidationError, ValidationError)

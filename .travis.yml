@@ -4,34 +4,52 @@ python:
 
 cache: pip
 
+git:
+  depth: 3
+
 services:
 - postgresql
 
 addons:
-  postgresql: "9.4"
-  #postgresql: "9.5" # Available in Trusty only
-  apt:
-    packages:
-    - texlive-base
-    - texlive-generic-recommended
-    - texlive-fonts-recommended
-    - texlive-latex-base
-    - texlive-latex-recommended
-    - texlive-latex-extra
-    - dvipng
-    - dvidvi
+  postgresql: "9.5"
 
-install:
+before_install:
 # Upgrade pip setuptools and wheel
 - pip install -U pip wheel setuptools
-- pip install .[precommit,testing]
+
+install:
+- pip install -e .[testing,pre-commit]
 - reentry scan -r aiida
+- pip install coveralls
+# add fake network executable
+- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
 
 env:
-- TEST_AIIDA_BACKEND=django
-- TEST_AIIDA_BACKEND=sqlalchemy
+  global:
+  # add network executable to PATH
+  - PATH=${PATH}:${TRAVIS_BUILD_DIR}
+  matrix:
+  - TEST_AIIDA_BACKEND: django
+    TEST_TYPE: tests
+  - TEST_AIIDA_BACKEND: sqlalchemy
+    TEST_TYPE: tests
+#  - TEST_AIIDA_BACKEND: django
+#    TEST_TYPE: docs
+    READTHEDOCS: 'True'
+  - TEST_AIIDA_BACKEND: django
+    TEST_TYPE: pre-commit
 
-script: .travis-data/script.sh
+  # Remove this to enforce the AiiDA coding style
+  allow_failures:
+  - TEST_AIIDA_BACKEND: django
+    TEST_TYPE: pre-commit
 
-git:
-  depth: 3
+script:
+- if [ "$TEST_TYPE" == "tests" ] ; then coverage run --append manage.py; fi  # runs unit tests
+# - if [ "$TEST_TYPE" == "docs" ] ; then cd docs; make; fi  # creates documentation
+# runs precommit checks but doesn't fail if they don't pass
+- if [ "$TEST_TYPE" == "pre-commit" ] ; then pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 ); fi
+
+after_success:
+- coveralls
+

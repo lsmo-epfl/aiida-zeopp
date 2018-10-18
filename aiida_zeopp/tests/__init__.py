@@ -1,8 +1,8 @@
 """ Helper functions and classes for tests
 """
+from __future__ import absolute_import
 import os
-import aiida.utils.fixtures
-import unittest
+from aiida.utils.fixtures import PluginTestCase  # noqa
 
 TEST_DIR = os.path.dirname(os.path.realpath(__file__))
 executables = {
@@ -18,12 +18,21 @@ def get_backend():
 
 
 def get_path_to_executable(executable):
-    import distutils.spawn
+    """ Get path to local executable.
+
+    :param executable: Name of executable in the $PATH variable
+    :type executable: str
+
+    :return: path to executable
+    :rtype: str
+    """
+    # pylint issue https://github.com/PyCQA/pylint/issues/73
+    import distutils.spawn  # pylint: disable=no-name-in-module,import-error
     path = distutils.spawn.find_executable(executable)
     if path is None:
         raise ValueError("{} executable not found in PATH.".format(executable))
 
-    return path
+    return os.path.abspath(path)
 
 
 def get_computer(name='localhost'):
@@ -80,44 +89,3 @@ def get_temp_folder():
     import tempfile
 
     return Folder(tempfile.mkdtemp())
-
-
-fixture_manager = aiida.utils.fixtures.FixtureManager()
-fixture_manager.backend = get_backend()
-
-
-class PluginTestCase(unittest.TestCase):
-    """
-    Set up a complete temporary AiiDA environment for plugin tests
-
-    Filesystem:
-
-        * temporary config (``.aiida``) folder
-        * temporary repository folder
-
-    Database:
-
-        * temporary database cluster via the ``pgtest`` package
-        * with aiida database user
-        * with aiida_db database
-
-    AiiDA:
-
-        * set to use the temporary config folder
-        * create and configure a profile
-    """
-
-    @classmethod
-    def setUpClass(cls):
-        from aiida.utils.capturing import Capturing
-        cls.fixture_manager = fixture_manager
-        if not fixture_manager.has_profile_open():
-            with Capturing():
-                cls.fixture_manager.create_profile()
-
-    def tearDown(self):
-        self.fixture_manager.reset_db()
-
-    #@classmethod
-    #def tearDownClass(cls):
-    #    cls.fixture_manager.destroy_all()

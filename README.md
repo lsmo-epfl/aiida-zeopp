@@ -1,8 +1,8 @@
-## aiida-zeopp
+# aiida-zeopp
 
 AiiDA plugin for [Zeo++](http://www.zeoplusplus.org/)
 
-# Installation
+## Installation
 
 ```shell
 git clone https://github.com/ltalirz/aiida-zeopp aiida-zeopp
@@ -11,7 +11,13 @@ pip install -e .  # also installs aiida, if missing (but not postgres)
 reentry scan -r aiida  
 ```
 
-# Usage
+## Tests
+
+```shell
+python manage.py
+```
+
+## Usage
 A complete example of how to submit a test calculation using this plugin.
 
 ```shell

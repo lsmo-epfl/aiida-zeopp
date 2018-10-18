@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 #import json
+from __future__ import absolute_import
 from aiida.parsers.parser import Parser
 from aiida.parsers.exceptions import OutputParsingError
 from aiida_zeopp.calculations.network import NetworkCalculation
+from six.moves import zip
 
 
 class NetworkParser(Parser):
@@ -53,9 +55,8 @@ class NetworkParser(Parser):
         if set(output_files) <= set(list_of_files):
             pass
         else:
-            self.logger.error(
-                "Not all expected output files {} were found".format(
-                    output_files))
+            self.logger.error("Not all expected output files {} were found".
+                              format(output_files))
             return success, node_list
 
         # Parse output files
