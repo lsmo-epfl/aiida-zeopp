@@ -1,1 +1,1 @@
-from .geometry import ZeoppGeometryWorkChain
+from .blockpockets import ZeoppBlockPocketsWorkChain
