@@ -1,7 +1,8 @@
 """ Helper functions and classes for tests
 """
+from __future__ import absolute_import
 import os
-import unittest
+from aiida.utils.fixtures import PluginTestCase  # noqa
 
 TEST_DIR = os.path.dirname(os.path.realpath(__file__))
 executables = {
@@ -79,34 +80,3 @@ def get_temp_folder():
     import tempfile
 
     return Folder(tempfile.mkdtemp())
-
-
-#TODO: Replace this class by aiida.utils.fixtures.PluginTestCase when aiida-core v0.12.1 is released
-class PluginTestCase(unittest.TestCase):
-    """
-    Set up a complete temporary AiiDA environment for plugin tests
-
-    Filesystem:
-
-        * temporary config (``.aiida``) folder
-        * temporary repository folder
-
-    Database:
-
-        * temporary database cluster via the ``pgtest`` package
-        * with aiida database user
-        * with aiida_db database
-
-    AiiDA:
-
-        * set to use the temporary config folder
-        * create and configure a profile
-    """
-
-    @classmethod
-    def setUpClass(cls):
-        from aiida.utils.fixtures import _PYTEST_FIXTURE_MANAGER
-        cls.fixture_manager = _PYTEST_FIXTURE_MANAGER
-
-    def tearDown(self):
-        self.fixture_manager.reset_db()
