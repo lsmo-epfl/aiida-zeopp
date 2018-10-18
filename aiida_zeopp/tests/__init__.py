@@ -32,7 +32,7 @@ def get_path_to_executable(executable):
     if path is None:
         raise ValueError("{} executable not found in PATH.".format(executable))
 
-    return path
+    return os.path.abspath(path)
 
 
 def get_computer(name='localhost'):
