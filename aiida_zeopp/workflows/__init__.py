@@ -1,1 +1,1 @@
-from .blockpockets import ZeoppBlockPocketsWorkChain
+from .blockpockets import ZeoppBlockPocketsWorkChain  # noqa

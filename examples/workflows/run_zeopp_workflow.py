@@ -1,11 +1,9 @@
 from __future__ import absolute_import
 from __future__ import print_function
 import os
-from argparse import ArgumentParser
 from aiida.common.example_helpers import test_and_get_code
 from aiida.orm.data.base import Float
 from aiida.orm.data.cif import CifData
-from aiida.orm.data.parameter import ParameterData
 from aiida.work.run import submit
 from aiida_zeopp.workflows import ZeoppBlockPocketsWorkChain
 

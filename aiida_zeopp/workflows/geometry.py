@@ -102,6 +102,7 @@ class ZeoppGeometryWorkChain(WorkChain):
 
     def return_result(self):
         """Attach the results of the raspa calculation and the initial structure to the outputs."""
+        # pylint: disable=bare-except
         try:
             self.out("block", self.ctx.zeopp_block["block"])
         except:

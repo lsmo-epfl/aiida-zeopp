@@ -67,6 +67,7 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
 
     def run_geom_zeopp(self):
         """This function will perform geometry analysis using zeo++."""
+        # pylint: disable=protected-access
         NetworkParameters = DataFactory('zeopp.parameters')
         sigma = self.inputs.probe_radius.value
         num_samples_sa = self.inputs._num_samples['sa']
@@ -103,8 +104,9 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
         return self.ctx.zeopp_geometry[
             "pore_volume_volpo"].dict.PONAV_Volume_fraction > 0.001
 
-    def run_block_zeopp(self):
+    def run_block_zeopp(self):  # pylint: disable=protected-access
         """This is the main function that will perform a zeo++ block pocket calculation."""
+        # pylint: disable=protected-access
         NetworkParameters = DataFactory('zeopp.parameters')
         sigma = self.inputs.probe_radius.value
         num_samples_block = self.inputs._num_samples['block']
@@ -128,6 +130,7 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
 
     def return_result(self):
         """Attach the results of the zeopp calculations to the outputs."""
+        # pylint: disable=bare-except
         try:
             self.out("block", self.ctx.zeopp_block["block"])
         except:
