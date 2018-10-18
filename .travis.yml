@@ -21,15 +21,20 @@ install:
 - pip install -e .[testing,pre-commit]
 - reentry scan -r aiida
 - pip install coveralls
+# add fake network executable
+- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
 
 env:
+  global:
+  # add network executable to PATH
+  - PATH=${PATH}:${TRAVIS_BUILD_DIR}
   matrix:
   - TEST_AIIDA_BACKEND: django
     TEST_TYPE: tests
   - TEST_AIIDA_BACKEND: sqlalchemy
     TEST_TYPE: tests
-  - TEST_AIIDA_BACKEND: django
-    TEST_TYPE: docs
+#  - TEST_AIIDA_BACKEND: django
+#    TEST_TYPE: docs
     READTHEDOCS: 'True'
   - TEST_AIIDA_BACKEND: django
     TEST_TYPE: pre-commit
@@ -41,7 +46,7 @@ env:
 
 script:
 - if [ "$TEST_TYPE" == "tests" ] ; then coverage run --append manage.py; fi  # runs unit tests
-- if [ "$TEST_TYPE" == "docs" ] ; then cd docs; make; fi  # creates documentation
+# - if [ "$TEST_TYPE" == "docs" ] ; then cd docs; make; fi  # creates documentation
 # runs precommit checks but doesn't fail if they don't pass
 - if [ "$TEST_TYPE" == "pre-commit" ] ; then pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 ); fi
 

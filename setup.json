@@ -31,7 +31,8 @@
         "aiida >= 0.12.2",
         "pycifrw >= 4.2",
         "pymatgen >= 2016.1.0",
-        "voluptuous"
+        "voluptuous",
+        "six"
     ],
     "extras_require": {
         "testing": [

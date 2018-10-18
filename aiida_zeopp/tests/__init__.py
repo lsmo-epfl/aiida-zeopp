@@ -18,7 +18,16 @@ def get_backend():
 
 
 def get_path_to_executable(executable):
-    import distutils.spawn
+    """ Get path to local executable.
+
+    :param executable: Name of executable in the $PATH variable
+    :type executable: str
+
+    :return: path to executable
+    :rtype: str
+    """
+    # pylint issue https://github.com/PyCQA/pylint/issues/73
+    import distutils.spawn  # pylint: disable=no-name-in-module,import-error
     path = distutils.spawn.find_executable(executable)
     if path is None:
         raise ValueError("{} executable not found in PATH.".format(executable))
