@@ -1,3 +1,8 @@
+[![Build Status](https://travis-ci.org/aiidateam/aiida-zeopp.svg?branch=master)](https://travis-ci.org/aiidateam/aiida-zeopp)
+[![Coverage Status](https://coveralls.io/repos/github/aiidateam/aiida-zeopp/badge.svg?branch=master)](https://coveralls.io/github/aiidateam/aiida-zeopp?branch=master)
+[![Docs status](https://readthedocs.org/projects/aiida-zeopp/badge)](http://aiida-zeopp.readthedocs.io/)
+[![PyPI version](https://badge.fury.io/py/aiida-zeopp.svg)](https://badge.fury.io/py/aiida-zeopp)
+
 # aiida-zeopp
 
 AiiDA plugin for [Zeo++](http://www.zeoplusplus.org/)
@@ -9,6 +14,8 @@ git clone https://github.com/ltalirz/aiida-zeopp aiida-zeopp
 cd aiida-zeopp
 pip install -e .  # also installs aiida, if missing (but not postgres)
 reentry scan -r aiida  
+verdi quicksetup  # better to set up a new profile
+verdi calculation plugins  # should now show your calclulation plugins
 ```
 
 ## Tests
@@ -18,6 +25,24 @@ python manage.py
 ```
 
 ## Usage
+A quick demo of how to submit a calculation:
+```shell
+verdi daemon start         # make sure the daemon is running
+cd examples
+verdi run submit.py        # submit test calculation
+verdi calculation list -a  # check status of calculation
+```
+
+## Tests
+
+The following will discover and run all unit test:
+```shell
+pip install -e .[testing]
+python manage.py
+```
+
+## Complete example
+
 A complete example of how to submit a test calculation using this plugin.
 
 ```shell
@@ -60,7 +85,7 @@ Configuring computer 'localhost' for the AiiDA user 'leopold.talirz@epfl.ch'
 Computer localhost has transport of type local
 There are no special keys to be configured. Configuration completed.
 
-verdi code setup
+$ verdi code setup
 At any prompt, type ? to get some help.
 ---------------------------------------
 => Label: aiida_zeopp
@@ -171,3 +196,7 @@ $ verdi data parameter show 80
   "Unitcell_volume": 18280.8
 }
 
+
+## License
+
+MIT

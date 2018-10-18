@@ -135,6 +135,8 @@ class NetworkParameters(ParameterData):
                 parsers += [pp.SurfaceAreaParser]
             elif k == 'res':
                 parsers += [pp.ResParser]
+            elif k == 'chan':
+                parsers += [pp.ChannelParser]
             #elif k == 'cssr':
             #    parsers += [sp.CssrParser]
             else:

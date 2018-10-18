@@ -2,6 +2,9 @@
 from __future__ import absolute_import
 import re
 import six
+from six.moves import map
+from six.moves import range
+from six.moves import zip
 
 
 class KeywordParser(object):
@@ -211,3 +214,74 @@ class ResParser(KeywordParser):
             res[cls.keywords[i]] = float(values[i + 1])
 
         return res
+
+
+class ChannelParser(object):
+    @classmethod
+    def parse(cls, string):  # pylint: disable=too-many-locals
+        """ Parse zeo++ .chan format
+
+        Example chan string::
+
+            P8bal_P1.chan   2 channels identified of dimensionality 3 3
+            Channel  0  9.92223  3.85084  9.92223
+            Channel  1  9.92222  3.85084  9.92222
+            P8bal_P1.chan summary(Max_of_columns_above)   9.92223 3.85084  9.92223  probe_rad: 1.8  probe_diam: 3.6
+
+
+        parameters
+        ----------
+        string: string
+          string in chan format
+        
+        return
+        ------
+        results: list
+          dictionary of output values
+        """
+        lines = string.splitlines()
+        # remove empty lines
+        lines = [l for l in lines if l.strip()]
+        nlines = len(lines)
+
+        # parse header line
+        match = re.search(
+            r'(\d+) channels identified of dimensionality ([\d\s]*)', lines[0])
+        if match:
+            nchannels = int(match.group(1))
+            dimensionalities = list(map(int, match.group(2).split()))
+        else:
+            raise ValueError(
+                "The following string was not recognized as a valid header of the .chan format:\n"
+                + lines[0])
+
+        if nchannels != len(dimensionalities):
+            raise ValueError(
+                "Number of channels {} does not match number of dimensionalities {}"
+                .format(nchannels, len(dimensionalities)))
+
+        if nchannels != nlines - 2:
+            raise ValueError(
+                "Number of lines in file {} does not equal number of channels {}+2"
+                .format(nlines, nchannels))
+
+        # parse remaning lines (last line is discarded)
+        channels = []
+        for i in range(1, nchannels + 1):
+            _c, _i, di, df, dif = lines[i].split()
+            channels.append(list(map(float, [di, df, dif])))
+
+        dis, dfs, difs = list(zip(*channels))
+
+        pm_dict = {
+            'Largest_included_spheres': dis,
+            'Largest_free_spheres': dfs,
+            'Largest_included_free_spheres': difs,
+            'Dimensionalities': dimensionalities,
+        }
+        return pm_dict
+
+    @classmethod
+    def parse_aiida(cls, string):
+        from aiida.orm.data.parameter import ParameterData
+        return ParameterData(dict=cls.parse(string))
