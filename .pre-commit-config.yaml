@@ -33,4 +33,4 @@
     name: Check version numbers
     entry: python ./.travis-data/check_version.py
     language: system
-    files: '^(setup.json)|(aiida_diff/__init__.py)'
+    files: '^(setup.json)|(aiida_zeopp/__init__.py)'
