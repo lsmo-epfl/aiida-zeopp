@@ -172,7 +172,7 @@ class SurfaceAreaParser(KeywordParser):
         return super(SurfaceAreaParser, cls).parse(string)
 
 
-class ResParser(object):
+class ResParser(KeywordParser):
 
     keywords = (
         'Largest_included_sphere',
