@@ -4,12 +4,14 @@ from aiida.orm.code import Code
 from aiida.orm.data.base import Float
 from aiida.work.run import submit
 from aiida.work.workchain import WorkChain, ToContext, if_, Outputs
+from aiida.work.workfunction import workfunction
 
 # import base data classes
 ZeoppCalculation = CalculationFactory('zeopp.network')
 ParameterData = DataFactory('parameter')
 CifData = DataFactory('cif')
 SinglefileData = DataFactory('singlefile')
+NetworkParameters = DataFactory('zeopp.parameters')
 
 # optional inputs
 options = {
@@ -21,11 +23,44 @@ options = {
     "withmpi": False,
 }
 
-num_samples_default = {
+num_samples = {
     'sa': 10000,
     'volpo': 100000,
     'block': 100,
 }
+
+
+@workfunction
+def get_zeopp_geometry_parameters(probe_radius):
+    """Create NetworkParameters from probe radius.
+
+    """
+    sigma = probe_radius.value
+
+    params = {
+        'ha': True,
+        'res': True,
+        'sa': [sigma, sigma, num_samples['sa']],
+        'chan': sigma,
+        'volpo': [sigma, sigma, num_samples['volpo']],
+    }
+    return NetworkParameters(dict=params)
+
+
+@workfunction
+def get_zeopp_block_parameters(probe_radius):
+    """Create NetworkParameters from probe radius.
+
+    :param sigma: Probe radius (A)
+    """
+    sigma = probe_radius.value
+
+    params = {
+        'ha': True,
+        'block': [sigma, num_samples['block']],
+    }
+
+    return NetworkParameters(dict=params)
 
 
 class ZeoppBlockPocketsWorkChain(WorkChain):
@@ -41,13 +76,7 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
         spec.input("structure", valid_type=CifData, required=True)
         spec.input("zeopp_code", valid_type=Code, required=True)
         spec.input(
-            "_num_samples",
-            valid_type=dict,
-            required=False,
-            default=num_samples_default)
-        spec.input(
             "_options", valid_type=dict, required=False, default=options)
-        spec.input("_flag", valid_type=bool, required=False, default=False)
 
         # Define the outputs, specifying the type we expect
         spec.output("block", valid_type=SinglefileData, required=False)
@@ -56,7 +85,7 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
             "surface_area_sa", valid_type=ParameterData, required=False)
         spec.output(
             "free_sphere_res", valid_type=ParameterData, required=False)
-        spec.output("channels_chan", valid_type=SinglefileData, required=False)
+        spec.output("channels_chan", valid_type=ParameterData, required=False)
 
         # Define workflow logic
         spec.outline(
@@ -68,27 +97,11 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
     def run_geom_zeopp(self):
         """This function will perform geometry analysis using zeo++."""
         # pylint: disable=protected-access
-        NetworkParameters = DataFactory('zeopp.parameters')
-        sigma = self.inputs.probe_radius.value
-        num_samples_sa = self.inputs._num_samples['sa']
-        num_samples_volpo = self.inputs._num_samples['volpo']
-        if (self.inputs._flag):
-            params = {
-                'ha': True,
-                'res': True,
-                'sa': [sigma, sigma, num_samples_sa],
-                'chan': sigma,
-                'volpo': [sigma, sigma, num_samples_volpo],
-            }
-        else:
-            params = {
-                'volpo': [sigma, sigma, num_samples_volpo],
-            }
-
         inputs = {
             'code': self.inputs.zeopp_code,
             'structure': self.inputs.structure,
-            'parameters': NetworkParameters(dict=params),
+            'parameters':
+            get_zeopp_geometry_parameters(self.inputs.probe_radius),
             '_options': self.inputs._options,
             '_label': "run_geom_zeopp",
         }
@@ -107,17 +120,10 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
     def run_block_zeopp(self):  # pylint: disable=protected-access
         """This is the main function that will perform a zeo++ block pocket calculation."""
         # pylint: disable=protected-access
-        NetworkParameters = DataFactory('zeopp.parameters')
-        sigma = self.inputs.probe_radius.value
-        num_samples_block = self.inputs._num_samples['block']
-        params = {
-            'ha': True,
-            'block': [sigma, num_samples_block],
-        }
         inputs = {
             'code': self.inputs.zeopp_code,
             'structure': self.inputs.structure,
-            'parameters': NetworkParameters(dict=params),
+            'parameters': get_zeopp_block_parameters(self.inputs.probe_radius),
             '_options': self.inputs._options,
             '_label': "run_block_zeopp",
         }
