@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/aiidateam/aiida-zeopp.svg?branch=master)](https://travis-ci.org/aiidateam/aiida-zeopp)
-[![Coverage Status](https://coveralls.io/repos/github/aiidateam/aiida-zeopp/badge.svg?branch=master)](https://coveralls.io/github/aiidateam/aiida-zeopp?branch=master)
+[![Build Status](https://travis-ci.org/ltalirz/aiida-zeopp.svg?branch=master)](https://travis-ci.org/ltalirz/aiida-zeopp)
+[![Coverage Status](https://coveralls.io/repos/github/ltalirz/aiida-zeopp/badge.svg?branch=master)](https://coveralls.io/github/ltalirz/aiida-zeopp?branch=master)
 [![Docs status](https://readthedocs.org/projects/aiida-zeopp/badge)](http://aiida-zeopp.readthedocs.io/)
 [![PyPI version](https://badge.fury.io/py/aiida-zeopp.svg)](https://badge.fury.io/py/aiida-zeopp)
 
