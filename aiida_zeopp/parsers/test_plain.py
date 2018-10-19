@@ -53,8 +53,8 @@ class ChannelParserTestCase(unittest.TestCase):
         """
 
         parser = parsers.ChannelParser
-        channel_list = parser.parse(string)
+        channels = parser.parse(string)['Channels']
 
-        self.assertEquals(channel_list['Dimensionalities'][1], 3)
-        self.assertAlmostEquals(channel_list['Largest_included_spheres'][1],
+        self.assertEquals(channels['Dimensionalities'][1], 3)
+        self.assertAlmostEquals(channels['Largest_included_spheres'][1],
                                 9.92222)

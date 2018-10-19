@@ -136,10 +136,9 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
 
     def return_result(self):
         """Attach the results of the zeopp calculations to the outputs."""
-        # pylint: disable=bare-except
         try:
             self.out("block", self.ctx.zeopp_block["block"])
-        except:
+        except AttributeError:
             self.report("No block pocket calculation performed")
         try:
             self.out("surface_area_sa",
@@ -147,7 +146,7 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
             self.out("free_sphere_res",
                      self.ctx.zeopp_geometry["free_sphere_res"])
             self.out("channels_chan", self.ctx.zeopp_geometry["channels_chan"])
-        except:
+        except AttributeError:
             pass
         self.out("pore_volume_volpo",
                  self.ctx.zeopp_geometry["pore_volume_volpo"])
