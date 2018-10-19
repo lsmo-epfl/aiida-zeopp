@@ -274,10 +274,12 @@ class ChannelParser(object):
         dis, dfs, difs = list(zip(*channels))
 
         pm_dict = {
-            'Largest_included_spheres': dis,
-            'Largest_free_spheres': dfs,
-            'Largest_included_free_spheres': difs,
-            'Dimensionalities': dimensionalities,
+            'Channels': {
+                'Largest_included_spheres': dis,
+                'Largest_free_spheres': dfs,
+                'Largest_included_free_spheres': difs,
+                'Dimensionalities': dimensionalities,
+            }
         }
         return pm_dict
 
