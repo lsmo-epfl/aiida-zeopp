@@ -78,5 +78,13 @@ class TestNetwork(zt.PluginTestCase):
         })
         retrieved = self.get_retrieved(params1)
 
+        # check that it parses successfully
         parser1 = NetworkParser(self.get_calc(params1))
-        parser1.parse_with_retrieved(retrieved)
+        success, node_list = parser1.parse_with_retrieved(retrieved)
+
+        self.assertTrue(success)
+
+        # check that parsed nodes meet expectations
+        expected_keys = set(['structure_cssr', 'output_parameters'])
+        found_keys = {n[0] for n in node_list}
+        self.assertEqual(expected_keys, found_keys)
