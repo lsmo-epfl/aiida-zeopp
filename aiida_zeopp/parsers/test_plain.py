@@ -43,13 +43,13 @@ class ResParserTestCase(unittest.TestCase):
 
 class ChannelParserTestCase(unittest.TestCase):
     def test_parse_p8bal_p1(self):
+        """Test case with channels."""
 
         string = """
         P8bal_P1.chan   2 channels identified of dimensionality 3 3
         Channel  0  9.92223  3.85084  9.92223
         Channel  1  9.92222  3.85084  9.92222
         P8bal_P1.chan summary(Max_of_columns_above)   9.92223 3.85084  9.92223  probe_rad: 1.8  probe_diam: 3.6
-
         """
 
         parser = parsers.ChannelParser
@@ -58,3 +58,16 @@ class ChannelParserTestCase(unittest.TestCase):
         self.assertEquals(channels['Dimensionalities'][1], 3)
         self.assertAlmostEquals(channels['Largest_included_spheres'][1],
                                 9.92222)
+
+    def test_parse_IPO3_no_channel(self):
+        """Test case with zero channels."""
+
+        string = """
+        out.chan   0 channels identified of dimensionality
+        out.chan summary(Max_of_columns_above)   0 0  0  probe_rad: 1.525  probe_diam: 3.05
+        """
+
+        parser = parsers.ChannelParser
+        channels = parser.parse(string)['Channels']
+
+        self.assertEquals(len(channels['Dimensionalities']), 0)

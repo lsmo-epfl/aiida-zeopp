@@ -4,7 +4,6 @@ import re
 import six
 from six.moves import map
 from six.moves import range
-from six.moves import zip
 
 
 class KeywordParser(object):
@@ -246,14 +245,18 @@ class ChannelParser(object):
 
         # parse header line
         match = re.search(
-            r'(\d+) channels identified of dimensionality ([\d\s]*)', lines[0])
-        if match:
-            nchannels = int(match.group(1))
-            dimensionalities = list(map(int, match.group(2).split()))
-        else:
+            r'(\d+) channels identified of dimensionality([\d\s]*)', lines[0])
+        if not match:
             raise ValueError(
                 "The following string was not recognized as a valid header of the .chan format:\n"
                 + lines[0])
+
+        nchannels = int(match.group(1))
+
+        if nchannels == 0:
+            dimensionalities = []
+        else:
+            dimensionalities = list(map(int, match.group(2).split()))
 
         if nchannels != len(dimensionalities):
             raise ValueError(
@@ -266,12 +269,12 @@ class ChannelParser(object):
                 .format(nlines, nchannels))
 
         # parse remaning lines (last line is discarded)
-        channels = []
+        dis, dfs, difs = [], [], []
         for i in range(1, nchannels + 1):
             _c, _i, di, df, dif = lines[i].split()
-            channels.append(list(map(float, [di, df, dif])))
-
-        dis, dfs, difs = list(zip(*channels))
+            dis.append(float(di))
+            dfs.append(float(df))
+            difs.append(float(dif))
 
         pm_dict = {
             'Channels': {
