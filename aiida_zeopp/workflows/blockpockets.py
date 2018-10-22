@@ -115,7 +115,7 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
     def should_run_block_zeopp(self):
         """If the pore non-accessible volume is 0 - there is no need to run block pocket calculation."""
         return self.ctx.zeopp_geometry[
-            "pore_volume_volpo"].dict.PONAV_Volume_fraction > 0.001
+            "output_parameters"].dict.PONAV_Volume_fraction > 0.001
 
     def run_block_zeopp(self):  # pylint: disable=protected-access
         """This is the main function that will perform a zeo++ block pocket calculation."""
@@ -141,15 +141,11 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
         except AttributeError:
             self.report("No block pocket calculation performed")
         try:
-            self.out("surface_area_sa",
-                     self.ctx.zeopp_geometry["surface_area_sa"])
-            self.out("free_sphere_res",
-                     self.ctx.zeopp_geometry["free_sphere_res"])
-            self.out("channels_chan", self.ctx.zeopp_geometry["channels_chan"])
+            self.out("output_parameters",
+                     self.ctx.zeopp_geometry["output_parameters"])
         except AttributeError:
             pass
-        self.out("pore_volume_volpo",
-                 self.ctx.zeopp_geometry["pore_volume_volpo"])
+
         self.report("Workchain <{}> completed successfully".format(
             self.calc.pk))
         return
