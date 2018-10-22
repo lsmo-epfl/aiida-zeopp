@@ -80,12 +80,8 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
 
         # Define the outputs, specifying the type we expect
         spec.output("block", valid_type=SinglefileData, required=False)
-        spec.output("pore_volume_volpo", valid_type=ParameterData)
         spec.output(
-            "surface_area_sa", valid_type=ParameterData, required=False)
-        spec.output(
-            "free_sphere_res", valid_type=ParameterData, required=False)
-        spec.output("channels_chan", valid_type=ParameterData, required=False)
+            "output_parameters", valid_type=ParameterData, required=True)
 
         # Define workflow logic
         spec.outline(
@@ -140,11 +136,9 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
             self.out("block", self.ctx.zeopp_block["block"])
         except AttributeError:
             self.report("No block pocket calculation performed")
-        try:
-            self.out("output_parameters",
-                     self.ctx.zeopp_geometry["output_parameters"])
-        except AttributeError:
-            pass
+
+        self.out("output_parameters",
+                 self.ctx.zeopp_geometry["output_parameters"])
 
         self.report("Workchain <{}> completed successfully".format(
             self.calc.pk))
