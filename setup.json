@@ -23,7 +23,7 @@
             "zeopp-submit = aiida_zeopp.console_scripts.data_cli:cli"
         ],
         "aiida.workflows": [
-            "zeopp.geometry= aiida_zeopp.workflows:ZeoppGeometryWorkChain"
+            "zeopp.blockpockets = aiida_zeopp.workflows:ZeoppBlockPocketsWorkChain"
         ]
     },
     "setup_requires": [
