@@ -4,6 +4,7 @@ from aiida.orm.data.parameter import ParameterData
 import six
 from six.moves import map
 
+# These options allow specifying the name of the output file
 # key : [ accepted values, label ]
 output_options = {
     'cssr': (bool, 'structure_cssr'),
@@ -17,13 +18,29 @@ output_options = {
     'vsa': (ExactSequence([float, float, int]), 'surface_sample_vsa'),
     'vol': (ExactSequence([float, float, int]), 'volume_vol'),
     'volpo': (ExactSequence([float, float, int]), 'pore_volume_volpo'),
+    'ray_atom': (ExactSequence([float, float, int]), 'ray_atom'),
     'block': (ExactSequence([float, int]), 'block'),
     'psd': (ExactSequence([float, float, int]), 'psd'),
     'chan': (float, 'channels_chan'),
+    'gridG': (bool, 'grid_gaussian'),
+    'gridGBohr': (bool, 'grid_gaussian_bohr'),
+    'strinfo': (bool, 'str_info'),
+    'oms': (bool, 'open_metal_sites'),
 }
 
+# Currently NOT implemented
+# These options produce an output file with a hardcoded name
+# key : [ accepted values, [ output file name(s) ], label ]
+#fixed_output_options = {
+#    'gridBOV': (bool, ['{}_f.bov', '{}_f.distances'], 'grid_bov'),
+#}
+
+# These options modify the output of other options
+# key : [ accepted values, label ]
 modifier_options = {
-    'ha': (bool, 'high_res'),
+    'ha': (bool, 'high_accuracy'),
+    'stripatomnames': (bool, 'strip_atom_names'),
+    'nor': (bool, 'no_radial'),
 }
 
 all_options = dict(
@@ -95,7 +112,11 @@ class NetworkParameters(ParameterData):
 
     @property
     def output_keys(self):
-        """Return list of keys of options """
+        """Return subset of specified options requiring an output file name.
+        
+        Out of the selected options, return those that you need to specify an
+        output file name for.
+        """
         return [k for k in self.get_dict() if k in list(output_options.keys())]
 
     @property
