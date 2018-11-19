@@ -20,11 +20,6 @@ verdi calculation plugins  # should now show your calclulation plugins
 
 ## Usage
 
- * Use `CifData` to specify input structure
- * (optional) Use `SinglefileData` to specify atomic radii file
- * Use `NetworkParameters` dictionary to specify other command line options
-
-A quick demo of how to submit a calculation:
 ```shell
 verdi daemon start         # make sure the daemon is running
 cd examples
@@ -32,7 +27,12 @@ verdi run submit.py        # submit test calculation
 verdi calculation list -a  # check status of calculation
 ```
 
-For a complete list of supported command line options, see [here](aiida_zeopp/calculations/network.py)
+See `examples/submit.py` for an example of how to set up a calculation:
+
+ * Use `CifData` to specify input structure.
+ * (optional) Use `SinglefileData` to specify atomic radii file.
+ * Use `NetworkParameters` dictionary to specify other command line options.
+   For a complete list of supported command line options, see [here](aiida_zeopp/data/parameters.py)
 
 ## Tests
 
