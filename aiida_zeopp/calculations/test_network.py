@@ -67,7 +67,9 @@ class TestNetwork(zt.PluginTestCase):
                 'vsa': [1.82, 1.82, 5000],
                 'volpo': [1.82, 1.82, 5000],
                 'chan': 1.2,
-                'ha': True,
+                'ha': False,
+                'strinfo': True,
+                'gridG': True,
             })
         calc.use_parameters(parameters)
 
