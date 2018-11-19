@@ -8,7 +8,7 @@
     "classifiers": [
         "Programming Language :: Python"
     ],
-    "version": "0.1.2",
+    "version": "0.2.0",
     "entry_points": {
         "aiida.calculations": [
             "zeopp.network = aiida_zeopp.calculations.network:NetworkCalculation"
@@ -48,7 +48,7 @@
         "pre-commit": [
             "pre-commit==1.11.0",
             "yapf==0.24.0",
-            "prospector==0.12.11",
+            "prospector==1.1.5",
             "pylint==1.9.3"
         ]
     }
