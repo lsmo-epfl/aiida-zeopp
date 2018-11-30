@@ -36,9 +36,9 @@ structure = CifData(file=os.path.join(this_dir, 'HKUST-1.cif'))
 calc.use_structure(structure)
 
 # Optional: use radii file
-#SinglefileData = DataFactory('singlefile')
-#atomic_radii = SinglefileData(file=os.path.join(TEST_DIR, 'MgO.rad'))
-#calc.use_atomic_radii(atomic_radii)
+SinglefileData = DataFactory('singlefile')
+atomic_radii = SinglefileData(file=os.path.join(tests.TEST_DIR, 'MgO.rad'))
+calc.use_atomic_radii(atomic_radii)
 
 calc.store_all()
 calc.submit()
