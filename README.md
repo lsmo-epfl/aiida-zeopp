@@ -18,7 +18,34 @@ verdi quicksetup  # better to set up a new profile
 verdi calculation plugins  # should now show your calclulation plugins
 ```
 
-## Usage
+## Features
+
+ * Add input structure in CIF format
+  ```python
+  CifData = DataFactory('cif')
+  calc.use_structure(CifData(file='/path/to/file'))
+  ```
+ * Specify command line options using a python dictionary and `NetworkParameters`
+  ```python
+  d = { 'sa': [1.82, 1.82, 1000], 'volpo': [1.82, 1.82, 1000], 'chan': 1.2 }
+  NetworkParameters = DataFactory('zeopp.parameters')
+  calc.use_parameters(NetworkParameters(dict=d))
+  ```
+ * `NetworkParameters` validates the command line options using [voluptuous](https://github.com/alecthomas/voluptuous).
+   Find out about supported options:
+  ```python
+  NetworkParameters = DataFactory('zeopp.parameters')
+  print(NetworkParameters.schema)
+  ```
+ * Add alternative atomic radii file
+  ```python
+  SinglefileData = DataFactory('singlefile')
+  calc.use_atomic_radii(SinglefileData(file='/path/to/file'))
+  ```
+
+## Examples
+
+See `examples` folder for complete examples of setting up a calculation or workflow.
 
 ```shell
 verdi daemon start         # make sure the daemon is running
@@ -27,16 +54,11 @@ verdi run submit.py        # submit test calculation
 verdi calculation list -a  # check status of calculation
 ```
 
-See `examples/submit.py` for an example of how to set up a calculation:
-
- * Use `CifData` to specify input structure.
- * (optional) Use `SinglefileData` to specify atomic radii file.
- * Use `NetworkParameters` dictionary to specify other command line options.
-   For a complete list of supported command line options, see [here](aiida_zeopp/data/parameters.py)
-
 ## Tests
 
-The following will discover and run all unit test:
+`aiida_zeopp` comes with a number of tests that are run at every commit.
+
+The following will discover and run all unit tests:
 ```shell
 pip install -e .[testing]
 python manage.py

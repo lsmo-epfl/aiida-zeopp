@@ -51,7 +51,8 @@ class NetworkParameters(ParameterData):
     """ Command line parameters for zeo++ network binary
     """
 
-    schema = Schema({k: all_options[k][0] for k in all_options})
+    _schema = Schema({k: all_options[k][0] for k in all_options})
+    schema = _schema.schema  # alias for easier printing
 
     _OUTPUT_FILE_PREFIX = "out.{}"
 
@@ -75,7 +76,7 @@ class NetworkParameters(ParameterData):
 
     def validate(self, parameters_dict):
         """validate parameters"""
-        return NetworkParameters.schema(parameters_dict)
+        return NetworkParameters._schema(parameters_dict)
 
     def cmdline_params(self, structure_file_name=None, radii_file_name=None):
         """Synthesize command line parameters
