@@ -21,6 +21,7 @@ calc.set_resources({"num_machines": 1})
 
 # Prepare input parameters
 NetworkParameters = DataFactory('zeopp.parameters')
+# For allowed keys, print(NetworkParameters.schema)
 d = {
     'cssr': True,
     'sa': [1.82, 1.82, 1000],
