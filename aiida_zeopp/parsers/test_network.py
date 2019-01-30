@@ -5,7 +5,7 @@ from __future__ import absolute_import
 import os
 
 import aiida_zeopp.tests as zt
-from six.moves import zip
+import six
 
 
 class TestNetwork(zt.PluginTestCase):
@@ -50,11 +50,16 @@ class TestNetwork(zt.PluginTestCase):
 
         tmp_dir = tempfile.mkdtemp()
 
-        test_files = ['HKUST-1.cssr', 'HKUST-1.sa', 'HKUST-1.volpo']
-        output_files = parameters.output_files
-        for ftest, fout in list(zip(test_files, output_files)):
+        test_files = {
+            'cssr': 'HKUST-1.cssr',
+            'sa': 'HKUST-1.sa',
+            'volpo': 'HKUST-1.volpo',
+        }
+
+        for out_key, out_file in six.iteritems(parameters.output_dict):
             shutil.copyfile(
-                os.path.join(zt.TEST_DIR, ftest), os.path.join(tmp_dir, fout))
+                os.path.join(zt.TEST_DIR, test_files[out_key]),
+                os.path.join(tmp_dir, out_file))
 
         res = FolderData()
         res.replace_with_folder(tmp_dir)
