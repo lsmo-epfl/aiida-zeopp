@@ -54,6 +54,7 @@ class TestNetwork(zt.PluginTestCase):
             'cssr': 'HKUST-1.cssr',
             'sa': 'HKUST-1.sa',
             'volpo': 'HKUST-1.volpo',
+            'block': 'HKUST-1.block',
         }
 
         for out_key, out_file in six.iteritems(parameters.output_dict):
@@ -93,3 +94,26 @@ class TestNetwork(zt.PluginTestCase):
         expected_keys = set(['structure_cssr', 'output_parameters'])
         found_keys = {n[0] for n in node_list}
         self.assertEqual(expected_keys, found_keys)
+
+    def test_parser_fail(self):
+        """Test parsing a fake output.
+
+        Providing empty .block file which should raise a ParsingError.
+        """
+        from aiida_zeopp.parsers.network import NetworkParser
+        from aiida.parsers.exceptions import OutputParsingError
+        from aiida.orm import DataFactory
+
+        NetworkParameters = DataFactory('zeopp.parameters')
+
+        params1 = NetworkParameters(dict={
+            'volpo': [1.82, 1.82, 100000],
+            'block': [1.82, 10000],
+        })
+        retrieved = self.get_retrieved(params1)
+
+        # check that it parses successfully
+        parser1 = NetworkParser(self.get_calc(params1))
+
+        with self.assertRaises(OutputParsingError):
+            parser1.parse_with_retrieved(retrieved)
