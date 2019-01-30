@@ -112,22 +112,30 @@ class NetworkParameters(ParameterData):
         return list(map(str, parameters))
 
     @property
+    def output_dict(self):
+        """Return dictionary of specified options requiring an output file name.
+
+        Keys are the selected options that require an output file name,
+        values are the file names.
+        """
+        return {
+            k: self._OUTPUT_FILE_PREFIX.format(k)
+            for k in self.get_dict() if k in list(output_options.keys())
+        }
+
+    @property
     def output_keys(self):
         """Return subset of specified options requiring an output file name.
         
         Out of the selected options, return those that you need to specify an
         output file name for.
         """
-        return [k for k in self.get_dict() if k in list(output_options.keys())]
+        return list(self.output_dict.keys())
 
     @property
     def output_files(self):
         """Return list of output files to be retrieved"""
-        output_list = []
-        for k in self.output_keys:
-            output_list += [self._OUTPUT_FILE_PREFIX.format(k)]
-
-        return output_list
+        return list(self.output_dict.values())
 
     @property
     def output_parsers(self):

@@ -69,15 +69,29 @@ class NetworkParser(Parser):
         for fname, parser, link in list(
                 zip(output_files, output_parsers, output_links)):
 
+            abspath = out_folder.get_abs_path(fname)
+
             if parser is None:
+
                 # just add file, if no parser implemented
                 parsed = SinglefileData(file=out_folder.get_abs_path(fname))
                 node_list.append((link, parsed))
 
+                # workaround: if block pocket file is empty, raise an error
+                # (it indicates the calculation did not finish)
+                if link == 'block':
+                    with open(abspath) as f:
+                        content = f.read()
+
+                    if not content.strip():
+                        raise OutputParsingError(
+                            "Empty block file. This indicates the calculation of blocked pockets did not finish."
+                        )
+
             else:
                 # else parse and add keys to output_parameters
                 try:
-                    with open(out_folder.get_abs_path(fname)) as f:
+                    with open(abspath) as f:
                         # Note: We join it to the output_params
                         #parsed = parser.parse_aiida(f.read())
                         parsed_dict = parser.parse(f.read())

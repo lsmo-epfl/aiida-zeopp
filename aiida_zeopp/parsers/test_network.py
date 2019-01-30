@@ -5,7 +5,7 @@ from __future__ import absolute_import
 import os
 
 import aiida_zeopp.tests as zt
-from six.moves import zip
+import six
 
 
 class TestNetwork(zt.PluginTestCase):
@@ -50,11 +50,17 @@ class TestNetwork(zt.PluginTestCase):
 
         tmp_dir = tempfile.mkdtemp()
 
-        test_files = ['HKUST-1.cssr', 'HKUST-1.sa', 'HKUST-1.volpo']
-        output_files = parameters.output_files
-        for ftest, fout in list(zip(test_files, output_files)):
+        test_files = {
+            'cssr': 'HKUST-1.cssr',
+            'sa': 'HKUST-1.sa',
+            'volpo': 'HKUST-1.volpo',
+            'block': 'HKUST-1.block',
+        }
+
+        for out_key, out_file in six.iteritems(parameters.output_dict):
             shutil.copyfile(
-                os.path.join(zt.TEST_DIR, ftest), os.path.join(tmp_dir, fout))
+                os.path.join(zt.TEST_DIR, test_files[out_key]),
+                os.path.join(tmp_dir, out_file))
 
         res = FolderData()
         res.replace_with_folder(tmp_dir)
@@ -88,3 +94,26 @@ class TestNetwork(zt.PluginTestCase):
         expected_keys = set(['structure_cssr', 'output_parameters'])
         found_keys = {n[0] for n in node_list}
         self.assertEqual(expected_keys, found_keys)
+
+    def test_parser_fail(self):
+        """Test parsing a fake output.
+
+        Providing empty .block file which should raise a ParsingError.
+        """
+        from aiida_zeopp.parsers.network import NetworkParser
+        from aiida.parsers.exceptions import OutputParsingError
+        from aiida.orm import DataFactory
+
+        NetworkParameters = DataFactory('zeopp.parameters')
+
+        params1 = NetworkParameters(dict={
+            'volpo': [1.82, 1.82, 100000],
+            'block': [1.82, 10000],
+        })
+        retrieved = self.get_retrieved(params1)
+
+        # check that it parses successfully
+        parser1 = NetworkParser(self.get_calc(params1))
+
+        with self.assertRaises(OutputParsingError):
+            parser1.parse_with_retrieved(retrieved)
