@@ -1,9 +1,0 @@
-{
-  "aiida_zeopp/calculations/test_network.py::TestNetwork::test_submit_HKUST1": true, 
-  "aiida_zeopp/calculations/test_network.py::TestNetwork::test_submit_MgO": true, 
-  "aiida_zeopp/data/test_parameters.py::TestNetworkParameters::test_cmdline_cssr": true, 
-  "aiida_zeopp/data/test_parameters.py::TestNetworkParameters::test_output_parsers": true, 
-  "aiida_zeopp/parsers/test_network.py::TestNetwork::test_parser": true, 
-  "aiida_zeopp/parsers/test_network.py::TestNetwork::test_parser_fail": true, 
-  "aiida_zeopp/parsers/test_structure.py::CssrParserTestCase::test_parse_hkust": true
-}
