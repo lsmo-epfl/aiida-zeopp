@@ -94,7 +94,7 @@ class PoresSizeDistParserTestCase(unittest.TestCase):
         histogram = parser.parse(string)
 
         bins = [0.0, 0.1, 0.2]
-        counts = [0.0, 0.0, 0.0]
+        counts = [0, 0, 0]
         cumulatives = [1.0, 1.0, 1.0]
         derivatives = [0.0, 0.0, 0.0]
 

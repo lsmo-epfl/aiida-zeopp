@@ -249,7 +249,7 @@ class PoresSizeDistParser(object):
         for line in lines[i + 1:]:
             b, count, cumulative, derivative = line.split()
             bins.append(float(b))
-            counts.append(float(count))
+            counts.append(int(count))
             cumulatives.append(float(cumulative))
             derivatives.append(float(derivative))
 
@@ -318,7 +318,7 @@ class ChannelParser(object):
                 "Number of lines in file {} does not equal number of channels {}+2"
                 .format(nlines, nchannels))
 
-        # parse remaning lines (last line is discarded)
+        # parse remaining lines (last line is discarded)
         dis, dfs, difs = [], [], []
         for i in range(1, nchannels + 1):
             _c, _i, di, df, dif = lines[i].split()
