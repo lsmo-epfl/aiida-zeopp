@@ -1,5 +1,6 @@
 # pylint: disable=useless-super-delegation
 from __future__ import absolute_import
+from __future__ import print_function
 import re
 import six
 from six.moves import map
@@ -214,9 +215,10 @@ class ResParser(KeywordParser):
 
         return res
 
+
 class PoresSizeDistParser(object):
     @classmethod
-    def parse(cls, string):
+    def parse(cls, string):  # pylint: disable=too-many-locals
         """
         Parse zeo++ .psd format, using routines similar to other parsers to avoid additional pandas dependency
 
@@ -233,28 +235,26 @@ class PoresSizeDistParser(object):
         lines = string.splitlines()
         # remove empty lines
         lines = [l for l in lines if l.strip()]
-        nlines = len(lines)
 
         # find line where histogram data begins
-        header_line = 'Bin Count Cumulative_dist Derivative_dist'
+        header_line = 'Bin Count'
+        i = 0
         for i, line in enumerate(lines):
             if header_line in line:
                 break
-            else:
-                raise ValueError(
-                    'Did not find header line in data'
-                )
-
+        else:
+            raise ValueError('Did not find header line in data')
         # extract histogram data
         bins, counts, cumulatives, derivatives = [], [], [], []
-        for line in lines[i+1:]:
-            bin, count, cumulative, derivative = line.split()
-            bins.append(float(bin))
+        for line in lines[i + 1:]:
+            b, count, cumulative, derivative = line.split()
+            bins.append(float(b))
             counts.append(float(count))
             cumulatives.append(float(cumulative))
             derivatives.append(float(derivative))
 
-        psd_dict = {'psd': {
+        psd_dict = {
+            'psd': {
                 'bins': bins,
                 'counts': counts,
                 'cumulatives': cumulatives,
@@ -263,6 +263,7 @@ class PoresSizeDistParser(object):
         }
 
         return psd_dict
+
 
 class ChannelParser(object):
     @classmethod

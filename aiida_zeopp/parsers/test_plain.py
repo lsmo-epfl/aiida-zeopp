@@ -72,24 +72,23 @@ class ChannelParserTestCase(unittest.TestCase):
 
         self.assertEquals(len(channels['Dimensionalities']), 0)
 
+
 class PoresSizeDistParserTestCase(unittest.TestCase):
     def test_parse_hkust_psd(self):
-        string = """
-        Pore size distribution histogram
-        Bin size (A): 0.1
-        Number of bins: 1000
-        From: 0
-        To: 100
-        Total samples: 100000
-        Accessible samples: 33376
-        Fraction of sample points in node spheres: 0.33376
-        Fraction of sample points outside node spheres: 0
-        
-        Bin Count Cumulative_dist Derivative_dist
-        0 0 1 0
-        0.1 0 1 0
-        0.2 0 1 0   
-        """
+        string = ('Pore size distribution histogram\n'
+                  'Bin size (A): 0.1\n'
+                  'Number of bins: 1000\n'
+                  'From: 0\n'
+                  'To: 100\n'
+                  'Total samples: 100000\n'
+                  'Accessible samples: 33376\n'
+                  'Fraction of sample points in node spheres: 0.33376\n'
+                  'Fraction of sample points outside node spheres: 0\n'
+                  '\n'
+                  'Bin Count Cumulative_dist Derivative_dist\n'
+                  '0 0 1 0\n'
+                  '0.1 0 1 0\n'
+                  '0.2 0 1 0\n')
 
         parser = parsers.PoresSizeDistParser
         histogram = parser.parse(string)
@@ -99,7 +98,7 @@ class PoresSizeDistParserTestCase(unittest.TestCase):
         cumulatives = [1.0, 1.0, 1.0]
         derivatives = [0.0, 0.0, 0.0]
 
-        self.assertEquals(bins, histogram['pds']['bins'])
-        self.assertEquals(counts, histogram['pds']['counts'])
-        self.assertEquals(cumulatives, histogram['pds']['cumulatives'])
-        self.assertEquals(derivatives, histogram['pds']['derivatives'])
+        self.assertEquals(bins, histogram['psd']['bins'])
+        self.assertEquals(counts, histogram['psd']['counts'])
+        self.assertEquals(cumulatives, histogram['psd']['cumulatives'])
+        self.assertEquals(derivatives, histogram['psd']['derivatives'])
