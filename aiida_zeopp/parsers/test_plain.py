@@ -71,3 +71,35 @@ class ChannelParserTestCase(unittest.TestCase):
         channels = parser.parse(string)['Channels']
 
         self.assertEquals(len(channels['Dimensionalities']), 0)
+
+class PoresSizeDistParserTestCase(unittest.TestCase):
+    def test_parse_hkust_psd(self):
+        string = """
+        Pore size distribution histogram
+        Bin size (A): 0.1
+        Number of bins: 1000
+        From: 0
+        To: 100
+        Total samples: 100000
+        Accessible samples: 33376
+        Fraction of sample points in node spheres: 0.33376
+        Fraction of sample points outside node spheres: 0
+        
+        Bin Count Cumulative_dist Derivative_dist
+        0 0 1 0
+        0.1 0 1 0
+        0.2 0 1 0   
+        """
+
+        parser = parsers.PoresSizeDistParser
+        histogram = parser.parse(string)
+
+        bins = [0.0, 0.1, 0.2]
+        counts = [0.0, 0.0, 0.0]
+        cumulatives = [1.0, 1.0, 1.0]
+        derivatives = [0.0, 0.0, 0.0]
+
+        self.assertEquals(bins, histogram['pds']['bins'])
+        self.assertEquals(counts, histogram['pds']['counts'])
+        self.assertEquals(cumulatives, histogram['pds']['cumulatives'])
+        self.assertEquals(derivatives, histogram['pds']['derivatives'])
