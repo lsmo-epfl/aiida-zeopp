@@ -167,7 +167,7 @@ class NetworkParameters(ParameterData):
                 parsers += [pp.ResParser]
             elif k == 'chan':
                 parsers += [pp.ChannelParser]
-            elif k == 'pds':
+            elif k == 'psd':
                 parsers += [pp.PoresSizeDistParser]
             #elif k == 'cssr':
             #    parsers += [sp.CssrParser]
