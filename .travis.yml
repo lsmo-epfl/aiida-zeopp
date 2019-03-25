@@ -1,31 +1,34 @@
 language: python
 python:
-- "2.7"
-
-cache: pip
-
-git:
-  depth: 3
+- "3.6"
 
 services:
-- postgresql
+  - postgresql
+  - rabbitmq
 
 addons:
-  postgresql: "9.5"
+  postgresql: "10"
 
 before_install:
 # Upgrade pip setuptools and wheel
 - pip install -U pip wheel setuptools
 
 install:
+# Upgrade pip setuptools and wheel
+- pip install -U wheel setuptools coveralls
+- pip install pip==18.1
 - pip install -e .[testing,pre-commit]
+- if [ "$AIIDA_VERSION" == "develop" ]; then .travis-data/install_aiida_github.sh ; fi  # installs develop branch
 - reentry scan -r aiida
-- pip install coveralls
 # add fake network executable
 - cat "#!/bin/bash\necho 'network'" > network; chmod +x network
 
 env:
   global:
+  - PLUGIN_DIR: aiida-diff
+  - TEST_AIIDA_BACKEND: django
+  - AIIDA_VERSION: develop
+  - AIIDA_DEVELOP_GIT_HASH: 0ca5d991d039dca2261df3d6ad8da2f03d591caa
   # add network executable to PATH
   - PATH=${PATH}:${TRAVIS_BUILD_DIR}
   matrix:
@@ -45,11 +48,10 @@ env:
     TEST_TYPE: pre-commit
 
 script:
-- if [ "$TEST_TYPE" == "tests" ] ; then coverage run --source=aiida_zeopp --append manage.py; fi  # runs unit tests
-# - if [ "$TEST_TYPE" == "docs" ] ; then cd docs; make; fi  # creates documentation
-# runs precommit checks but doesn't fail if they don't pass
-- if [ "$TEST_TYPE" == "pre-commit" ] ; then pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 ); fi
+  - if [ "$TEST_TYPE" == "tests" ] ; then coverage run --source=aiida_zeopp --append manage.py; fi  # runs unit tests
+  # - if [ "$TEST_TYPE" == "docs" ] ; then cd docs; make; fi  # creates documentation
+  # runs precommit checks but doesn't fail if they don't pass
+  - if [ "$TEST_TYPE" == "pre-commit" ] ; then pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 ); fi
 
 after_success:
-- coveralls
-
+  - coveralls

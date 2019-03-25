@@ -3,6 +3,7 @@
 """
 from __future__ import absolute_import
 import os
+import io
 
 import aiida_zeopp.tests as zt
 
@@ -14,52 +15,57 @@ class TestNetwork(zt.PluginTestCase):
     def test_submit_HKUST1(self):
         """Test submitting a calculation"""
         from aiida_zeopp.tests import TEST_DIR
-
-        code = self.code
+        from aiida_zeopp.calculations.network import NetworkCalculation
+        from aiida.engine import run_get_node
 
         # Prepare input parameters
-        from aiida.orm import DataFactory
+        from aiida.plugins import DataFactory
         NetworkParameters = DataFactory('zeopp.parameters')
         parameters = NetworkParameters(dict={'cssr': True})
+
         CifData = DataFactory('cif')
         structure = CifData(
             file=os.path.join(TEST_DIR, 'HKUST-1.cif'), parse_policy='lazy')
 
         # set up calculation
-        calc = code.new_calc()
-        calc.label = "aiida_zeopp format conversion"
-        calc.description = "Test converting .cif to .cssr format"
-        calc.set_max_wallclock_seconds(30)
-        calc.set_withmpi(False)
-        calc.set_resources({"num_machines": 1, "num_mpiprocs_per_machine": 1})
-        calc.use_parameters(parameters)
-        calc.use_structure(structure)
+        options = {
+            "resources": {
+                "num_machines": 1,
+                "num_mpiprocs_per_machine": 1,
+            },
+            "max_wallclock_seconds": 3 * 60,
+        }
 
-        calc.store_all()
-        #calc.submit()
-        calc.submit_test(folder=zt.get_temp_folder())
-        #print("submitted calculation; calc=Calculation(uuid='{}') # ID={}"\
-        #        .format(calc.uuid,calc.dbnode.pk))
+        inputs = {
+            'code': self.code,
+            'parameters': parameters,
+            'structure': structure,
+            'metadata': {
+                'options': options,
+                'label': "aiida_zeopp format conversion",
+                'description': "Test converting .cif to .cssr format",
+            },
+        }
+
+        _result, node = run_get_node(NetworkCalculation, **inputs)
+
+        cssr = io.open(
+            os.path.join(TEST_DIR, 'HKUST-1.cssr'), 'r',
+            encoding='utf8').read()
+        self.assertEqual(cssr, node.outputs.structure_cssr.get_content())
 
     def test_submit_MgO(self):
         """Test submitting a calculation
-        
+
         This includes a radii file.
         """
         from aiida_zeopp.tests import TEST_DIR
-
-        # set up calculation
-        calc = self.code.new_calc()
-        calc.label = "aiida_zeopp format conversion"
-        calc.description = "Test converting .cif to .cssr format"
-        calc.set_max_wallclock_seconds(30)
-        calc.set_withmpi(False)
-        calc.set_resources({"num_machines": 1, "num_mpiprocs_per_machine": 1})
+        from aiida_zeopp.calculations.network import NetworkCalculation
+        from aiida.engine import run_get_node
+        from aiida.plugins import DataFactory
 
         # Prepare input parameters
-        from aiida.orm import DataFactory
-        NetworkParameters = DataFactory('zeopp.parameters')
-        parameters = NetworkParameters(
+        parameters = DataFactory('zeopp.parameters')(
             dict={
                 'cssr': True,
                 'res': True,
@@ -69,21 +75,41 @@ class TestNetwork(zt.PluginTestCase):
                 'chan': 1.2,
                 'ha': False,
                 'strinfo': True,
-                'gridG': True,
+                #    'gridG': True,
             })
-        calc.use_parameters(parameters)
 
-        CifData = DataFactory('cif')
-        structure = CifData(
+        structure = DataFactory('cif')(
             file=os.path.join(TEST_DIR, 'MgO.cif'), parse_policy='lazy')
-        calc.use_structure(structure)
 
-        SinglefileData = DataFactory('singlefile')
-        atomic_radii = SinglefileData(file=os.path.join(TEST_DIR, 'MgO.rad'))
-        calc.use_atomic_radii(atomic_radii)
+        atomic_radii = DataFactory('singlefile')(
+            file=os.path.join(TEST_DIR, 'MgO.rad'))
 
-        calc.store_all()
-        #calc.submit()
-        calc.submit_test(folder=zt.get_temp_folder())
-        #print("submitted calculation; calc=Calculation(uuid='{}') # ID={}"\
-        #        .format(calc.uuid,calc.dbnode.pk))
+        # set up calculation
+        options = {
+            "resources": {
+                "num_machines": 1,
+                "num_mpiprocs_per_machine": 1,
+            },
+            "max_wallclock_seconds": 30,
+        }
+
+        inputs = {
+            'code': self.code,
+            'parameters': parameters,
+            'structure': structure,
+            'atomic_radii': atomic_radii,
+            'metadata': {
+                'options': options,
+                'label': "aiida_zeopp format conversion",
+                'description': "Test converting .cif to .cssr format",
+            },
+        }
+
+        _result, node = run_get_node(NetworkCalculation, **inputs)
+
+        self.assertAlmostEqual(
+            node.outputs.output_parameters.get_attribute('Density'),
+            3.18223,
+            places=4)
+        self.assertEqual(
+            node.outputs.output_parameters.get_attribute('ASA_m^2/g'), 0.0)

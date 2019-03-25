@@ -21,6 +21,6 @@ class CssrParser(object):
 
     @classmethod
     def parse_aiida(cls, string):
-        from aiida.orm.data.structure import StructureData
+        from aiida.orm.nodes.data.structure import StructureData
         pym_struct = cls.parse(string)
         return StructureData(pymatgen_structure=pym_struct)
