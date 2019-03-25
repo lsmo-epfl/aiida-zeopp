@@ -2,7 +2,10 @@
 """
 from __future__ import absolute_import
 import os
-from aiida.utils.fixtures import PluginTestCase  # noqa
+from aiida.manage.fixtures import PluginTestCase
+
+__all__ = ('PluginTestCase', 'get_backend', 'get_path_to_executable',
+           'get_computer', 'get_code')
 
 TEST_DIR = os.path.dirname(os.path.realpath(__file__))
 executables = {
@@ -38,22 +41,23 @@ def get_path_to_executable(executable):
 def get_computer(name='localhost'):
     """Setup localhost computer"""
     from aiida.orm import Computer
-    from aiida.common.exceptions import NotExistent
+    from aiida.common import NotExistent
 
     try:
-        computer = Computer.get(name)
+        computer = Computer.objects.get(name=name)
     except NotExistent:
 
         import tempfile
         computer = Computer(
             name=name,
-            description='localhost computer set up by aiida_gudhi tests',
+            description='localhost computer set up by aiida_zeopp tests',
             hostname='localhost',
             workdir=tempfile.mkdtemp(),
             transport_type='local',
             scheduler_type='direct',
             enabled_state=True)
         computer.store()
+        computer.configure()
 
     return computer
 
@@ -61,13 +65,14 @@ def get_computer(name='localhost'):
 def get_code(entry_point, computer_name='localhost'):
     """Setup code on localhost computer"""
     from aiida.orm import Code
-    from aiida.common.exceptions import NotExistent
+    from aiida.common import NotExistent
 
     computer = get_computer(computer_name)
     executable = executables[entry_point]
 
     try:
-        code = Code.get_from_string('{}@{}'.format(executable, computer_name))
+        code = Code.objects.get(
+            label='{}@{}'.format(executable, computer_name))
     except NotExistent:
         path = get_path_to_executable(executable)
         code = Code(

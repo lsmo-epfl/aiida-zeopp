@@ -1,136 +1,85 @@
 from __future__ import absolute_import
-from aiida.orm.calculation.job import JobCalculation
-from aiida.common.utils import classproperty
-from aiida.common.exceptions import (InputValidationError, ValidationError)
-from aiida.common.datastructures import (CalcInfo, CodeInfo)
-from aiida.orm import DataFactory
+from aiida.engine import CalcJob
+from aiida.common import (CalcInfo, CodeInfo)
+from aiida.plugins import DataFactory
+import six
 
 NetworkParameters = DataFactory('zeopp.parameters')
 CifData = DataFactory('cif')
 SinglefileData = DataFactory('singlefile')
+Dict = DataFactory('dict')
 
 
-class NetworkCalculation(JobCalculation):
+class NetworkCalculation(CalcJob):
     """
     AiiDA calculation plugin for the zeo++ network binary
-    
     """
+    _DEFAULT_PARSER = 'zeopp.network'
 
-    def _init_internal_params(self):
-        """
-        Init internal parameters at class load time
-        """
-        # reuse base class function
-        super(NetworkCalculation, self)._init_internal_params()
-        self._default_parser = 'zeopp.network'
+    @classmethod
+    def define(cls, spec):
+        super(NetworkCalculation, cls).define(spec)
 
-    @classproperty
-    def _use_methods(cls):
-        """
-        Add use_* methods for calculations.
-        
-        Code below enables the usage
-        my_calculation.use_parameters(my_parameters)
-        """
-        use_dict = JobCalculation._use_methods
-        use_dict.update({
-            "parameters": {
-                'valid_types': NetworkParameters,
-                'additional_parameter': None,
-                'linkname': 'parameters',
-                'docstring': "add command line parameters",
-            },
-            "structure": {
-                'valid_types': CifData,
-                'additional_parameter': None,
-                'linkname': 'structure',
-                'docstring': "add input structure to be analyzed",
-            },
-            "atomic_radii": {
-                'valid_types': SinglefileData,
-                'additional_parameter': None,
-                'linkname': 'atomic_radii',
-                'docstring': "file specifying atomic radii",
-            },
-        })
-        return use_dict
+        spec.input(
+            'metadata.options.parser_name',
+            valid_type=six.string_types,
+            default=cls._DEFAULT_PARSER)
+        spec.input(
+            'parameters',
+            valid_type=NetworkParameters,
+            help='command line parameters for zeo++')
+        spec.input(
+            'structure',
+            valid_type=CifData,
+            help='input structure to be analyzed')
+        spec.input(
+            'atomic_radii',
+            valid_type=SinglefileData,
+            help='atomic radii file',
+            required=False)
 
-    def _validate_inputs(self, inputdict):
-        """ Validate input links.
-        """
-        # Check inputdict
-        try:
-            parameters = inputdict.pop(self.get_linkname('parameters'))
-        except KeyError:
-            raise InputValidationError(
-                "No parameters specified for calculation")
-        if not isinstance(parameters, NetworkParameters):
-            raise InputValidationError(
-                "parameters not of type NetworkParameters")
+        spec.exit_code(
+            101,
+            'ERROR_OUTPUT_FILES_MISSING',
+            message='Not all expected output files {} were found.')
+        spec.output(
+            'output_parameters',
+            valid_type=Dict,
+            help='key-value pairs parsed from zeo++ output file(s).')
 
-        # Check code
-        try:
-            code = inputdict.pop(self.get_linkname('code'))
-        except KeyError:
-            raise InputValidationError("No code specified for calculation")
-
-        # Check input files
-
-        try:
-            structure = inputdict.pop(self.get_linkname('structure'))
-            if not isinstance(structure, CifData):
-                raise InputValidationError("structure not of type CifData")
-        except KeyError:
-            raise InputValidationError(
-                "No input structure specified for calculation")
-
-        try:
-            atomic_radii = inputdict.pop(self.get_linkname('atomic_radii'))
-        except KeyError:
-            # this will use internally defined atomic radii
-            atomic_radii = None
-
-        # Check that nothing is left unparsed
-        if inputdict:
-            raise ValidationError("Unrecognized inputs: {}".format(inputdict))
-
-        return parameters, code, structure, atomic_radii
-
-    def _prepare_for_submission(self, tempfolder, inputdict):
+    def prepare_for_submission(self, folder):
         """
         Create input files.
 
-            :param tempfolder: aiida.common.folders.Folder subclass where
-                the plugin should put all its files.
-            :param inputdict: dictionary of the input nodes as they would
-                be returned by get_inputs_dict
-        """
+        :param folder: an `aiida.common.folders.Folder` to temporarily write files on disk
+        :return: `aiida.common.datastructures.CalcInfo` instance
 
-        parameters, code, structure, atomic_radii = \
-                self._validate_inputs(inputdict)
+        """
 
         # Prepare CalcInfo to be returned to aiida
         calcinfo = CalcInfo()
         calcinfo.uuid = self.uuid
-        calcinfo.local_copy_list = [[
-            structure.get_file_abs_path(), structure.filename
-        ]]
+        calcinfo.local_copy_list = [(self.inputs.structure.uuid,
+                                     self.inputs.structure.filename,
+                                     self.inputs.structure.filename)]
 
-        if atomic_radii is not None:
+        if 'atomic_radii' in self.inputs:
+            atomic_radii = self.inputs.atomic_radii
             radii_file_name = atomic_radii.filename
             calcinfo.local_copy_list.append(
-                [atomic_radii.get_file_abs_path(), radii_file_name])
+                (atomic_radii.uuid, atomic_radii.filename,
+                 atomic_radii.filename))
         else:
             radii_file_name = None
 
         calcinfo.remote_copy_list = []
-        calcinfo.retrieve_list = parameters.output_files
+        calcinfo.retrieve_list = self.inputs.parameters.output_files
 
         codeinfo = CodeInfo()
-        codeinfo.cmdline_params = parameters.cmdline_params(
-            structure_file_name=structure.filename,
+        codeinfo.cmdline_params = self.inputs.parameters.cmdline_params(
+            structure_file_name=self.inputs.structure.filename,
             radii_file_name=radii_file_name)
-        codeinfo.code_uuid = code.uuid
+        codeinfo.code_uuid = self.inputs.code.uuid
         calcinfo.codes_info = [codeinfo]
 
         return calcinfo

@@ -54,8 +54,8 @@ class KeywordParser(object):
 
     @classmethod
     def parse_aiida(cls, string):
-        from aiida.orm.data.parameter import ParameterData
-        return ParameterData(dict=cls.parse(string))
+        from aiida.orm import Dict
+        return Dict(dict=cls.parse(string))
 
 
 class PoreVolumeParser(KeywordParser):
@@ -338,5 +338,5 @@ class ChannelParser(object):
 
     @classmethod
     def parse_aiida(cls, string):
-        from aiida.orm.data.parameter import ParameterData
-        return ParameterData(dict=cls.parse(string))
+        from aiida.orm import Dict
+        return Dict(dict=cls.parse(string))

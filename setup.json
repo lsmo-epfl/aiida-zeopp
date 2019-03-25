@@ -31,7 +31,7 @@
     ],
     "reentry_register": true,
     "install_requires": [
-        "aiida >= 0.12.2",
+        "aiida-core >= 0.12.2",
         "pycifrw >= 4.2",
         "pymatgen <= 2018.12.12",
         "voluptuous",

@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from voluptuous import Schema, ExactSequence
-from aiida.orm.data.parameter import ParameterData
+from aiida.orm import Dict
 import six
 from six.moves import map
 
@@ -47,7 +47,7 @@ all_options = dict(
     list(output_options.items()) + list(modifier_options.items()))
 
 
-class NetworkParameters(ParameterData):
+class NetworkParameters(Dict):
     """ Command line parameters for zeo++ network binary
     """
 

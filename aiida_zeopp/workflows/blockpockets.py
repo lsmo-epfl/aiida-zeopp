@@ -1,10 +1,9 @@
 from __future__ import absolute_import
-from aiida.orm import CalculationFactory, DataFactory
-from aiida.orm.code import Code
-from aiida.orm.data.base import Float
-from aiida.work.run import submit
-from aiida.work.workchain import WorkChain, ToContext, if_, Outputs
-from aiida.work.workfunction import workfunction
+from aiida.plugins import CalculationFactory, DataFactory
+from aiida.orm import Code
+from aiida.orm import Float
+from aiida.engine import WorkChain, ToContext, if_
+from aiida.engine import calcfunction
 
 # import base data classes
 ZeoppCalculation = CalculationFactory('zeopp.network')
@@ -30,7 +29,7 @@ num_samples = {
 }
 
 
-@workfunction
+@calcfunction
 def get_zeopp_geometry_parameters(probe_radius):
     """Create NetworkParameters from probe radius.
 
@@ -47,7 +46,7 @@ def get_zeopp_geometry_parameters(probe_radius):
     return NetworkParameters(dict=params)
 
 
-@workfunction
+@calcfunction
 def get_zeopp_block_parameters(probe_radius):
     """Create NetworkParameters from probe radius.
 
@@ -103,10 +102,10 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
         }
 
         # Create the calculation process and launch it
-        future = submit(ZeoppCalculation.process(), **inputs)
+        future = self.submit(ZeoppCalculation.process(), **inputs)
         self.report("pk: {} | Running geometry analysis with zeo++".format(
             future.pid))
-        return ToContext(zeopp_geometry=Outputs(future))
+        return ToContext(zeopp_geometry=future)
 
     def should_run_block_zeopp(self):
         """If the pore non-accessible volume is 0 - there is no need to run block pocket calculation."""
@@ -125,10 +124,10 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
         }
 
         # Create the calculation process and launch it
-        future = submit(ZeoppCalculation.process(), **inputs)
+        future = self.submit(ZeoppCalculation.process(), **inputs)
         self.report("pk: {} | Running zeo++ block volume calculation".format(
             future.pid))
-        return ToContext(zeopp_block=Outputs(future))
+        return ToContext(zeopp_block=future)
 
     def return_result(self):
         """Attach the results of the zeopp calculations to the outputs."""

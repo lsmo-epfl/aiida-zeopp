@@ -1,10 +1,9 @@
 from __future__ import absolute_import
 from __future__ import print_function
 import os
-from aiida.common.example_helpers import test_and_get_code
-from aiida.orm.data.base import Float
-from aiida.orm.data.cif import CifData
-from aiida.work.run import submit
+from aiida.orm import Float, Code
+from aiida.orm.nodes.data.cif import CifData
+from aiida.engine import submit
 from aiida_zeopp.workflows import ZeoppBlockPocketsWorkChain
 
 probe_radius = 1.8
@@ -13,8 +12,8 @@ print((pwd + "/structure.cif"))
 structure = CifData(file=pwd + "/structure.cif")
 
 # replace 'network@localhost' with your zeo++ AiiDA code
-code = test_and_get_code(
-    'network@localhost', expected_code_type='zeopp.network')
+code = Code.objects.get(
+    label='network@localhost', input_plugin_name='zeopp.network')
 
 future = submit(
     ZeoppBlockPocketsWorkChain,

@@ -7,7 +7,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 import os
 import aiida_zeopp.tests as tests
-from aiida.orm import DataFactory
+from aiida.plugins import DataFactory
 
 code = tests.get_code(entry_point='zeopp.network')
 
@@ -33,7 +33,7 @@ calc.use_parameters(parameters)
 
 CifData = DataFactory('cif')
 this_dir = os.path.dirname(os.path.realpath(__file__))
-structure = CifData(file=os.path.join(this_dir, 'HKUST-1.cif'))
+structure = CifData(filepath=os.path.join(this_dir, 'HKUST-1.cif'))
 calc.use_structure(structure)
 
 # Optional: use radii file
