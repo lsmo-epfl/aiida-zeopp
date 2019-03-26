@@ -5,23 +5,31 @@ python:
 services:
   - postgresql
   - rabbitmq
+  - docker
 
 addons:
   postgresql: "10"
 
 before_install:
-# Upgrade pip setuptools and wheel
-- pip install -U pip wheel setuptools
+  # Upgrade pip setuptools and wheel
+  - pip install -U wheel setuptools coveralls
+  - pip install pip==18.1
+  # install singularity
+  - wget -O- http://neuro.debian.net/lists/trusty.us-nh.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list
+  - sudo apt-key add .travis.singularity_key.txt
+  - sudo apt-get update
+  - sudo apt-get install -y singularity-container
+  - singularity pull shub://ltalirz/singularity-recipe-zeopp:ansible
 
 install:
-# Upgrade pip setuptools and wheel
-- pip install -U wheel setuptools coveralls
-- pip install pip==18.1
 - pip install -e .[testing,pre-commit]
 - if [ "$AIIDA_VERSION" == "develop" ]; then .travis-data/install_aiida_github.sh ; fi  # installs develop branch
 - reentry scan -r aiida
 # add fake network executable
-- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
+#- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
+#- echo -e '#!/bin/bash\nset -e\nsingularity exec ./ltalirz-singularity-recipe-zeopp-master-ansible.simg /usr/local/bin/network "$@"' > network; chmod +x network
+# test fake executable
+- .travis-data/network
 
 env:
   global:
@@ -30,7 +38,9 @@ env:
   - AIIDA_VERSION: develop
   - AIIDA_DEVELOP_GIT_HASH: 0ca5d991d039dca2261df3d6ad8da2f03d591caa
   # add network executable to PATH
-  - PATH=${PATH}:${TRAVIS_BUILD_DIR}
+  #- PATH=${PATH}:${TRAVIS_BUILD_DIR}
+  # use 'network' script from .travis-data
+  - PATH=${PATH}:${TRAVIS_BUILD_DIR}/.travis-data
   matrix:
   - TEST_AIIDA_BACKEND: django
     TEST_TYPE: tests
@@ -49,8 +59,6 @@ env:
 
 script:
   - if [ "$TEST_TYPE" == "tests" ] ; then coverage run --source=aiida_zeopp --append manage.py; fi  # runs unit tests
-  # - if [ "$TEST_TYPE" == "docs" ] ; then cd docs; make; fi  # creates documentation
-  # runs precommit checks but doesn't fail if they don't pass
   - if [ "$TEST_TYPE" == "pre-commit" ] ; then pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 ); fi
 
 after_success:
