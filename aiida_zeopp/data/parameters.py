@@ -61,18 +61,12 @@ class NetworkParameters(Dict):
         """
         Constructor for the data class
 
-        Usage: ``NetworkParameters(dict={'cssr': True})``
+        :param dict: the dictionary to set
 
-        .. note:: As of 2017-09, the constructor must also support a single dbnode
-          argument (to reconstruct the object from a database node).
-          For this reason, positional arguments are not allowed.
+        Usage: ``NetworkParameters(dict={'cssr': True})``
         """
-        if 'dbnode' in kwargs:
-            super(NetworkParameters, self).__init__(**kwargs)
-        else:
-            # set dictionary of Dict
-            dict = self.validate(dict)
-            super(NetworkParameters, self).__init__(dict=dict, **kwargs)
+        dict = self.validate(dict)
+        super(NetworkParameters, self).__init__(dict=dict, **kwargs)
 
     def validate(self, parameters_dict):
         """validate parameters"""
