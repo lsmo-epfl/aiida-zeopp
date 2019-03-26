@@ -28,8 +28,8 @@ install:
 # Upgrade pip setuptools and wheel
 - pip install -U wheel setuptools coveralls
 - pip install pip==18.1
-- if [ "$AIIDA_VERSION" == "develop" ]; then .travis-data/install_aiida_github.sh ; fi  # installs develop branch
 - pip install -e .[testing,pre-commit]
+- if [ "$AIIDA_VERSION" == "develop" ]; then .travis-data/install_aiida_github.sh ; fi  # installs develop branch
 - reentry scan -r aiida
 # add fake network executable
 - cat "#!/bin/bash\necho 'network'" > network; chmod +x network
