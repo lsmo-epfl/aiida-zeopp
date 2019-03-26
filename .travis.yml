@@ -13,13 +13,6 @@ services:
 addons:
   postgresql: "10"
 
-env:
-  global:
-  - PLUGIN_DIR: aiida-diff
-  - TEST_AIIDA_BACKEND: django
-  - AIIDA_VERSION: develop
-  - AIIDA_DEVELOP_GIT_HASH: 0ca5d991d039dca2261df3d6ad8da2f03d591caa
-
 before_install:
 # Upgrade pip setuptools and wheel
 - pip install -U pip wheel setuptools
@@ -36,6 +29,10 @@ install:
 
 env:
   global:
+  - PLUGIN_DIR: aiida-diff
+  - TEST_AIIDA_BACKEND: django
+  - AIIDA_VERSION: develop
+  - AIIDA_DEVELOP_GIT_HASH: 0ca5d991d039dca2261df3d6ad8da2f03d591caa
   # add network executable to PATH
   - PATH=${PATH}:${TRAVIS_BUILD_DIR}
   matrix:
