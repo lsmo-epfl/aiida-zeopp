@@ -10,8 +10,11 @@ addons:
   postgresql: "10"
 
 before_install:
-# Upgrade pip setuptools and wheel
-- pip install -U pip wheel setuptools
+  # Upgrade pip setuptools and wheel
+  - pip install -U pip wheel setuptools
+  # for singularity, see https://github.com/singularityhub/travis-ci/blob/master/.travis.yml
+  - sudo chmod u+x .travis/*.sh
+  - /bin/bash .travis/setup.sh
 
 install:
 # Upgrade pip setuptools and wheel
@@ -48,7 +51,11 @@ env:
     TEST_TYPE: pre-commit
 
 script:
-  - if [ "$TEST_TYPE" == "tests" ] ; then coverage run --source=aiida_zeopp --append manage.py; fi  # runs unit tests
+  - |
+        if [ "$TEST_TYPE" == "tests" ] ; then
+            /bin/bash .travis/build.sh Singularity;
+            coverage run --source=aiida_zeopp --append manage.py;
+        fi  # runs unit tests
   # - if [ "$TEST_TYPE" == "docs" ] ; then cd docs; make; fi  # creates documentation
   # runs precommit checks but doesn't fail if they don't pass
   - if [ "$TEST_TYPE" == "pre-commit" ] ; then pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 ); fi
