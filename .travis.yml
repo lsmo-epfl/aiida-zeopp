@@ -2,13 +2,9 @@ language: python
 python:
 - "3.6"
 
-cache: pip
-
-git:
-  depth: 3
-
 services:
-- postgresql
+  - postgresql
+  - rabbitmq
 
 addons:
   postgresql: "10"
@@ -52,10 +48,10 @@ env:
     TEST_TYPE: pre-commit
 
 script:
-- if [ "$TEST_TYPE" == "tests" ] ; then coverage run --source=aiida_zeopp --append manage.py; fi  # runs unit tests
-# - if [ "$TEST_TYPE" == "docs" ] ; then cd docs; make; fi  # creates documentation
-# runs precommit checks but doesn't fail if they don't pass
-- if [ "$TEST_TYPE" == "pre-commit" ] ; then pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 ); fi
+  - if [ "$TEST_TYPE" == "tests" ] ; then coverage run --source=aiida_zeopp --append manage.py; fi  # runs unit tests
+  # - if [ "$TEST_TYPE" == "docs" ] ; then cd docs; make; fi  # creates documentation
+  # runs precommit checks but doesn't fail if they don't pass
+  - if [ "$TEST_TYPE" == "pre-commit" ] ; then pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 ); fi
 
 after_success:
-- coveralls
+  - coveralls
