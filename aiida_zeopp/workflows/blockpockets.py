@@ -7,7 +7,7 @@ from aiida.engine import calcfunction
 
 # import base data classes
 ZeoppCalculation = CalculationFactory('zeopp.network')
-ParameterData = DataFactory('parameter')
+Dict = DataFactory('dict')
 CifData = DataFactory('cif')
 SinglefileData = DataFactory('singlefile')
 NetworkParameters = DataFactory('zeopp.parameters')
@@ -79,8 +79,7 @@ class ZeoppBlockPocketsWorkChain(WorkChain):
 
         # Define the outputs, specifying the type we expect
         spec.output("block", valid_type=SinglefileData, required=False)
-        spec.output(
-            "output_parameters", valid_type=ParameterData, required=True)
+        spec.output("output_parameters", valid_type=Dict, required=True)
 
         # Define workflow logic
         spec.outline(

@@ -70,7 +70,7 @@ class NetworkParameters(Dict):
         if 'dbnode' in kwargs:
             super(NetworkParameters, self).__init__(**kwargs)
         else:
-            # set dictionary of ParameterData
+            # set dictionary of Dict
             dict = self.validate(dict)
             super(NetworkParameters, self).__init__(dict=dict, **kwargs)
 
@@ -81,7 +81,7 @@ class NetworkParameters(Dict):
     def cmdline_params(self, structure_file_name=None, radii_file_name=None):
         """Synthesize command line parameters
         
-        e.g. [ ['-axs', '0.4', 'out.axs'], ['structure.cif']]
+        e.g. [ '-axs', '0.4', 'out.axs', 'structure.cif']
         """
         parameters = []
 

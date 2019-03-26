@@ -55,7 +55,8 @@ def get_computer(name='localhost'):
             workdir=tempfile.mkdtemp(),
             transport_type='local',
             scheduler_type='direct',
-            enabled_state=True)
+            enabled_state=True,
+        )
         computer.store()
         computer.configure()
 

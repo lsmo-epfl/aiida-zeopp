@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-#import json
 from __future__ import absolute_import
 from aiida.parsers.parser import Parser
-from aiida.common import OutputParsingError
 from aiida.orm import Dict
 from six.moves import zip
 from aiida.common import exceptions
@@ -31,9 +29,6 @@ class NetworkParser(Parser):
         # pylint: disable=too-many-locals
         from aiida.orm.nodes.data.singlefile import SinglefileData
 
-        success = False
-        node_list = []
-
         # Check that the retrieved folder is there
         try:
             output_folder = self.retrieved
@@ -42,6 +37,17 @@ class NetworkParser(Parser):
 
         # Check the folder content is as expected
         list_of_files = output_folder.list_object_names()
+
+        # pylint: disable=protected-access
+        self.logger.error(list_of_files)
+        abspath = output_folder._repository._get_base_folder().abspath
+        self.logger.error(output_folder._repository._get_base_folder().abspath)
+        self.logger.error("retrieve list")
+        self.logger.error(self.node.get_retrieve_list())
+        import glob
+        stuff = glob.glob(abspath + "/*")
+        self.logger.error(stuff)
+
         inp_params = self.node.inputs.parameters
         output_files = inp_params.output_files
         # Note: set(A) <= set(B) checks whether A is a subset of B
@@ -58,6 +64,8 @@ class NetworkParser(Parser):
         output_links = inp_params.output_links
         output_parameters = Dict(dict={})
 
+        empty_block = False
+
         for fname, parser, link in list(
                 zip(output_files, output_parsers, output_links)):
 
@@ -68,8 +76,7 @@ class NetworkParser(Parser):
             if parser is None:
 
                 # just add file, if no parser implemented
-                parsed = SinglefileData(
-                    filepath=output_folder.get_abs_path(fname))
+                parsed = SinglefileData(file=abspath)
                 self.out(link, parsed)
 
                 # workaround: if block pocket file is empty, raise an error
@@ -79,9 +86,10 @@ class NetworkParser(Parser):
                         content = f.read()
 
                     if not content.strip():
-                        raise OutputParsingError(
+                        self.logger.error(
                             "Empty block file. This indicates the calculation of blocked pockets did not finish."
                         )
+                        empty_block = True
 
             else:
                 # else parse and add keys to output_parameters
@@ -105,9 +113,11 @@ class NetworkParser(Parser):
         # of <calcnode>.res.Input_...
         for k in inp_params.keys():
             output_parameters.set_attribute('Input_{}'.format(k),
-                                            inp_params.get_attr(k))
+                                            inp_params.get_attribute(k))
 
         self.out('output_parameters', output_parameters)
 
-        success = True
-        return success, node_list
+        if empty_block:
+            return self.exit_codes.ERROR_EMPTY_BLOCK
+
+        return self.exit_codes.SUCCESS

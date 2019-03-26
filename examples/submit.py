@@ -7,17 +7,11 @@ from __future__ import absolute_import
 from __future__ import print_function
 import os
 import aiida_zeopp.tests as tests
-from aiida.plugins import DataFactory
+from aiida.plugins import DataFactory, CalculationFactory
+from aiida.engine import run_get_node
 
+NetworkCalculation = CalculationFactory('zeopp.network')
 code = tests.get_code(entry_point='zeopp.network')
-
-# set up calculation
-calc = code.new_calc()
-calc.label = "aiida_zeopp example calculation"
-calc.description = "Converts .cif to .cssr format, computes surface area, pore volume and channels"
-calc.set_max_wallclock_seconds(1 * 60)
-calc.set_withmpi(False)
-calc.set_resources({"num_machines": 1})
 
 # Prepare input parameters
 NetworkParameters = DataFactory('zeopp.parameters')
@@ -29,19 +23,36 @@ d = {
     'chan': 1.2,
 }
 parameters = NetworkParameters(dict=d)
-calc.use_parameters(parameters)
 
 CifData = DataFactory('cif')
 this_dir = os.path.dirname(os.path.realpath(__file__))
-structure = CifData(filepath=os.path.join(this_dir, 'HKUST-1.cif'))
-calc.use_structure(structure)
+structure = CifData(file=os.path.join(this_dir, 'HKUST-1.cif'))
 
-# Optional: use radii file
-SinglefileData = DataFactory('singlefile')
-atomic_radii = SinglefileData(file=os.path.join(tests.TEST_DIR, 'MgO.rad'))
-calc.use_atomic_radii(atomic_radii)
+# set up calculation
+options = {
+    "resources": {
+        "num_machines": 1,
+        "num_mpiprocs_per_machine": 1,
+    },
+    "max_wallclock_seconds": 1 * 60,
+}
 
-calc.store_all()
-calc.submit()
-print("submitted calculation; calc=Calculation(uuid='{}') # ID={}".format(
-    calc.uuid, calc.dbnode.pk))
+inputs = {
+    'code': code,
+    'parameters': parameters,
+    'structure': structure,
+    'metadata': {
+        'options':
+        options,
+        'label':
+        "aiida_zeopp example calculation",
+        'description':
+        "Converts .cif to .cssr format, computes surface area, pore volume and channels",
+    },
+}
+
+# or use aiida.engine.submit
+result, node = run_get_node(NetworkCalculation, **inputs)
+
+print("Computed density: {:.3f}".format(
+    node.outputs.output_parameters.get_attribute('Density')))

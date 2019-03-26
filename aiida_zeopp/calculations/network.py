@@ -39,9 +39,18 @@ class NetworkCalculation(CalcJob):
             required=False)
 
         spec.exit_code(
+            0, 'SUCCESS', message='Calculation completed successfully.')
+        spec.exit_code(
             101,
             'ERROR_OUTPUT_FILES_MISSING',
-            message='Not all expected output files {} were found.')
+            message='Not all expected output files were found.')
+        spec.exit_code(
+            102,
+            'WARNING_EMPTY_BLOCK_FILE',
+            message=
+            'Empty block file. This indicates the calculation of blocked pockets did not finish.'
+        )
+
         spec.output(
             'output_parameters',
             valid_type=Dict,
@@ -80,6 +89,7 @@ class NetworkCalculation(CalcJob):
             structure_file_name=self.inputs.structure.filename,
             radii_file_name=radii_file_name)
         codeinfo.code_uuid = self.inputs.code.uuid
+        codeinfo.withmpi = False
         calcinfo.codes_info = [codeinfo]
 
         return calcinfo
