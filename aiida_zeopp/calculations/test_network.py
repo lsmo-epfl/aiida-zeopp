@@ -54,64 +54,62 @@ class TestNetwork(zt.PluginTestCase):
             encoding='utf8').read()
         self.assertEqual(cssr, node.outputs.structure_cssr.get_content())
 
-    # def test_submit_MgO(self):
-    #     """Test submitting a calculation
-    #
-    #     This includes a radii file.
-    #     """
-    #     from aiida_zeopp.tests import TEST_DIR
-    #     from aiida_zeopp.calculations.network import NetworkCalculation
-    #     from aiida.engine import run_get_node
-    #
-    #     # Prepare input parameters
-    #     from aiida.plugins import DataFactory
-    #     NetworkParameters = DataFactory('zeopp.parameters')
-    #     parameters = NetworkParameters(
-    #         dict={
-    #             'cssr': True,
-    #             'res': True,
-    #             'sa': [1.82, 1.82, 5000],
-    #             'vsa': [1.82, 1.82, 5000],
-    #             'volpo': [1.82, 1.82, 5000],
-    #             'chan': 1.2,
-    #             'ha': False,
-    #             'strinfo': True,
-    #             'gridG': True,
-    #         })
-    #
-    #     CifData = DataFactory('cif')
-    #     structure = CifData(
-    #         file=os.path.join(TEST_DIR, 'MgO.cif'), parse_policy='lazy')
-    #
-    #     SinglefileData = DataFactory('singlefile')
-    #     atomic_radii = SinglefileData(file=os.path.join(TEST_DIR, 'MgO.rad'))
-    #
-    #     # set up calculation
-    #     options = {
-    #         "resources": {
-    #             "num_machines": 1,
-    #             "num_mpiprocs_per_machine": 1,
-    #         },
-    #         "max_wallclock_seconds": 30,
-    #     }
-    #
-    #     inputs = {
-    #         'code': self.code,
-    #         'parameters': parameters,
-    #         'structure': structure,
-    #         'atomic_radii': atomic_radii,
-    #         'metadata': {
-    #             'options': options,
-    #             'label': "aiida_zeopp format conversion",
-    #             'description': "Test converting .cif to .cssr format",
-    #         },
-    #     }
-    #
-    #     result, node = run_get_node(NetworkCalculation, **inputs)
+    def test_submit_MgO(self):
+        """Test submitting a calculation
 
-    #     self.assertAlmostEqual(node.outputs.output_parameters.get_attribute('Density'), 0.879097, places=4)
+        This includes a radii file.
+        """
+        from aiida_zeopp.tests import TEST_DIR
+        from aiida_zeopp.calculations.network import NetworkCalculation
+        from aiida.engine import run_get_node
+        from aiida.plugins import DataFactory
 
-    #
-    #     cssr = open(os.path.join(TEST_DIR, 'MgO.cssr'), 'rb').read()
-    #     cssr_computed = node.outputs.structure_cssr.get_content()
-    #     self.assertEqual(cssr, cssr_computed)
+        # Prepare input parameters
+        parameters = DataFactory('zeopp.parameters')(
+            dict={
+                'cssr': True,
+                'res': True,
+                'sa': [1.82, 1.82, 5000],
+                'vsa': [1.82, 1.82, 5000],
+                'volpo': [1.82, 1.82, 5000],
+                'chan': 1.2,
+                'ha': False,
+                'strinfo': True,
+                #    'gridG': True,
+            })
+
+        structure = DataFactory('cif')(
+            file=os.path.join(TEST_DIR, 'MgO.cif'), parse_policy='lazy')
+
+        atomic_radii = DataFactory('singlefile')(
+            file=os.path.join(TEST_DIR, 'MgO.rad'))
+
+        # set up calculation
+        options = {
+            "resources": {
+                "num_machines": 1,
+                "num_mpiprocs_per_machine": 1,
+            },
+            "max_wallclock_seconds": 30,
+        }
+
+        inputs = {
+            'code': self.code,
+            'parameters': parameters,
+            'structure': structure,
+            'atomic_radii': atomic_radii,
+            'metadata': {
+                'options': options,
+                'label': "aiida_zeopp format conversion",
+                'description': "Test converting .cif to .cssr format",
+            },
+        }
+
+        _result, node = run_get_node(NetworkCalculation, **inputs)
+
+        self.assertAlmostEqual(
+            node.outputs.output_parameters.get_attribute('Density'),
+            3.18223,
+            places=4)
+        self.assertEqual(
+            node.outputs.output_parameters.get_attribute('ASA_m^2/g'), 0.0)
