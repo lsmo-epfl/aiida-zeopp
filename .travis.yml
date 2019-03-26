@@ -17,6 +17,7 @@ env:
   global:
   - PLUGIN_DIR: aiida-diff
   - TEST_AIIDA_BACKEND: django
+  - AIIDA_VERSION: develop
   - AIIDA_DEVELOP_GIT_HASH: 0ca5d991d039dca2261df3d6ad8da2f03d591caa
 
 before_install:
