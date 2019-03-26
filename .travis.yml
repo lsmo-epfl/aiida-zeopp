@@ -1,6 +1,6 @@
 language: python
 python:
-- "2.7"
+- "3.6"
 
 cache: pip
 
@@ -11,13 +11,22 @@ services:
 - postgresql
 
 addons:
-  postgresql: "9.5"
+  postgresql: "10"
+
+env:
+  global:
+  - PLUGIN_DIR: aiida-diff
+  - TEST_AIIDA_BACKEND: django
+  - AIIDA_DEVELOP_GIT_HASH: 0ca5d991d039dca2261df3d6ad8da2f03d591caa
 
 before_install:
 # Upgrade pip setuptools and wheel
 - pip install -U pip wheel setuptools
 
 install:
+# Upgrade pip setuptools and wheel
+- pip install -U pip wheel setuptools
+- if [ "$AIIDA_VERSION" == "develop" ]; then .travis-data/install_aiida_github.sh ; fi  # installs develop branch
 - pip install -e .[testing,pre-commit]
 - reentry scan -r aiida
 - pip install coveralls
@@ -52,4 +61,3 @@ script:
 
 after_success:
 - coveralls
-
