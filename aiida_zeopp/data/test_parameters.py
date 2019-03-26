@@ -26,7 +26,7 @@ class TestNetworkParameters(PluginTestCase):
                          [None, SurfaceAreaParser, PoreVolumeParser])
 
     def test_validation(self):
-        """Test that validation prevents creating wrong versions."""
+        """Test that validation raises an exception for wrong input."""
         from aiida_zeopp.data.parameters import NetworkParameters
         from voluptuous import MultipleInvalid
 
