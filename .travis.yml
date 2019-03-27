@@ -9,9 +9,6 @@ services:
 
 addons:
   postgresql: "10"
-  apt:
-    packages:
-      - singularity-container
 
 before_install:
   # Upgrade pip setuptools and wheel
