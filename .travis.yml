@@ -27,6 +27,7 @@ install:
 - reentry scan -r aiida
 # add fake network executable
 #- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
+- cat '#!/bin/bash\nset -e\nsingularity exec ./ltalirz-singularity-recipe-zeopp-master-ansible.simg /usr/local/bin/network "$@"' > network; chmod +x network
 
 env:
   global:
@@ -53,15 +54,8 @@ env:
     TEST_TYPE: pre-commit
 
 script:
-  - |
-        if [ "$TEST_TYPE" == "tests" ] ; then
-        #    /bin/bash .travis/build.sh Singularity;
-            coverage run --source=aiida_zeopp --append manage.py;
-        fi  # runs unit tests
-  # - if [ "$TEST_TYPE" == "docs" ] ; then cd docs; make; fi  # creates documentation
-  # runs precommit checks but doesn't fail if they don't pass
+  - if [ "$TEST_TYPE" == "tests" ] ; then coverage run --source=aiida_zeopp --append manage.py; fi  # runs unit tests
   - if [ "$TEST_TYPE" == "pre-commit" ] ; then pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 ); fi
-  - singularity exec ltalirz-singularity-recipe-zeopp-master-ansible.simg /usr/local/bin/network
 
 after_success:
   - coveralls
