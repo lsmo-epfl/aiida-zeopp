@@ -1,0 +1,4 @@
+#!/bin/bash
+# piping through to singularity
+set -e
+singularity exec ${TRAVIS_BUILD_DIR}/ltalirz-singularity-recipe-zeopp-master-ansible.simg /usr/local/bin/network "$@"

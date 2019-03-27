@@ -27,7 +27,7 @@ install:
 - reentry scan -r aiida
 # add fake network executable
 #- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
-- echo -e '#!/bin/bash\nset -e\nsingularity exec ./ltalirz-singularity-recipe-zeopp-master-ansible.simg /usr/local/bin/network "$@"' > network; chmod +x network
+#- echo -e '#!/bin/bash\nset -e\nsingularity exec ./ltalirz-singularity-recipe-zeopp-master-ansible.simg /usr/local/bin/network "$@"' > network; chmod +x network
 
 env:
   global:
@@ -36,7 +36,9 @@ env:
   - AIIDA_VERSION: develop
   - AIIDA_DEVELOP_GIT_HASH: 0ca5d991d039dca2261df3d6ad8da2f03d591caa
   # add network executable to PATH
-  - PATH=${PATH}:${TRAVIS_BUILD_DIR}
+  #- PATH=${PATH}:${TRAVIS_BUILD_DIR}
+  # use 'network' script from .travis-data
+  - PATH=${PATH}:${TRAVIS_BUILD_DIR}/.travis-data
   matrix:
   - TEST_AIIDA_BACKEND: django
     TEST_TYPE: tests
