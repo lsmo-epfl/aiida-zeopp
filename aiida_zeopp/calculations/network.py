@@ -56,6 +56,8 @@ class NetworkCalculation(CalcJob):
             valid_type=Dict,
             help='key-value pairs parsed from zeo++ output file(s).')
 
+        spec.default_output_node = 'output_parameters'
+
     def prepare_for_submission(self, folder):
         """
         Create input files.
