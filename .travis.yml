@@ -55,7 +55,7 @@ env:
     TEST_TYPE: pre-commit
 
 script:
-  - if [ "$TEST_TYPE" == "tests" ] ; then coverage run --source=aiida_zeopp --append manage.py; fi  # runs unit tests
+  - if [ "$TEST_TYPE" == "tests" ] ; then py.test --cov aiida_diff --cov-append . ; fi  # runs unit tests
   - if [ "$TEST_TYPE" == "pre-commit" ] ; then pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 ); fi
 
 after_success:
