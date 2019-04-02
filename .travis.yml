@@ -21,8 +21,8 @@ before_install:
   - singularity pull shub://ltalirz/singularity-recipe-zeopp:ansible
 
 install:
-- pip install -e .[testing,pre-commit]
 - if [ "$AIIDA_VERSION" == "develop" ]; then .travis-data/install_aiida_github.sh ; fi  # installs develop branch
+- pip install -e .[testing,pre-commit]
 - reentry scan -r aiida
 # add fake network executable
 #- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
