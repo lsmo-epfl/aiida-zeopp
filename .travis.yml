@@ -5,7 +5,6 @@ python:
 services:
   - postgresql
   - rabbitmq
-  - docker
 
 addons:
   postgresql: "10"
@@ -28,8 +27,6 @@ install:
 # add fake network executable
 #- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
 #- echo -e '#!/bin/bash\nset -e\nsingularity exec ./ltalirz-singularity-recipe-zeopp-master-ansible.simg /usr/local/bin/network "$@"' > network; chmod +x network
-# test fake executable
-- .travis-data/network
 
 env:
   global:
