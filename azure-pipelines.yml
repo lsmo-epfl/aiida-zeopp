@@ -6,6 +6,9 @@
 trigger:
 - master
 
+variables:
+  AIIDA_DEVELOP_GIT_HASH: e852d66fc51345fbdb8ebf98580a5646d79bc043
+
 jobs:
 - job: before_install
   pool:
@@ -52,7 +55,7 @@ jobs:
     displayName: 'Install dependencies'
 
   # this can be removed once aiida-core 1.0.0b2 is released
-  - script: .travis-data/install_aiida_github.sh
+  - script: .travis-data/install_aiida_github.sh && reentry scan
     displayName: 'Install aiida-core develop version'
 
   - script: |
