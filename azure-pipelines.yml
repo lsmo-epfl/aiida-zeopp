@@ -52,7 +52,7 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-      py.test --junitxml=test-results.xml --cov aiida_diff --cov-append .
+      py.test --junitxml=test-results.xml --cov aiida_zeopp --cov-append .
     displayName: 'Run pytest'
 
   - task: PublishTestResults@2
