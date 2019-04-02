@@ -72,7 +72,7 @@ def get_code(entry_point, computer_name='localhost'):
     executable = executables[entry_point]
 
     try:
-        code = Code.objects.get(
+        code = Code.objects.get(  # pylint: disable=no-member
             label='{}@{}'.format(executable, computer_name))
     except NotExistent:
         path = get_path_to_executable(executable)

@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from aiida.engine import CalcJob
 from aiida.common import (CalcInfo, CodeInfo)
 from aiida.plugins import DataFactory
+from aiida.orm import Data
 import six
 
 NetworkParameters = DataFactory('zeopp.parameters')
@@ -51,6 +52,8 @@ class NetworkCalculation(CalcJob):
             'Empty block file. This indicates the calculation of blocked pockets did not finish.'
         )
 
+        spec.outputs.dynamic = True
+        spec.outputs.valid_type = Data
         spec.output(
             'output_parameters',
             valid_type=Dict,
