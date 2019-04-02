@@ -52,14 +52,23 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-      pytest tests --doctest-modules --junitxml=junit/test-results.xml
+      py.test --junitxml=test-results.xml --cov aiida_diff --cov-append .
     displayName: 'Run pytest'
 
   - task: PublishTestResults@2
     inputs:
-      testResultsFiles: '**/test-results.xml'
+      testResultsFiles: 'test-results.xml'
       testRunTitle: 'Python $(python.version)'
     condition: succeededOrFailed()
+
+- job: coveralls
+  dependsOn:
+    - test
+  steps:
+
+  - script: coveralls
+    displayName: 'Upload test coverage to coveralls.io'
+
 
 # - job: 'Publish'
 #   dependsOn: 'Test'
