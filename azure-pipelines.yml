@@ -51,6 +51,10 @@ jobs:
   - script: python -m pip install -e .[testing,pre-commit] && reentry scan
     displayName: 'Install dependencies'
 
+  # this can be removed once aiida-core 1.0.0b2 is released
+  - script: .travis-data/install_aiida_github.sh
+    displayName: 'Install aiida-core develop version'
+
   - script: |
       py.test --junitxml=test-results.xml --cov aiida_zeopp --cov-append .
     displayName: 'Run pytest'
