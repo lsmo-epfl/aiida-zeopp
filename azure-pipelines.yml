@@ -48,15 +48,17 @@ jobs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
 
+  # remove once https://github.com/aiidateam/aiida_core/issues/2414 is solved
   - script: python -m pip install pip==18.1
     displayName: 'Fix pip version'
+   
+  # this can be removed once aiida-core 1.0.0b2 is released
+  - script: .travis-data/install_aiida_github.sh && reentry scan
+    displayName: 'Install aiida-core develop version'
 
   - script: python -m pip install -e .[testing,pre-commit] && reentry scan
     displayName: 'Install dependencies'
 
-  # this can be removed once aiida-core 1.0.0b2 is released
-  - script: .travis-data/install_aiida_github.sh && reentry scan
-    displayName: 'Install aiida-core develop version'
 
   - script: |
       py.test --junitxml=test-results.xml --cov aiida_zeopp --cov-append .
@@ -67,6 +69,26 @@ jobs:
       testResultsFiles: 'test-results.xml'
       testRunTitle: 'Python $(python.version)'
     condition: succeededOrFailed()
+
+- job: pre-commit
+  strategy:
+    matrix:
+      Python27:
+        python.version: '2.7'
+      Python36:
+        python.version: '3.6'
+    maxParallel: 4
+  dependsOn:
+    - before_install
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+
+  - script: pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 );
+    displayName: 'Run pre-commit check'
 
 - job: coveralls
   dependsOn:
