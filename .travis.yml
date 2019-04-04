@@ -57,26 +57,30 @@ after_success:
   - coveralls
 
 jobs:
-    include:
-        - stage: deploy
-          # Make sure the tag is valid semver
-          if: "branch = master AND tag =~ ^v[0-9]+\\.[0-9]+\\.[0-9]+(a|b|rc)?[0-9]*$"
-          addons: skip
-          python: 3.6
-          before_install: skip
-          install: skip
-          before_script: skip
-          script: skip
-          env: ignore
-          after_deploy:
-            - echo "Deployed $TRAVIS_TAG to PyPI"
-          deploy: &pypi
-              provider: pypi
-              skip_existing: true
-              username: aiida-bot
-              password:
-                  # See https://docs.travis-ci.com/user/encryption-keys/ for instructions
-                  secure: "2CXKbNjVneb/Xmh9xjNA60GcmN4+tkLQR6PbS3eUz7WuSRKxpi406cTfaYHAv1TJKIDEPNDElLXktrHIBuZcj/V+4DgVQN3uS19NeXLDFMwuf1CKv46yQTO0iTGfo3FUPbCvvC4P3fp6geKSn6TUtUJaZmRbYIqgxJLC+qxewctR8Y/EyTW7SiKhJFfgTGfIQ1diDNfrCG7cPI2RnuTBo8oA3HW3BkyCJiMQ6Nyeodb7k2foLcdFOJuoSXKZiaoGCdaMyHyL32ZOp6IKU2t5RF+q7fT1trtlnWFhhDf766I/+AwH0h+/GZYGP5IZjARhqU290COIDhv4VI66D7EN82tBDKQFrm7PqxC+1no4FrjHQmF6hN31ATphdHqkygh0jg4W+AP8+WJUKwp3/mAnS4q1i7dUbiQtMKNl2+6dm0HSUCVsLHFLVdvKsfXYppNT7qNhWavOJdUfcC7veZHRiuOCYfFXqz1h2NuJ1OwnZ6GKyw0fpsw7Zpmtt4qJ+IIUGOsnreKB6NW311DcL3Gx4hWcLdIlXfP9QbVttztlsQnSVR0UAhA0UoCzzcZmdgZYRArHb7I75BInoEK5seKvOImCVHxfFKH9AN8gkZPOgauFCC3KzbzG01ofVSMhDgo88qfV9p8LFPKzmw9MQuYIU7YOQWQ8iSxzWYKDg7QIR4c="
-              on:
-                  repo: ltalirz/aiida-zeopp
-                  tags: true
+  include:
+    - stage: deploy
+      # Make sure the tag is valid semver
+      if: "tag =~ ^v[0-9]+\\.[0-9]+\\.[0-9]+(a|b|rc)?[0-9]*$"
+      services: ignore
+      addons: skip
+      python: 3.6
+      before_install: skip
+      install: skip
+      before_script: skip
+      script: skip
+      env: ignore
+      before_deploy:
+        - echo "About to deploy $TRAVIS_TAG to PyPI"
+      after_deploy:
+        - echo "Deployed $TRAVIS_TAG to PyPI"
+      deploy: &pypi
+        provider: pypi
+        skip_existing: true
+        username: aiida-bot
+        password:
+          # See https://docs.travis-ci.com/user/encryption-keys/ for instructions
+          secure: "2CXKbNjVneb/Xmh9xjNA60GcmN4+tkLQR6PbS3eUz7WuSRKxpi406cTfaYHAv1TJKIDEPNDElLXktrHIBuZcj/V+4DgVQN3uS19NeXLDFMwuf1CKv46yQTO0iTGfo3FUPbCvvC4P3fp6geKSn6TUtUJaZmRbYIqgxJLC+qxewctR8Y/EyTW7SiKhJFfgTGfIQ1diDNfrCG7cPI2RnuTBo8oA3HW3BkyCJiMQ6Nyeodb7k2foLcdFOJuoSXKZiaoGCdaMyHyL32ZOp6IKU2t5RF+q7fT1trtlnWFhhDf766I/+AwH0h+/GZYGP5IZjARhqU290COIDhv4VI66D7EN82tBDKQFrm7PqxC+1no4FrjHQmF6hN31ATphdHqkygh0jg4W+AP8+WJUKwp3/mAnS4q1i7dUbiQtMKNl2+6dm0HSUCVsLHFLVdvKsfXYppNT7qNhWavOJdUfcC7veZHRiuOCYfFXqz1h2NuJ1OwnZ6GKyw0fpsw7Zpmtt4qJ+IIUGOsnreKB6NW311DcL3Gx4hWcLdIlXfP9QbVttztlsQnSVR0UAhA0UoCzzcZmdgZYRArHb7I75BInoEK5seKvOImCVHxfFKH9AN8gkZPOgauFCC3KzbzG01ofVSMhDgo88qfV9p8LFPKzmw9MQuYIU7YOQWQ8iSxzWYKDg7QIR4c="
+        on:
+          repo: ltalirz/aiida-zeopp
+          branch: master
+          tags: true
