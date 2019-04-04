@@ -70,7 +70,7 @@ jobs:
       testRunTitle: 'Python $(python.version)'
     condition: succeededOrFailed()
 
-- job: pre-commit
+- job: pre_commit
   strategy:
     matrix:
       Python27:
