@@ -1,33 +1,23 @@
 language: python
 python:
+- "3.6"
 - "2.7"
 
-cache: pip
-
-git:
-  depth: 3
-
 services:
-- postgresql
+  - postgresql
+  - rabbitmq
 
 addons:
-  postgresql: "9.5"
-
-before_install:
-# Upgrade pip setuptools and wheel
-- pip install -U pip wheel setuptools
-
-install:
-- pip install -e .[testing,pre-commit]
-- reentry scan -r aiida
-- pip install coveralls
-# add fake network executable
-- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
+  postgresql: "10"
 
 env:
   global:
+  - AIIDA_VERSION: develop
+  - AIIDA_DEVELOP_GIT_HASH: a2976007d3c3e5403597b389ad6cbe72aa522e3e
   # add network executable to PATH
-  - PATH=${PATH}:${TRAVIS_BUILD_DIR}
+  #- PATH=${PATH}:${TRAVIS_BUILD_DIR}
+  # use 'network' script from .ci
+  - PATH=${PATH}:${TRAVIS_BUILD_DIR}/.ci
   matrix:
   - TEST_AIIDA_BACKEND: django
     TEST_TYPE: tests
@@ -39,17 +29,54 @@ env:
   - TEST_AIIDA_BACKEND: django
     TEST_TYPE: pre-commit
 
-  # Remove this to enforce the AiiDA coding style
-  allow_failures:
-  - TEST_AIIDA_BACKEND: django
-    TEST_TYPE: pre-commit
+before_install:
+  # Upgrade pip setuptools and wheel
+  - pip install -U wheel setuptools coveralls
+  - pip install pip==18.1
+  # install singularity
+  - wget -O- http://neuro.debian.net/lists/trusty.us-nh.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list
+  - sudo apt-key add .travis.singularity_key.txt
+  - sudo apt-get update
+  - sudo apt-get install -y singularity-container
+  - singularity pull shub://ltalirz/singularity-recipe-zeopp:ansible
+
+install:
+- if [ "$AIIDA_VERSION" == "develop" ]; then .ci/install_aiida_github.sh ; fi  # installs develop branch
+- pip install -e .[testing,pre-commit]
+- reentry scan -r aiida
+# add fake network executable
+#- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
+#- echo -e '#!/bin/bash\nset -e\nsingularity exec ./ltalirz-singularity-recipe-zeopp-master-ansible.simg /usr/local/bin/network "$@"' > network; chmod +x network
+
 
 script:
-- if [ "$TEST_TYPE" == "tests" ] ; then coverage run --source=aiida_zeopp --append manage.py; fi  # runs unit tests
-# - if [ "$TEST_TYPE" == "docs" ] ; then cd docs; make; fi  # creates documentation
-# runs precommit checks but doesn't fail if they don't pass
-- if [ "$TEST_TYPE" == "pre-commit" ] ; then pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 ); fi
+  - if [ "$TEST_TYPE" == "tests" ] ; then py.test --cov aiida_zeopp --cov-append . ; fi  # runs unit tests
+  - if [ "$TEST_TYPE" == "pre-commit" ] ; then pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 ); fi
 
 after_success:
-- coveralls
+  - coveralls
 
+jobs:
+    include:
+        - stage: deploy
+          # Make sure the tag is valid semver
+          if: "branch = master AND tag =~ ^v[0-9]+\\.[0-9]+\\.[0-9]+(a|b|rc)?[0-9]*$"
+          addons: skip
+          python: 3.6
+          before_install: skip
+          install: skip
+          before_script: skip
+          script: skip
+          env: ignore
+          after_deploy:
+            - echo "Deployed $TRAVIS_TAG to PyPI"
+          deploy: &pypi
+              provider: pypi
+              skip_existing: true
+              username: aiida-bot
+              password:
+                  # See https://docs.travis-ci.com/user/encryption-keys/ for instructions
+                  secure: "2CXKbNjVneb/Xmh9xjNA60GcmN4+tkLQR6PbS3eUz7WuSRKxpi406cTfaYHAv1TJKIDEPNDElLXktrHIBuZcj/V+4DgVQN3uS19NeXLDFMwuf1CKv46yQTO0iTGfo3FUPbCvvC4P3fp6geKSn6TUtUJaZmRbYIqgxJLC+qxewctR8Y/EyTW7SiKhJFfgTGfIQ1diDNfrCG7cPI2RnuTBo8oA3HW3BkyCJiMQ6Nyeodb7k2foLcdFOJuoSXKZiaoGCdaMyHyL32ZOp6IKU2t5RF+q7fT1trtlnWFhhDf766I/+AwH0h+/GZYGP5IZjARhqU290COIDhv4VI66D7EN82tBDKQFrm7PqxC+1no4FrjHQmF6hN31ATphdHqkygh0jg4W+AP8+WJUKwp3/mAnS4q1i7dUbiQtMKNl2+6dm0HSUCVsLHFLVdvKsfXYppNT7qNhWavOJdUfcC7veZHRiuOCYfFXqz1h2NuJ1OwnZ6GKyw0fpsw7Zpmtt4qJ+IIUGOsnreKB6NW311DcL3Gx4hWcLdIlXfP9QbVttztlsQnSVR0UAhA0UoCzzcZmdgZYRArHb7I75BInoEK5seKvOImCVHxfFKH9AN8gkZPOgauFCC3KzbzG01ofVSMhDgo88qfV9p8LFPKzmw9MQuYIU7YOQWQ8iSxzWYKDg7QIR4c="
+              on:
+                  repo: ltalirz/aiida-zeopp
+                  tags: true

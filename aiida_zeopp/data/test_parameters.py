@@ -14,7 +14,6 @@ class TestNetworkParameters(PluginTestCase):
     def test_output_parsers(self):
         from aiida_zeopp.data.parameters import NetworkParameters
         from aiida_zeopp.parsers.plain import SurfaceAreaParser, PoreVolumeParser
-        #from aiida_zeopp.parsers.structure import CssrParser
 
         d = {
             'cssr': True,
@@ -25,3 +24,15 @@ class TestNetworkParameters(PluginTestCase):
 
         self.assertEqual(p.output_parsers,
                          [None, SurfaceAreaParser, PoreVolumeParser])
+
+    def test_validation(self):
+        """Test that validation raises an exception for wrong input."""
+        from aiida_zeopp.data.parameters import NetworkParameters
+        from voluptuous import MultipleInvalid
+
+        d = {
+            'cssr2': True,
+        }
+
+        with self.assertRaises(MultipleInvalid):
+            NetworkParameters(d)

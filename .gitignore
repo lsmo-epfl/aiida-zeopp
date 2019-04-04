@@ -11,3 +11,7 @@ build/
 dist/
 .idea/
 .cache/
+.vscode/
+test-results.xml
+.coverage
+.pytest_cache/

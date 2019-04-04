@@ -8,7 +8,7 @@
     "classifiers": [
         "Programming Language :: Python"
     ],
-    "version": "0.2.0",
+    "version": "1.0.0a1",
     "entry_points": {
         "aiida.calculations": [
             "zeopp.network = aiida_zeopp.calculations.network:NetworkCalculation"
@@ -31,7 +31,7 @@
     ],
     "reentry_register": true,
     "install_requires": [
-        "aiida >= 0.12.2",
+        "aiida-core >=1.0.0b1,<2.0.0",
         "pycifrw >= 4.2",
         "pymatgen <= 2018.12.12",
         "voluptuous",
@@ -39,17 +39,16 @@
     ],
     "extras_require": {
         "testing": [
-            "mock==2.0.0",
-            "pgtest==1.1.0",
-            "sqlalchemy-diff==0.1.3",
-            "wheel>=0.31",
+            "pgtest==1.2.0",
+            "pytest>=4.4,<5.0.0",
+            "pytest-cov>=2.6.1,<3.0.0",
             "coverage"
         ],
         "pre-commit": [
             "pre-commit==1.11.0",
-            "yapf==0.24.0",
-            "prospector==1.1.5",
-            "pylint==1.9.3"
+            "yapf==0.26.0",
+            "prospector==0.12.11",
+            "pylint==1.9.4"
         ]
     }
 }

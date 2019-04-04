@@ -55,9 +55,9 @@ class ChannelParserTestCase(unittest.TestCase):
         parser = parsers.ChannelParser
         channels = parser.parse(string)['Channels']
 
-        self.assertEquals(channels['Dimensionalities'][1], 3)
-        self.assertAlmostEquals(channels['Largest_included_spheres'][1],
-                                9.92222)
+        self.assertEqual(channels['Dimensionalities'][1], 3)
+        self.assertAlmostEqual(channels['Largest_included_spheres'][1],
+                               9.92222)
 
     def test_parse_IPO3_no_channel(self):
         """Test case with zero channels."""
@@ -70,7 +70,7 @@ class ChannelParserTestCase(unittest.TestCase):
         parser = parsers.ChannelParser
         channels = parser.parse(string)['Channels']
 
-        self.assertEquals(len(channels['Dimensionalities']), 0)
+        self.assertEqual(len(channels['Dimensionalities']), 0)
 
 
 class PoresSizeDistParserTestCase(unittest.TestCase):
@@ -98,7 +98,7 @@ class PoresSizeDistParserTestCase(unittest.TestCase):
         cumulatives = [1.0, 1.0, 1.0]
         derivatives = [0.0, 0.0, 0.0]
 
-        self.assertEquals(bins, histogram['psd']['bins'])
-        self.assertEquals(counts, histogram['psd']['counts'])
-        self.assertEquals(cumulatives, histogram['psd']['cumulatives'])
-        self.assertEquals(derivatives, histogram['psd']['derivatives'])
+        self.assertEqual(bins, histogram['psd']['bins'])
+        self.assertEqual(counts, histogram['psd']['counts'])
+        self.assertEqual(cumulatives, histogram['psd']['cumulatives'])
+        self.assertEqual(derivatives, histogram['psd']['derivatives'])

@@ -10,9 +10,7 @@ AiiDA plugin for [Zeo++](http://www.zeoplusplus.org/)
 ## Installation
 
 ```shell
-git clone https://github.com/ltalirz/aiida-zeopp aiida-zeopp
-cd aiida-zeopp
-pip install -e .  # also installs aiida, if missing (but not postgres)
+pip install aiida-zeopp
 reentry scan
 verdi quicksetup  # better to set up a new profile
 verdi calculation plugins  # should now show your calclulation plugins
@@ -29,7 +27,7 @@ verdi calculation plugins  # should now show your calclulation plugins
   ```python
   d = { 'sa': [1.82, 1.82, 1000], 'volpo': [1.82, 1.82, 1000], 'chan': 1.2 }
   NetworkParameters = DataFactory('zeopp.parameters')
-  calc.use_parameters(NetworkParameters(dict=d))
+  inputs['parameters'] = NetworkParameters(dict=d)
   ```
  * `NetworkParameters` validates the command line options using [voluptuous](https://github.com/alecthomas/voluptuous).
    Find out about supported options:
@@ -40,7 +38,7 @@ verdi calculation plugins  # should now show your calclulation plugins
  * Add alternative atomic radii file
   ```python
   SinglefileData = DataFactory('singlefile')
-  calc.use_atomic_radii(SinglefileData(file='/path/to/file'))
+  inputs['atomic_radii'] = SinglefileData(file='/path/to/file')
   ```
 
 ## Examples
@@ -50,8 +48,7 @@ See `examples` folder for complete examples of setting up a calculation or workf
 ```shell
 verdi daemon start         # make sure the daemon is running
 cd examples
-verdi run submit.py        # submit test calculation
-verdi calculation list -a  # check status of calculation
+verdi run submit.py        # runs test calculation
 ```
 
 ## Tests
@@ -61,13 +58,13 @@ verdi calculation list -a  # check status of calculation
 The following will discover and run all unit tests:
 ```shell
 pip install -e .[testing]
-python manage.py
+pytest
 ```
 
 ## Analyzing output
 
 ```shell
-$ verdi calculation show 88
+$ verdi process show 88
 -----------  ------------------------------------------------------------------------------
 type         NetworkCalculation
 pk           88
@@ -92,7 +89,7 @@ retrieved            90  FolderData
 structure_cssr       91  SinglefileData
 output_parameters    92  ParameterData
 
-$ verdi calculation res 88
+$ verdi calcjob res 88
 {
   "ASA_A^2": 3532.09,
   "ASA_m^2/cm^3": 1932.13,
@@ -141,7 +138,7 @@ $ verdi calculation res 88
   "Unitcell_volume": 18280.8
 }
 
-$ verdi calculation outputls 88
+$ verdi calcjob outputls 88
 _scheduler-stderr.txt
 _scheduler-stdout.txt
 out.chan
@@ -149,7 +146,7 @@ out.cssr
 out.sa
 out.volpo
 
-$ verdi calculation outputcat 88 -p out.sa
+$ verdi calcjob outputcat 88 -p out.sa
 @ out.sa Unitcell_volume: 18280.8   Density: 0.879097   ASA_A^2: 3532.09 ASA_m^2/cm^3: 1932.13 ASA_m^2/g: 2197.86 NASA_A^2: 0 NASA_m^2/cm^3: 0 NASA_m^2/g: 0
 Number_of_channels: 1 Channel_surface_area_A^2: 3532.09
 Number_of_pockets: 0 Pocket_surface_area_A^2:
