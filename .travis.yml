@@ -1,6 +1,7 @@
 language: python
 python:
 - "3.6"
+- "2.7"
 
 services:
   - postgresql
@@ -8,6 +9,25 @@ services:
 
 addons:
   postgresql: "10"
+
+env:
+  global:
+  - AIIDA_VERSION: develop
+  - AIIDA_DEVELOP_GIT_HASH: 0ca5d991d039dca2261df3d6ad8da2f03d591caa
+  # add network executable to PATH
+  #- PATH=${PATH}:${TRAVIS_BUILD_DIR}
+  # use 'network' script from .travis-data
+  - PATH=${PATH}:${TRAVIS_BUILD_DIR}/.travis-data
+  matrix:
+  - TEST_AIIDA_BACKEND: django
+    TEST_TYPE: tests
+  - TEST_AIIDA_BACKEND: sqlalchemy
+    TEST_TYPE: tests
+#  - TEST_AIIDA_BACKEND: django
+#    TEST_TYPE: docs
+    READTHEDOCS: 'True'
+  - TEST_AIIDA_BACKEND: django
+    TEST_TYPE: pre-commit
 
 before_install:
   # Upgrade pip setuptools and wheel
@@ -28,31 +48,6 @@ install:
 #- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
 #- echo -e '#!/bin/bash\nset -e\nsingularity exec ./ltalirz-singularity-recipe-zeopp-master-ansible.simg /usr/local/bin/network "$@"' > network; chmod +x network
 
-env:
-  global:
-  - PLUGIN_DIR: aiida-diff
-  - TEST_AIIDA_BACKEND: django
-  - AIIDA_VERSION: develop
-  - AIIDA_DEVELOP_GIT_HASH: e852d66fc51345fbdb8ebf98580a5646d79bc043
-  # add network executable to PATH
-  #- PATH=${PATH}:${TRAVIS_BUILD_DIR}
-  # use 'network' script from .travis-data
-  - PATH=${PATH}:${TRAVIS_BUILD_DIR}/.travis-data
-  matrix:
-  - TEST_AIIDA_BACKEND: django
-    TEST_TYPE: tests
-  - TEST_AIIDA_BACKEND: sqlalchemy
-    TEST_TYPE: tests
-#  - TEST_AIIDA_BACKEND: django
-#    TEST_TYPE: docs
-    READTHEDOCS: 'True'
-  - TEST_AIIDA_BACKEND: django
-    TEST_TYPE: pre-commit
-
-  # Remove this to enforce the AiiDA coding style
-  allow_failures:
-  - TEST_AIIDA_BACKEND: django
-    TEST_TYPE: pre-commit
 
 script:
   - if [ "$TEST_TYPE" == "tests" ] ; then py.test --cov aiida_zeopp --cov-append . ; fi  # runs unit tests
