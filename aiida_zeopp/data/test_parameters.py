@@ -7,9 +7,12 @@ class TestNetworkParameters(PluginTestCase):
         from aiida_zeopp.data.parameters import NetworkParameters
 
         d = {'cssr': True}
-        p = NetworkParameters(d)
-
-        self.assertEqual(p.cmdline_params(), ['-cssr', 'out.cssr'])
+        self.assertEqual(
+            NetworkParameters(d).cmdline_params(), ['-cssr', 'out.cssr'])
+        d = {'cssr': False}
+        self.assertEqual(NetworkParameters(d).cmdline_params(), [])
+        d = {}
+        self.assertEqual(NetworkParameters(d).cmdline_params(), [])
 
     def test_output_parsers(self):
         from aiida_zeopp.data.parameters import NetworkParameters

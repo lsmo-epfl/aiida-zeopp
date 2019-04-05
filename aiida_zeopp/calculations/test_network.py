@@ -51,18 +51,17 @@ def test_submit_MgO(clear_database, network_code, basic_options):  # pylint: dis
     from aiida.plugins import DataFactory
 
     # Prepare input parameters
-    parameters = DataFactory('zeopp.parameters')(
-        dict={
-            'cssr': True,
-            'res': True,
-            'sa': [1.82, 1.82, 5000],
-            'vsa': [1.82, 1.82, 5000],
-            'volpo': [1.82, 1.82, 5000],
-            'chan': 1.2,
-            'ha': False,
-            'strinfo': True,
-            # 'gridG': True,
-        })
+    parameters = DataFactory('zeopp.parameters')(dict={
+        'cssr': True,
+        'res': True,
+        'sa': [1.82, 1.82, 5000],
+        'vsa': [1.82, 1.82, 5000],
+        'volpo': [1.82, 1.82, 5000],
+        'chan': 1.2,
+        'ha': True,
+        'strinfo': True,
+        'gridG': True,
+    })
 
     structure = DataFactory('cif')(
         file=os.path.join(TEST_DIR, 'MgO.cif'), parse_policy='lazy')
