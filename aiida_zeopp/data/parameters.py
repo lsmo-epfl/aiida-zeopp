@@ -88,7 +88,9 @@ class NetworkParameters(Dict):
 
             parameter = ['-{}'.format(k)]
             if isinstance(v, bool):
-                pass
+                # if boolean is false, no parameter to add
+                if not v:
+                    continue
             elif isinstance(v, list):
                 parameter += v
             else:

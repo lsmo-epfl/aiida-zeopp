@@ -79,7 +79,7 @@ jobs:
         username: aiida-bot
         password:
           # See https://docs.travis-ci.com/user/encryption-keys/ for instructions
-          secure: "2CXKbNjVneb/Xmh9xjNA60GcmN4+tkLQR6PbS3eUz7WuSRKxpi406cTfaYHAv1TJKIDEPNDElLXktrHIBuZcj/V+4DgVQN3uS19NeXLDFMwuf1CKv46yQTO0iTGfo3FUPbCvvC4P3fp6geKSn6TUtUJaZmRbYIqgxJLC+qxewctR8Y/EyTW7SiKhJFfgTGfIQ1diDNfrCG7cPI2RnuTBo8oA3HW3BkyCJiMQ6Nyeodb7k2foLcdFOJuoSXKZiaoGCdaMyHyL32ZOp6IKU2t5RF+q7fT1trtlnWFhhDf766I/+AwH0h+/GZYGP5IZjARhqU290COIDhv4VI66D7EN82tBDKQFrm7PqxC+1no4FrjHQmF6hN31ATphdHqkygh0jg4W+AP8+WJUKwp3/mAnS4q1i7dUbiQtMKNl2+6dm0HSUCVsLHFLVdvKsfXYppNT7qNhWavOJdUfcC7veZHRiuOCYfFXqz1h2NuJ1OwnZ6GKyw0fpsw7Zpmtt4qJ+IIUGOsnreKB6NW311DcL3Gx4hWcLdIlXfP9QbVttztlsQnSVR0UAhA0UoCzzcZmdgZYRArHb7I75BInoEK5seKvOImCVHxfFKH9AN8gkZPOgauFCC3KzbzG01ofVSMhDgo88qfV9p8LFPKzmw9MQuYIU7YOQWQ8iSxzWYKDg7QIR4c="
+          secure: "SlXuoxLJscLdarij3Jnm3GCOfYBAFfknWPeeKMqh3MiA7Rc4pADN8RYbemp3lYZ1U/4PD64rHhmiIH8J5jY/UTjhW8P+9ONmyjVCtUdKZkx6fFNKyniQVnTbYGYnL8eyldKV9NYL2iKq0zMo8jfhOTXnejrN1i3U2zEYDGavz8VF5mZv+x/iKf+bhu8UO4GIQmcgJ3kObKuQXOtMNwuupdTEnRC2n/HGyOljoCnQ7eF9wmYABd+c9QmsKOKP29aajf7IqKKa8pO2XBd1ld9fw/l8IcLL53SSMc0kieket44nVxZIhQqbb3v8CSYfIFwspm5oM/AJ1BtYAA9tm+TfqnlxUhZajA6CpwJUPsygJ4mJ7jf02g3gClZd7gAEhhBxCDe2S0nF0x2nCJXJy2FQgPwOnIz0sgOeyncImW/BxBugfwItLY5nZdiNP00yga6mWxDnS9o6EPz54qrdZGQSaP1pbeWUatG3Xa4hBY7toIE86m4Ly1eH78OhqWiUrcxFTlQN4DUlU9pzq40DwzDd8MNd6tVCj9AYKGyUqCJihrHEjfsUBJ/X1t+jnnfxdQ7sL7MQK/xqF09/5lsW00dKOuQn/yosW69Bg8V8GKleVHwLAjSl0hQy0QJS9wGIT42OOvETpBWZGg1sg2mR3WQItFNFvT9vNvaZd/nIxwskcUs="
         on:
           repo: ltalirz/aiida-zeopp
           branch: master
