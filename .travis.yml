@@ -13,7 +13,7 @@ addons:
 env:
   global:
   - AIIDA_VERSION: develop
-  - AIIDA_DEVELOP_GIT_HASH: a2976007d3c3e5403597b389ad6cbe72aa522e3e
+  - AIIDA_DEVELOP_GIT_HASH: 409a90d7c8ac8f26792c0f0fbc1f8567f2feb89a
   # add network executable to PATH
   #- PATH=${PATH}:${TRAVIS_BUILD_DIR}
   # use 'network' script from .ci

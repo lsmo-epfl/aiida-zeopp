@@ -21,7 +21,7 @@ verdi calculation plugins  # should now show your calclulation plugins
  * Add input structure in CIF format
   ```python
   CifData = DataFactory('cif')
-  calc.use_structure(CifData(file='/path/to/file'))
+  inputs['structure'] = CifData(file='/path/to/file')
   ```
  * Specify command line options using a python dictionary and `NetworkParameters`
   ```python
