@@ -6,7 +6,8 @@
     "url": "https://github.com/ltalirz/aiida-zeopp",
     "license": "Creative Commons",
     "classifiers": [
-        "Programming Language :: Python"
+        "Programming Language :: Python",
+        "Framework :: AiiDA"
     ],
     "version": "1.0.0a1",
     "entry_points": {
