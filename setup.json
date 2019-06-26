@@ -9,7 +9,7 @@
         "Programming Language :: Python",
         "Framework :: AiiDA"
     ],
-    "version": "1.0.0a2",
+    "version": "1.0.0b1",
     "entry_points": {
         "aiida.calculations": [
             "zeopp.network = aiida_zeopp.calculations.network:NetworkCalculation"
@@ -32,7 +32,7 @@
     ],
     "reentry_register": true,
     "install_requires": [
-        "aiida-core >=1.0.0b1,<2.0.0",
+        "aiida-core >=1.0.0b3,<2.0.0",
         "pycifrw >= 4.2",
         "pymatgen <= 2018.12.12",
         "voluptuous",
