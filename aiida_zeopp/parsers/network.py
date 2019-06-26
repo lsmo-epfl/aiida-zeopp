@@ -59,40 +59,37 @@ class NetworkParser(Parser):
         for fname, parser, link in list(
                 zip(output_files, output_parsers, output_links)):
 
-            # hack - to be removed
-            handle = output_folder.open(fname)
+            with self.retrieved.open(fname, 'rb') as handle:
+                if parser is None:
 
-            if parser is None:
+                    # just add file, if no parser implemented
+                    parsed = SinglefileData(file=handle)
+                    self.out(link, parsed)
 
-                # just add file, if no parser implemented
-                parsed = SinglefileData(file=handle)
-                self.out(link, parsed)
+                    # workaround: if block pocket file is empty, raise an error
+                    # (it indicates the calculation did not finish)
+                    if link == 'block':
+                        content = handle.read()
 
-                # workaround: if block pocket file is empty, raise an error
-                # (it indicates the calculation did not finish)
-                if link == 'block':
-                    content = handle.read()
+                        if not content.strip():
+                            self.logger.error(
+                                "Empty block file. This indicates the calculation of blocked pockets did not finish."
+                            )
+                            empty_block = True
 
-                    if not content.strip():
+                else:
+                    # else parse and add keys to output_parameters
+                    try:
+                        # Note: We join it to the output_params
+                        #parsed = parser.parse_aiida(f.read())
+                        parsed_dict = parser.parse(
+                            handle.read().decode('utf8'))
+                    except ValueError:
                         self.logger.error(
-                            "Empty block file. This indicates the calculation of blocked pockets did not finish."
-                        )
-                        empty_block = True
+                            "Error parsing file {} with parser {}".format(
+                                fname, parser))
 
-            else:
-                # else parse and add keys to output_parameters
-                try:
-                    # Note: We join it to the output_params
-                    #parsed = parser.parse_aiida(f.read())
-                    parsed_dict = parser.parse(handle.read())
-                except ValueError:
-                    self.logger.error(
-                        "Error parsing file {} with parser {}".format(
-                            fname, parser))
-
-                output_parameters.update_dict(parsed_dict)
-
-            handle.close()
+                    output_parameters.update_dict(parsed_dict)
 
         # add name of input structures as parameter
         output_parameters.set_attribute('Input_structure_filename',

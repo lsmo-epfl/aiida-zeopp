@@ -38,8 +38,8 @@ def get_path_to_executable(executable):
     return os.path.abspath(path)
 
 
-def get_computer(name='localhost'):
-    """Setup localhost computer"""
+def get_computer(name):
+    """Set up localhost computer"""
     from aiida.orm import Computer
     from aiida.common import NotExistent
 
@@ -51,7 +51,7 @@ def get_computer(name='localhost'):
         computer = Computer(
             name=name,
             description='localhost computer set up by aiida_zeopp tests',
-            hostname='localhost',
+            hostname=name,
             workdir=tempfile.mkdtemp(),
             transport_type='local',
             scheduler_type='direct',
@@ -62,8 +62,8 @@ def get_computer(name='localhost'):
     return computer
 
 
-def get_code(entry_point, computer_name='localhost'):
-    """Setup code on localhost computer"""
+def get_code(entry_point, computer_name='localhost-test'):
+    """Set up code on provided computer"""
     from aiida.orm import Code
     from aiida.common import NotExistent
 

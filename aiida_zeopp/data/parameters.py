@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from voluptuous import Schema, ExactSequence
+from voluptuous import Schema, ExactSequence, Any
 from aiida.orm import Dict
 import six
 from six.moves import map
@@ -35,10 +35,36 @@ output_options = {
 #    'gridBOV': (bool, ['{}_f.bov', '{}_f.distances'], 'grid_bov'),
 #}
 
+ha_options = [
+    "OCC",
+    "FCC",
+    "ACC",
+    "AQC",
+    "DDH",
+    "TIH",
+    "ICH",
+    "ICC",
+    "RIH",
+    "S4",
+    "S10",
+    "S20",
+    "S30",
+    "S40",
+    "S50",
+    "S100",
+    "S500",
+    "S1000",
+    "S10000",
+    "DEF",
+    "HI",
+    "MED",
+    "LOW",
+]
+
 # These options modify the output of other options
 # key : [ accepted values, label ]
 modifier_options = {
-    'ha': (bool, 'high_accuracy'),
+    'ha': (Any(*ha_options), 'high_accuracy'),
     'stripatomnames': (bool, 'strip_atom_names'),
     'nor': (bool, 'no_radial'),
 }

@@ -18,10 +18,8 @@ def get_backend_str():
     Defaults to django backend.
     """
     from aiida.backends.profile import BACKEND_DJANGO, BACKEND_SQLA
-    backend_env = os.environ.get('TEST_AIIDA_BACKEND')
-    if not backend_env:
-        return BACKEND_DJANGO
-    elif backend_env in (BACKEND_DJANGO, BACKEND_SQLA):
+    backend_env = os.environ.get('TEST_AIIDA_BACKEND', BACKEND_DJANGO)
+    if backend_env in (BACKEND_DJANGO, BACKEND_SQLA):
         return backend_env
 
     raise ValueError(
@@ -59,10 +57,6 @@ def network_code(aiida_profile):  # pylint: disable=unused-argument
 @pytest.fixture(scope='function')
 def basic_options():
     options = {
-        "resources": {
-            "num_machines": 1,
-            "num_mpiprocs_per_machine": 1,
-        },
         "max_wallclock_seconds": 120,
     }
     return options

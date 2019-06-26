@@ -15,16 +15,22 @@ class NetworkCalculation(CalcJob):
     """
     AiiDA calculation plugin for the zeo++ network binary
     """
-    _DEFAULT_PARSER = 'zeopp.network'
 
     @classmethod
     def define(cls, spec):
         super(NetworkCalculation, cls).define(spec)
 
         spec.input(
+            'metadata.options.resources',
+            valid_type=dict,
+            default={
+                'num_machines': 1,
+                'num_mpiprocs_per_machine': 1
+            })
+        spec.input(
             'metadata.options.parser_name',
             valid_type=six.string_types,
-            default=cls._DEFAULT_PARSER)
+            default='zeopp.network')
         spec.input(
             'parameters',
             valid_type=NetworkParameters,
