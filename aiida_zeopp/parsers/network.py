@@ -62,7 +62,6 @@ class NetworkParser(Parser):
             with self.retrieved.open(fname, 'rb') as handle:
                 if parser is None:
                     if link == 'block':
-                        content = handle.read()
                         if not parsed.content().strip():
                             self.logger.error(
                                 "Empty block file. This indicates the calculation of blocked pockets did not finish."
