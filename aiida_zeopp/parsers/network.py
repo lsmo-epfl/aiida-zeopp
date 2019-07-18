@@ -69,7 +69,7 @@ class NetworkParser(Parser):
                     # workaround: if block pocket file is empty, raise an error
                     # (it indicates the calculation did not finish)
                     if link == 'block':
-                        if not parsed.content().strip():
+                        if not parsed.get_content().strip():
                             self.logger.error(
                                 "Empty block file. This indicates the calculation of blocked pockets did not finish."
                             )
