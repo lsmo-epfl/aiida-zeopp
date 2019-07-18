@@ -61,22 +61,22 @@ class NetworkParser(Parser):
 
             with self.retrieved.open(fname, 'rb') as handle:
                 if parser is None:
-
+                    
                     # just add file, if no parser implemented
                     parsed = SinglefileData(file=handle)
                     self.out(link, parsed)
-
+                    
                     # workaround: if block pocket file is empty, raise an error
                     # (it indicates the calculation did not finish)
                     if link == 'block':
-                        content = handle.read()
-
-                        if not content.strip():
+                        if not parsed.get_content().strip():
                             self.logger.error(
                                 "Empty block file. This indicates the calculation of blocked pockets did not finish."
                             )
                             empty_block = True
 
+
+                            
                 else:
                     # else parse and add keys to output_parameters
                     try:
