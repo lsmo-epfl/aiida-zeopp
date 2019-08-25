@@ -3,7 +3,7 @@ from voluptuous import Schema, ExactSequence, Any
 from aiida.orm import Dict
 import six
 from six.moves import map
-
+import re
 # These options allow specifying the name of the output file
 # key : [ accepted values, label ]
 output_options = {
@@ -14,6 +14,7 @@ output_options = {
     'res': (bool, 'free_sphere_res'),
     'zvis': (bool, 'network_zvis'),
     'axs': (float, 'nodes_axs'),
+    'visVoro': (float, 'all_nodes_visvoro','acc_nodes_visvoro','nonacc_nodes_visvoro'),
     'sa': (ExactSequence([float, float, int]), 'surface_area_sa'),
     'vsa': (ExactSequence([float, float, int]), 'surface_sample_vsa'),
     'vol': (ExactSequence([float, float, int]), 'volume_vol'),
@@ -100,7 +101,7 @@ class NetworkParameters(Dict):
 
     def cmdline_params(self, structure_file_name=None, radii_file_name=None):
         """Synthesize command line parameters
-        
+
         e.g. [ '-axs', '0.4', 'out.axs', 'structure.cif']
         """
         parameters = []
@@ -123,7 +124,7 @@ class NetworkParameters(Dict):
                 parameter += [v]
 
             # add output file name
-            if k in output_keys:
+            if (k in output_keys) and (k != 'visVoro'):
                 parameter += [self._OUTPUT_FILE_PREFIX.format(k)]
 
             parameters += parameter
@@ -140,15 +141,23 @@ class NetworkParameters(Dict):
         Keys are the selected options that require an output file name,
         values are the file names.
         """
-        return {
-            k: self._OUTPUT_FILE_PREFIX.format(k)
-            for k in self.get_dict() if k in list(output_options.keys())
-        }
+        d = {}
+        for k in self.get_dict():
+            if k in list(output_options.keys()):
+                if k != 'visVoro':
+                    d.update({k: self._OUTPUT_FILE_PREFIX.format(k)})
+                elif k == 'visVoro':
+                    d.update({
+                        'visVoro_allnodes' : 'HKUST-1' + '_voro.xyz',
+                        'visVoro_accnodes' : 'HKUST-1' + '_voro_accessible.xyz',
+                        'visVoro_nonaccnodes' : 'HKUST-1' + '_voro_nonaccessible.xyz',
+                    })
+        return d
 
     @property
     def output_keys(self):
         """Return subset of specified options requiring an output file name.
-        
+
         Out of the selected options, return those that you need to specify an
         output file name for.
         """
@@ -203,6 +212,13 @@ class NetworkParameters(Dict):
         """Return list of output link names"""
         output_links = []
         for k in self.output_keys:
-            output_links += [output_options[k][1]]
+            if not k.startswith('visVoro'):
+                output_links += [output_options[k][1]]
+            elif k == 'visVoro_allnodes':
+                output_links += [output_options['visVoro'][1]]
+            elif k == 'visVoro_accnodes':
+                output_links += [output_options['visVoro'][2]]
+            elif k == 'visVoro_nonaccnodes':
+                output_links += [output_options['visVoro'][3]]
 
         return output_links
