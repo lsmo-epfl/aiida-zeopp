@@ -126,6 +126,8 @@ class NetworkParameters(Dict):
             # add output file name
             if (k in output_keys) and (k != 'visVoro'):
                 parameter += [self._OUTPUT_FILE_PREFIX.format(k)]
+            elif k.startswith('visVoro'):
+                parameter += [self._OUTPUT_FILE_PREFIX.format('visVoro')]
 
             parameters += parameter
 
@@ -148,9 +150,9 @@ class NetworkParameters(Dict):
                     d.update({k: self._OUTPUT_FILE_PREFIX.format(k)})
                 elif k == 'visVoro':
                     d.update({
-                        'visVoro_allnodes' : 'HKUST-1' + '_voro.xyz',
-                        'visVoro_accnodes' : 'HKUST-1' + '_voro_accessible.xyz',
-                        'visVoro_nonaccnodes' : 'HKUST-1' + '_voro_nonaccessible.xyz',
+                        'visVoro_allnodes' : self._OUTPUT_FILE_PREFIX.format(k) + '_voro.xyz',
+                        'visVoro_accnodes' : self._OUTPUT_FILE_PREFIX.format(k) + '_voro_accessible.xyz',
+                        'visVoro_nonaccnodes' : self._OUTPUT_FILE_PREFIX.format(k) + '_voro_nonaccessible.xyz',
                     })
         return d
 
