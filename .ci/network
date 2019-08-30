@@ -1,5 +1,6 @@
 #!/bin/bash
 # piping through to singularity
 set -e
-SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
-singularity exec "${SCRIPT_PATH}/../ltalirz-singularity-recipe-zeopp-master-ansible.simg" /usr/local/bin/network "$@"
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+singularity exec "${SCRIPT_PATH}/../singularity-files/zeopp.simg" /usr/local/bin/network "$@"
+

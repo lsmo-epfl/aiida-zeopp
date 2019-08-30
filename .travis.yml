@@ -1,7 +1,13 @@
 language: python
+dist: bionic
 python:
 - "3.6"
 - "2.7"
+
+# caching for singularity hub: you are allowed only 10 pulls per day!
+cache:
+  directories:
+  - singularity-images
 
 services:
   - postgresql
@@ -35,7 +41,13 @@ before_install:
   - sudo apt-key add .travis.singularity_key.txt
   - sudo apt-get update
   - sudo apt-get install -y singularity-container
-  - singularity pull shub://ltalirz/singularity-recipe-zeopp:ansible
+  # caching for singularity hub: you are allowed only 10 pulls per day!
+  - >
+    if [ -f "./singularity-images/zeopp.simg" ]; then 
+      mkdir singularity-images
+      singularity pull shub://ltalirz/singularity-recipe-zeopp:ansible
+      mv ltalirz-singularity-recipe-zeopp-master-ansible.simg singularity-images/zeopp.simg
+    fi
 
 install:
 - if [ "$AIIDA_VERSION" == "develop" ]; then .ci/install_aiida_github.sh ; fi  # installs develop branch
