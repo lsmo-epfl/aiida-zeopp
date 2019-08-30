@@ -29,7 +29,8 @@ env:
 before_install:
   # Upgrade pip setuptools and wheel
   - pip install -U wheel setuptools coveralls
-  - pip install pip==18.1
+  # numpy 17 requires python3
+  - pip install numpy==1.16.4
   # install singularity
   - wget -O- http://neuro.debian.net/lists/trusty.us-nh.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list
   - sudo apt-key add .travis.singularity_key.txt
