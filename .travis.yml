@@ -18,8 +18,6 @@ addons:
 
 env:
   global:
-  - AIIDA_VERSION: develop
-  - AIIDA_DEVELOP_GIT_HASH: 409a90d7c8ac8f26792c0f0fbc1f8567f2feb89a
   # add network executable to PATH
   #- PATH=${PATH}:${TRAVIS_BUILD_DIR}
   # use 'network' script from .ci
@@ -50,10 +48,8 @@ before_install:
     fi
 
 install:
-- if [ "$AIIDA_VERSION" == "develop" ]; then .ci/install_aiida_github.sh ; fi  # installs develop branch
 - pip install -e .[testing,pre-commit]
 - reentry scan -r aiida
-- verdi status
 # add fake network executable
 #- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
 #- echo -e '#!/bin/bash\nset -e\nsingularity exec ./ltalirz-singularity-recipe-zeopp-master-ansible.simg /usr/local/bin/network "$@"' > network; chmod +x network
