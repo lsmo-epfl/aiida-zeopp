@@ -35,6 +35,7 @@
         "aiida-core >=1.0.0b3,<2.0.0",
         "pycifrw >= 4.2",
         "pymatgen <= 2018.12.12",
+        "numpy < 1.17",
         "voluptuous",
         "six"
     ],
