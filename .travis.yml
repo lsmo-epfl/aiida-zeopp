@@ -1,5 +1,6 @@
 language: python
 dist: trusty
+sudo: required
 python:
 - "3.6"
 - "2.7"
@@ -42,18 +43,16 @@ before_install:
   - sudo apt-get install -y singularity-container
   # caching for singularity hub: you are allowed only 10 pulls per day!
   - >
-    if [ -f "./singularity-images/zeopp.simg" ]; then 
-      mkdir singularity-images
+    if [ ! -f "./singularity-images/zeopp.simg" ]; then 
+      mkdir -p singularity-images
       singularity pull shub://ltalirz/singularity-recipe-zeopp:ansible
       mv ltalirz-singularity-recipe-zeopp-master-ansible.simg singularity-images/zeopp.simg
     fi
 
 install:
+- network
 - pip install -e .[testing,pre-commit]
 - reentry scan -r aiida
-# add fake network executable
-#- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
-#- echo -e '#!/bin/bash\nset -e\nsingularity exec ./ltalirz-singularity-recipe-zeopp-master-ansible.simg /usr/local/bin/network "$@"' > network; chmod +x network
 
 
 script:
