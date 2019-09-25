@@ -148,11 +148,11 @@ class NetworkParameters(Dict):
             if k in list(output_options.keys()):
                 v = output_options[k][1]
                 if len(v) > 1:
-                    for i in enumerate(v):
+                    for index, item in enumerate(v):
                         output_dict.update({
-                            k + str(i + 1):
+                            k + str(index + 1):
                             self._OUTPUT_FILE_PREFIX.format(k + "." +
-                                                            str(v[i]))
+                                                            str(item))
                         })
                 else:
                     output_dict.update({k: self._OUTPUT_FILE_PREFIX.format(k)})
