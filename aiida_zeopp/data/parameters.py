@@ -3,30 +3,30 @@ from voluptuous import Schema, ExactSequence, Any
 from aiida.orm import Dict
 import six
 from six.moves import map
-import re
+
 # These options allow specifying the name of the output file
 # key : [ accepted values, label ]
 output_options = {
-    'cssr': (bool, 'structure_cssr'),
-    'v1': (bool, 'structure_v1'),
-    'xyz': (bool, 'structure_xyz'),
-    'nt2': (bool, 'network_nt2'),
-    'res': (bool, 'free_sphere_res'),
-    'zvis': (bool, 'network_zvis'),
-    'axs': (float, 'nodes_axs'),
-    'visVoro': (float, 'all_nodes_visvoro','acc_nodes_visvoro','nonacc_nodes_visvoro'),
-    'sa': (ExactSequence([float, float, int]), 'surface_area_sa'),
-    'vsa': (ExactSequence([float, float, int]), 'surface_sample_vsa'),
-    'vol': (ExactSequence([float, float, int]), 'volume_vol'),
-    'volpo': (ExactSequence([float, float, int]), 'pore_volume_volpo'),
-    'ray_atom': (ExactSequence([float, float, int]), 'ray_atom'),
-    'block': (ExactSequence([float, int]), 'block'),
-    'psd': (ExactSequence([float, float, int]), 'psd'),
-    'chan': (float, 'channels_chan'),
-    'gridG': (bool, 'grid_gaussian'),
-    'gridGBohr': (bool, 'grid_gaussian_bohr'),
-    'strinfo': (bool, 'str_info'),
-    'oms': (bool, 'open_metal_sites'),
+    'cssr': (bool, ['structure_cssr']),
+    'v1': (bool, ['structure_v1']),
+    'xyz': (bool, ['structure_xyz']),
+    'nt2': (bool, ['network_nt2']),
+    'res': (bool, ['free_sphere_res']),
+    'zvis': (bool, ['network_zvis']),
+    'axs': (float, ['nodes_axs']),
+    'visVoro': (float, ['voro', 'voro_accessible', 'voro_nonaccessible']),
+    'sa': (ExactSequence([float, float, int]), ['surface_area_sa']),
+    'vsa': (ExactSequence([float, float, int]), ['surface_sample_vsa']),
+    'vol': (ExactSequence([float, float, int]), ['volume_vol']),
+    'volpo': (ExactSequence([float, float, int]), ['pore_volume_volpo']),
+    'ray_atom': (ExactSequence([float, float, int]), ['ray_atom']),
+    'block': (ExactSequence([float, int]), ['block']),
+    'psd': (ExactSequence([float, float, int]), ['psd']),
+    'chan': (float, ['channels_chan']),
+    'gridG': (bool, ['grid_gaussian']),
+    'gridGBohr': (bool, ['grid_gaussian_bohr']),
+    'strinfo': (bool, ['str_info']),
+    'oms': (bool, ['open_metal_sites']),
 }
 
 # Currently NOT implemented
@@ -110,7 +110,8 @@ class NetworkParameters(Dict):
             parameters += ['-r', radii_file_name]
 
         pm_dict = self.get_dict()
-        output_keys = self.output_keys
+        prefix_list = self.prefix_list
+
         for k, v in six.iteritems(pm_dict):
 
             parameter = ['-{}'.format(k)]
@@ -124,10 +125,8 @@ class NetworkParameters(Dict):
                 parameter += [v]
 
             # add output file name
-            if (k in output_keys) and (k != 'visVoro'):
+            if k in prefix_list:
                 parameter += [self._OUTPUT_FILE_PREFIX.format(k)]
-            elif k.startswith('visVoro'):
-                parameter += [self._OUTPUT_FILE_PREFIX.format('visVoro')]
 
             parameters += parameter
 
@@ -143,18 +142,21 @@ class NetworkParameters(Dict):
         Keys are the selected options that require an output file name,
         values are the file names.
         """
-        d = {}
+        output_dict = {}
+
         for k in self.get_dict():
             if k in list(output_options.keys()):
-                if k != 'visVoro':
-                    d.update({k: self._OUTPUT_FILE_PREFIX.format(k)})
-                elif k == 'visVoro':
-                    d.update({
-                        'visVoro_allnodes' : self._OUTPUT_FILE_PREFIX.format(k) + '_voro.xyz',
-                        'visVoro_accnodes' : self._OUTPUT_FILE_PREFIX.format(k) + '_voro_accessible.xyz',
-                        'visVoro_nonaccnodes' : self._OUTPUT_FILE_PREFIX.format(k) + '_voro_nonaccessible.xyz',
-                    })
-        return d
+                v = output_options[k][1]
+                if len(v) > 1:
+                    for i in enumerate(v):
+                        output_dict.update({
+                            k + str(i + 1):
+                            self._OUTPUT_FILE_PREFIX.format(k + "." +
+                                                            str(v[i]))
+                        })
+                else:
+                    output_dict.update({k: self._OUTPUT_FILE_PREFIX.format(k)})
+        return output_dict
 
     @property
     def output_keys(self):
@@ -169,6 +171,16 @@ class NetworkParameters(Dict):
     def output_files(self):
         """Return list of output files to be retrieved"""
         return list(self.output_dict.values())
+
+    @property
+    def prefix_list(self):
+        """Return list of unique values to be used for command line and links"""
+        prefix_list = []
+        for key in self.output_keys:
+            nodigit = ''.join([i for i in key if not i.isdigit()])
+            prefix_list.append(nodigit)
+            prefix_list = list(dict.fromkeys(prefix_list))
+        return prefix_list
 
     @property
     def output_parsers(self):
@@ -213,14 +225,6 @@ class NetworkParameters(Dict):
     def output_links(self):
         """Return list of output link names"""
         output_links = []
-        for k in self.output_keys:
-            if not k.startswith('visVoro'):
-                output_links += [output_options[k][1]]
-            elif k == 'visVoro_allnodes':
-                output_links += [output_options['visVoro'][1]]
-            elif k == 'visVoro_accnodes':
-                output_links += [output_options['visVoro'][2]]
-            elif k == 'visVoro_nonaccnodes':
-                output_links += [output_options['visVoro'][3]]
-
+        for k in self.prefix_list:
+            output_links += output_options[k][1]
         return output_links
