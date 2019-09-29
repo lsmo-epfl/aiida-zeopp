@@ -36,13 +36,14 @@ before_install:
   - pip install -U wheel setuptools coveralls
   - pip install pip==18.1
   - pip install numpy==1.16.4  # needed for pymatgen
-  # build zeopp
+  # build zeopp (and cache results)
   - >
     if [ ! -f "./zeoplusplus/network" ]; then
       git clone https://github.com/ltalirz/zeoplusplus zeoplusplus
       cd zeoplusplus
       cd voro++/src; make; cd -
       make
+      cd ..
     fi
 
 install:
