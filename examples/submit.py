@@ -7,50 +7,68 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import os
-from aiida_zeopp import tests
+import click
+
 from aiida.plugins import DataFactory, CalculationFactory
 from aiida.engine import run_get_node
 
 NetworkCalculation = CalculationFactory('zeopp.network')
-code = tests.get_code(entry_point='zeopp.network')
-# To load a pre-configured code, use:
-# from aiida.orm import Code
-# code = Code.objects.get(label='network@computer')
 
-# Prepare input parameters
-NetworkParameters = DataFactory('zeopp.parameters')
-# For allowed keys, print(NetworkParameters.schema)
-d = {
-    'cssr': True,
-    'sa': [1.82, 1.82, 1000],
-    'volpo': [1.82, 1.82, 1000],
-    'chan': 1.2,
-    #'ha': 'LOW',
-}
-parameters = NetworkParameters(dict=d)
+@click.command('cli')
+@click.argument('network_code_string')
+def main(network_code_string):
+    """Example usage:
+    $ verdi run submit.py network@localhost
+    Alternative use (creates network@localhost-test code):
+    $ verdi run submit.py createcode
+    """
+    if network_code_string=='createcode':
+        from aiida_zeopp import tests
+        code = tests.get_code(entry_point='zeopp.network')
+    else:
+        from aiida.orm import Code
+        code = Code.get_from_string(network_code_string)
 
-CifData = DataFactory('cif')
-this_dir = os.path.dirname(os.path.realpath(__file__))
-structure = CifData(file=os.path.join(this_dir, 'HKUST-1.cif'))
+    # Prepare input parameters
+    NetworkParameters = DataFactory('zeopp.parameters')
+    # For allowed keys, print(NetworkParameters.schema)
+    parameters = NetworkParameters(dict={
+        'ha': 'LOW',                #just for speed up the test: use 'DEF' for any other case!
+        'cssr': True,               #converting to cssr
+        'sa': [1.86, 1.86, 1000],   #computing surface area
+        'vol': [0.0, 0.0, 1000],  #computing gemetric pore volume
+    })
 
-# set up calculation
-inputs = {
-    'code': code,
-    'parameters': parameters,
-    'structure': structure,
-    'metadata': {
-        'options': {
-            "max_wallclock_seconds": 1 * 60,
+    CifData = DataFactory('cif')
+    this_dir = os.path.dirname(os.path.realpath(__file__))
+    structure = CifData(file=os.path.join(this_dir, 'HKUST-1.cif'))
+
+    # set up calculation
+    inputs = {
+        'code': code,
+        'parameters': parameters,
+        'structure': structure,
+        'metadata': {
+            'options': {
+                "max_wallclock_seconds": 1 * 60,
+            },
+            'label':
+            "aiida_zeopp example calculation",
+            'description':
+            "Converts .cif to .cssr format, computes surface area, and pore volume",
         },
-        'label':
-        "aiida_zeopp example calculation",
-        'description':
-        "Converts .cif to .cssr format, computes surface area, pore volume and channels",
-    },
-}
+    }
 
-# or use aiida.engine.submit
-result, node = run_get_node(NetworkCalculation, **inputs)
+    # or use aiida.engine.submit
+    print("Running NetworkCalculation: wait...")
+    result, node = run_get_node(NetworkCalculation, **inputs)
 
-print("Computed density: {:.3f}".format(
-    node.outputs.output_parameters.get_attribute('Density')))
+    print("Nitrogen accessible surface area (m^2/g): {:.3f}".format(
+        node.outputs.output_parameters.get_attribute('ASA_m^2/g')))
+    print("Geometric pore volume (cm^3/g): {:.3f}".format(
+        node.outputs.output_parameters.get_attribute('AV_cm^3/g')))
+    print("CSSR structure: SinglefileData<{}>".format(
+        node.outputs.structure_cssr.pk))
+
+if __name__ == '__main__':
+    main()  # pylint: disable=no-value-for-parameter
