@@ -1,7 +1,14 @@
 language: python
+dist: trusty
+sudo: required
 python:
 - "3.6"
 - "2.7"
+
+# caching for singularity hub: you are allowed only 10 pulls per day!
+cache:
+  directories:
+  - singularity-images
 
 services:
   - postgresql
@@ -12,8 +19,6 @@ addons:
 
 env:
   global:
-  - AIIDA_VERSION: develop
-  - AIIDA_DEVELOP_GIT_HASH: 409a90d7c8ac8f26792c0f0fbc1f8567f2feb89a
   # add network executable to PATH
   #- PATH=${PATH}:${TRAVIS_BUILD_DIR}
   # use 'network' script from .ci
@@ -30,20 +35,24 @@ before_install:
   # Upgrade pip setuptools and wheel
   - pip install -U wheel setuptools coveralls
   - pip install pip==18.1
+  - pip install numpy==1.16.4  # needed for pymatgen
   # install singularity
   - wget -O- http://neuro.debian.net/lists/trusty.us-nh.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list
   - sudo apt-key add .travis.singularity_key.txt
   - sudo apt-get update
   - sudo apt-get install -y singularity-container
-  - singularity pull shub://ltalirz/singularity-recipe-zeopp:ansible
+  # caching for singularity hub: you are allowed only 10 pulls per day!
+  - >
+    if [ ! -f "./singularity-images/zeopp.simg" ]; then 
+      mkdir -p singularity-images
+      singularity pull shub://ltalirz/singularity-recipe-zeopp:ansible
+      mv ltalirz-singularity-recipe-zeopp-master-ansible.simg singularity-images/zeopp.simg
+    fi
 
 install:
-- if [ "$AIIDA_VERSION" == "develop" ]; then .ci/install_aiida_github.sh ; fi  # installs develop branch
+- network
 - pip install -e .[testing,pre-commit]
 - reentry scan -r aiida
-# add fake network executable
-#- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
-#- echo -e '#!/bin/bash\nset -e\nsingularity exec ./ltalirz-singularity-recipe-zeopp-master-ansible.simg /usr/local/bin/network "$@"' > network; chmod +x network
 
 
 script:
