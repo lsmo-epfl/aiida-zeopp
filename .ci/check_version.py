@@ -9,28 +9,28 @@ import os
 import json
 import sys
 
-this_path = os.path.split(os.path.realpath(__file__))[0]
+THIS_PATH = os.path.split(os.path.realpath(__file__))[0]
 
 # Get content of setup.json
-setup_fname = 'setup.json'
-setup_path = os.path.join(this_path, os.pardir, setup_fname)
-with open(setup_path) as f:
-    setup_content = json.load(f)
+SETUP_FNAME = 'setup.json'
+SETUP_PATH = os.path.join(THIS_PATH, os.pardir, SETUP_FNAME)
+with open(SETUP_PATH) as f:
+    SETUP_CONTENT = json.load(f)
 
 # Get version from python package
-sys.path.insert(0, os.path.join(this_path, os.pardir))
+sys.path.insert(0, os.path.join(THIS_PATH, os.pardir))
 import aiida_zeopp  # pylint: disable=wrong-import-position
-version = aiida_zeopp.__version__
+VERSION = aiida_zeopp.__version__
 
-if version != setup_content['version']:
-    print("Version number mismatch detected:")
-    print("Version number in '{}': {}".format(setup_fname,
-                                              setup_content['version']))
-    print("Version number in '{}/__init__.py': {}".format(
-        'aiida_zeopp', version))
+if VERSION != SETUP_CONTENT['version']:
+    print('version number mismatch detected:')
+    print("version number in '{}': {}".format(SETUP_FNAME,
+                                              SETUP_CONTENT['version']))
+    print("version number in '{}/__init__.py': {}".format(
+        'aiida_zeopp', VERSION))
     sys.exit(1)
 
 # Overwrite version in setup.json
-#setup_content['version'] = version
-#with open(setup_path, 'w') as f:
-#	json.dump(setup_content, f, indent=4, sort_keys=True)
+#SETUP_CONTENT['version'] = VERSION
+#with open(SETUP_PATH, 'w') as f:
+#	json.dump(SETUP_CONTENT, f, indent=4, sort_keys=True)

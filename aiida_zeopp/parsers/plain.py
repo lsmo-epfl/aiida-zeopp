@@ -1,3 +1,4 @@
+"""AiiDA parsers for output of network executable."""
 # pylint: disable=useless-super-delegation
 from __future__ import absolute_import
 from __future__ import print_function
@@ -8,6 +9,10 @@ from six.moves import range
 
 
 class KeywordParser(object):
+    """Generic keyword-value parser class.
+
+    Reused by more specific parsers.
+    """
 
     keywords = {
         'keyword1': float,
@@ -26,7 +31,7 @@ class KeywordParser(object):
         ----------
         string: string
           string with keywords
-        
+
         return
         ------
         results: dict
@@ -34,15 +39,15 @@ class KeywordParser(object):
         """
         results = {}
 
-        regex = r"{}: ([\d\.]*)"
+        regex = r'{}: ([\d\.]*)'
         for keyword, ktype in six.iteritems(cls.keywords):
             regex_rep = regex.format(re.escape(keyword))
             match = re.search(regex_rep, string)
             if match is None:
-                raise ValueError("Keyword {} not specified".format(keyword))
+                raise ValueError('Keyword {} not specified'.format(keyword))
 
             value = match.group(1)
-            if value == "":
+            if value == '':
                 value = 0
                 # uncomment this when #1 is fixed
                 #raise ValueError(
@@ -54,11 +59,13 @@ class KeywordParser(object):
 
     @classmethod
     def parse_aiida(cls, string):
+        """Parses string and returns AiiDA Dict."""
         from aiida.orm import Dict
         return Dict(dict=cls.parse(string))
 
 
 class PoreVolumeParser(KeywordParser):
+    """Parse PoreVolume output of network executable."""
 
     keywords = {
         'Unitcell_volume': float,
@@ -77,15 +84,15 @@ class PoreVolumeParser(KeywordParser):
 
         Example volpo string:
 
-        @ EDI.volpo Unitcell_volume: 307.484   Density: 1.62239 
-        POAV_A^3: 131.284 POAV_Volume_fraction: 0.42696 POAV_cm^3/g: 0.263168 
+        @ EDI.volpo Unitcell_volume: 307.484   Density: 1.62239
+        POAV_A^3: 131.284 POAV_Volume_fraction: 0.42696 POAV_cm^3/g: 0.263168
         PONAV_A^3: 0 PONAV_Volume_fraction: 0 PONAV_cm^3/g: 0
 
         parameters
         ----------
         string: string
           string in volpo format
-        
+
         return
         ------
         results: dict
@@ -95,6 +102,7 @@ class PoreVolumeParser(KeywordParser):
 
 
 class AVolumeParser(KeywordParser):
+    """Parse AVolume output of network executable."""
 
     keywords = {
         'Unitcell_volume': float,
@@ -121,7 +129,7 @@ class AVolumeParser(KeywordParser):
         ----------
         string: string
           string in volpo format
-        
+
         return
         ------
         results: dict
@@ -131,6 +139,7 @@ class AVolumeParser(KeywordParser):
 
 
 class SurfaceAreaParser(KeywordParser):
+    """Parse surface area output of network executable."""
 
     keywords = {
         'Unitcell_volume': float,
@@ -163,7 +172,7 @@ class SurfaceAreaParser(KeywordParser):
         ----------
         string: string
           string in sa format
-        
+
         return
         ------
         results: dict
@@ -173,6 +182,7 @@ class SurfaceAreaParser(KeywordParser):
 
 
 class ResParser(KeywordParser):
+    """Parse .res output of network executable."""
 
     keywords = (
         'Largest_included_sphere',
@@ -188,7 +198,7 @@ class ResParser(KeywordParser):
 
         HKUST-1.res    13.19937 6.74621  13.19937
 
-        Containing the diameters of 
+        Containing the diameters of
          * the largest included sphere
          * the largest free sphere
          * the largest included sphere along free sphere path
@@ -197,7 +207,7 @@ class ResParser(KeywordParser):
         ----------
         string: string
           string in res format
-        
+
         return
         ------
         res: dict
@@ -208,7 +218,7 @@ class ResParser(KeywordParser):
         values = string.split()
 
         if len(values) != 4:
-            raise ValueError("Found more than 4 fields in .res format")
+            raise ValueError('Found more than 4 fields in .res format')
 
         for i in (0, 1, 2):
             res[cls.keywords[i]] = float(values[i + 1])
@@ -217,6 +227,7 @@ class ResParser(KeywordParser):
 
 
 class PoresSizeDistParser(object):
+    """Parse pore size distribution output of network executable."""
     @classmethod
     def parse(cls, string):  # pylint: disable=too-many-locals
         """
@@ -247,8 +258,8 @@ class PoresSizeDistParser(object):
         # extract histogram data
         bins, counts, cumulatives, derivatives = [], [], [], []
         for line in lines[i + 1:]:
-            b, count, cumulative, derivative = line.split()
-            bins.append(float(b))
+            bin, count, cumulative, derivative = line.split()  # pylint: disable=redefined-builtin
+            bins.append(float(bin))
             counts.append(int(count))
             cumulatives.append(float(cumulative))
             derivatives.append(float(derivative))
@@ -266,6 +277,7 @@ class PoresSizeDistParser(object):
 
 
 class ChannelParser(object):
+    """Parse pore channel output of network executable."""
     @classmethod
     def parse(cls, string):  # pylint: disable=too-many-locals
         """ Parse zeo++ .chan format
@@ -282,7 +294,7 @@ class ChannelParser(object):
         ----------
         string: string
           string in chan format
-        
+
         return
         ------
         results: list
@@ -298,7 +310,7 @@ class ChannelParser(object):
             r'(\d+) channels identified of dimensionality([\d\s]*)', lines[0])
         if not match:
             raise ValueError(
-                "The following string was not recognized as a valid header of the .chan format:\n"
+                'The following string was not recognized as a valid header of the .chan format:\n'
                 + lines[0])
 
         nchannels = int(match.group(1))
@@ -310,18 +322,18 @@ class ChannelParser(object):
 
         if nchannels != len(dimensionalities):
             raise ValueError(
-                "Number of channels {} does not match number of dimensionalities {}"
+                'Number of channels {} does not match number of dimensionalities {}'
                 .format(nchannels, len(dimensionalities)))
 
         if nchannels != nlines - 2:
             raise ValueError(
-                "Number of lines in file {} does not equal number of channels {}+2"
+                'Number of lines in file {} does not equal number of channels {}+2'
                 .format(nlines, nchannels))
 
         # parse remaining lines (last line is discarded)
         dis, dfs, difs = [], [], []
         for i in range(1, nchannels + 1):
-            _c, _i, di, df, dif = lines[i].split()
+            _c, _i, di, df, dif = lines[i].split()  # pylint: disable=invalid-name
             dis.append(float(di))
             dfs.append(float(df))
             difs.append(float(dif))
