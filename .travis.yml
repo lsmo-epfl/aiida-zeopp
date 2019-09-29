@@ -8,7 +8,7 @@ python:
 # caching for singularity hub: you are allowed only 10 pulls per day!
 cache:
   directories:
-  - singularity-images
+  - zeopp
 
 services:
   - postgresql
@@ -20,9 +20,9 @@ addons:
 env:
   global:
   # add network executable to PATH
-  #- PATH=${PATH}:${TRAVIS_BUILD_DIR}
-  # use 'network' script from .ci
-  - PATH=${PATH}:${TRAVIS_BUILD_DIR}/.ci
+  - PATH=${PATH}:${TRAVIS_BUILD_DIR}/zeoplusplus
+  ## use 'network' script from .ci
+  #- PATH=${PATH}:${TRAVIS_BUILD_DIR}/.ci
   matrix:
   - TEST_AIIDA_BACKEND: django
     TEST_TYPE: tests
@@ -36,17 +36,13 @@ before_install:
   - pip install -U wheel setuptools coveralls
   - pip install pip==18.1
   - pip install numpy==1.16.4  # needed for pymatgen
-  # install singularity
-  - wget -O- http://neuro.debian.net/lists/trusty.us-nh.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list
-  - sudo apt-key add .travis.singularity_key.txt
-  - sudo apt-get update
-  - sudo apt-get install -y singularity-container
-  # caching for singularity hub: you are allowed only 10 pulls per day!
+  # build zeopp
   - >
-    if [ ! -f "./singularity-images/zeopp.simg" ]; then 
-      mkdir -p singularity-images
-      singularity pull shub://ltalirz/singularity-recipe-zeopp:ansible
-      mv ltalirz-singularity-recipe-zeopp-master-ansible.simg singularity-images/zeopp.simg
+    if [ ! -f "./zeoplusplus/network" ]; then
+      git clone https://github.com/ltalirz/zeoplusplus zeoplusplus
+      cd zeoplusplus
+      cd voro++/src; make; cd -
+      make
     fi
 
 install:
