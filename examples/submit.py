@@ -36,8 +36,7 @@ def main(network_code_string):
     # For allowed keys, print(NetworkParameters.schema)
     parameters = NetworkParameters(
         dict={
-            'ha':
-            'LOW',  #just for speed up the test: use 'DEF' for any other case!
+            'ha': 'LOW',  #just for speed; use 'DEF' for prodution!
             'cssr': True,  #converting to cssr
             'sa': [1.86, 1.86, 1000],  #computing surface area
             'vol': [0.0, 0.0, 1000],  #computing gemetric pore volume

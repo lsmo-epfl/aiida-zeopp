@@ -39,7 +39,7 @@ class KeywordParser(object):
         """
         results = {}
 
-        regex = r'{}: ([\d\.]*)'
+        regex = r'{}:\s?([\d\.]*)'
         for keyword, ktype in six.iteritems(cls.keywords):
             regex_rep = regex.format(re.escape(keyword))
             match = re.search(regex_rep, string)
