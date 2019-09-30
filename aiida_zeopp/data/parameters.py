@@ -6,7 +6,7 @@ import six
 from six.moves import map
 
 # These options allow specifying the name of the output file
-# key : [ accepted values, label ]
+# key : [ accepted values, labels ]
 OUTPUT_OPTIONS = {
     'cssr': (bool, ['structure_cssr']),
     'v1': (bool, ['structure_v1']),
@@ -66,9 +66,9 @@ HA_OPTIONS = [
 # These options modify the output of other options
 # key : [ accepted values, label ]
 MODIFIER_OPTIONS = {
-    'ha': (Any(*HA_OPTIONS), 'high_accuracy'),
-    'stripatomnames': (bool, 'strip_atom_names'),
-    'nor': (bool, 'no_radial'),
+    'ha': (Any(*HA_OPTIONS), ['high_accuracy']),
+    'stripatomnames': (bool, ['strip_atom_names']),
+    'nor': (bool, ['no_radial']),
 }
 
 ALL_OPTIONS = dict(
@@ -112,7 +112,7 @@ class NetworkParameters(Dict):
             parameters += ['-r', radii_file_name]
 
         pm_dict = self.get_dict()
-        prefix_list = self.prefix_list
+        output_dict = self.output_dict
 
         for k, val in six.iteritems(pm_dict):
 
@@ -126,9 +126,9 @@ class NetworkParameters(Dict):
             else:
                 parameter += [val]
 
-            # add output file name
-            if k in prefix_list:
-                parameter += [self._OUTPUT_FILE_PREFIX.format(k)]
+            # add output file name(s)
+            if k in output_dict:
+                parameter += output_dict[k]
 
             parameters += parameter
 
@@ -147,17 +147,20 @@ class NetworkParameters(Dict):
         output_dict = {}
 
         for k in self.get_dict():
-            if k in list(OUTPUT_OPTIONS.keys()):
-                val = OUTPUT_OPTIONS[k][1]
-                if len(val) > 1:
-                    for index, item in enumerate(val):
-                        output_dict.update({
-                            k + str(index + 1):
-                            self._OUTPUT_FILE_PREFIX.format(k + '.' +
-                                                            str(item))
-                        })
-                else:
-                    output_dict.update({k: self._OUTPUT_FILE_PREFIX.format(k)})
+            if k not in OUTPUT_OPTIONS:
+                continue
+
+            nfiles = len(OUTPUT_OPTIONS[k][1])
+            if nfiles == 1:
+                output_dict[k] = [self._OUTPUT_FILE_PREFIX.format(k)]
+            else:
+                # if multiple files, append link labels
+                labels = OUTPUT_OPTIONS[k][1]
+                output_dict[k] = [
+                    self._OUTPUT_FILE_PREFIX.format(k) + '.{}'.format(label)
+                    for label in labels
+                ]
+
         return output_dict
 
     @property
@@ -172,17 +175,8 @@ class NetworkParameters(Dict):
     @property
     def output_files(self):
         """Return list of output files to be retrieved"""
-        return list(self.output_dict.values())
-
-    @property
-    def prefix_list(self):
-        """Return list of unique values to be used for command line and links"""
-        prefix_list = []
-        for key in self.output_keys:
-            nodigit = ''.join([i for i in key if not i.isdigit()])
-            prefix_list.append(nodigit)
-            prefix_list = list(dict.fromkeys(prefix_list))
-        return prefix_list
+        # Note: This flattens list(self.output_dict.values())
+        return [item for files in self.output_dict.values() for item in files]
 
     @property
     def output_parsers(self):
@@ -203,7 +197,7 @@ class NetworkParameters(Dict):
         #import aiida_zeopp.parsers.structure as sp
 
         parsers = []
-        for k in self.output_keys:
+        for k in self.output_dict:
             if k == 'vol':
                 parsers += [pp.AVolumeParser]
             elif k == 'volpo':
@@ -216,6 +210,8 @@ class NetworkParameters(Dict):
                 parsers += [pp.ChannelParser]
             elif k == 'psd':
                 parsers += [pp.PoresSizeDistParser]
+            elif k == 'visVoro':
+                parsers += [None for _f in OUTPUT_OPTIONS[k][1]]
             #elif k == 'cssr':
             #    parsers += [sp.CssrParser]
             else:
@@ -227,6 +223,6 @@ class NetworkParameters(Dict):
     def output_links(self):
         """Return list of output link names"""
         output_links = []
-        for k in self.prefix_list:
+        for k in self.output_keys:
             output_links += OUTPUT_OPTIONS[k][1]
         return output_links
