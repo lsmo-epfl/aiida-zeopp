@@ -1,11 +1,20 @@
 # # Install pre-commit hooks via
 # pre-commit install
 
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v2.2.3
+  hooks:
+  - id: trailing-whitespace
+    types: [python]
+  - id: double-quote-string-fixer
+    types: [python]
+
 # modernizer: make sure our code-base is Python 3 ready
 - repo: https://github.com/python-modernize/python-modernize.git
-  sha: a234ce4e185cf77a55632888f1811d83b4ad9ef2
+  rev: a234ce4e185cf77a55632888f1811d83b4ad9ef2
   hooks:
   - id: python-modernize
+    types: [python]
     exclude: ^docs/
     args:
       - --write
@@ -28,6 +37,10 @@
     name: prospector
     description: "This hook runs Prospector: https://github.com/landscapeio/prospector"
     entry: prospector
+    exclude: &exclude_files >
+      (?x)^(
+        .*/test_.*.py
+      )$
 
   - id: version-number
     name: Check version numbers
