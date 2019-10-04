@@ -38,8 +38,11 @@ def main(network_code_string):
         dict={
             'ha': 'LOW',  #just for speed; use 'DEF' for prodution!
             'cssr': True,  #converting to cssr
+            'res': True,
             'sa': [1.86, 1.86, 1000],  #computing surface area
             'vol': [0.0, 0.0, 1000],  #computing gemetric pore volume
+            'block': [2.0, 100
+                      ]  #computing bblocking spheres for a big molecule
         })
 
     CifData = DataFactory('cif')
@@ -66,10 +69,29 @@ def main(network_code_string):
     print('Running NetworkCalculation: wait...')
     result, node = run_get_node(NetworkCalculation, **inputs)  # pylint: disable=unused-variable
 
+    print()
+    print('Computed output_parameters Dict<{}>'.format(
+        node.outputs.output_parameters.pk))
+    print()
+    print('Density ({}): {:.3f}'.format(
+        node.outputs.output_parameters.get_attribute('Density_unit'),
+        node.outputs.output_parameters.get_attribute('Density')))
+    print('Largest free sphere (A): {:.3f}'.format(
+        node.outputs.output_parameters.get_attribute('Largest_free_sphere')))
+    print('Largest included sphere (A): {:.3f}'.format(
+        node.outputs.output_parameters.get_attribute(
+            'Largest_included_sphere')))
     print('Nitrogen accessible surface area (m^2/g): {:.3f}'.format(
         node.outputs.output_parameters.get_attribute('ASA_m^2/g')))
     print('Geometric pore volume (cm^3/g): {:.3f}'.format(
         node.outputs.output_parameters.get_attribute('AV_cm^3/g')))
+    print('Number of blocking spheres needed for probe radius of {:.2f}A: {}'.
+          format(
+              node.outputs.output_parameters.get_attribute('Input_block')[0],
+              node.outputs.output_parameters.get_attribute(
+                  'Number_of_blocking_spheres')))
+    print('Blocking spheres file: SinglefileData<{}>'.format(
+        node.outputs.block.pk))
     print('CSSR structure: SinglefileData<{}>'.format(
         node.outputs.structure_cssr.pk))
 

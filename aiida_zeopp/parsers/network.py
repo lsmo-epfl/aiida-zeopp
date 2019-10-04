@@ -7,12 +7,20 @@ from aiida.parsers.parser import Parser
 from aiida.orm import Dict
 from aiida.common import exceptions
 
+UNIT_DICT = {
+    'Largest_free_sphere': 'A',
+    'Largest_included_free_sphere': 'A',
+    'Largest_included_sphere': 'A',
+    'Density': 'g/cm^3',
+    'Unitcell_volume': 'A^3'
+}
+
 
 class NetworkParser(Parser):
     """
     Parser class for output of zeo++ network binary
     """
-    def parse(self, **kwargs):
+    def parse(self, **kwargs):  #pylint: disable=too-many-branches
         """
         Parse output data folder, store results in database.
 
@@ -74,6 +82,11 @@ class NetworkParser(Parser):
                                 'Empty block file. This indicates the calculation of blocked pockets did not finish.'
                             )
                             empty_block = True
+                        else:
+                            output_parameters.update_dict({
+                                'Number_of_blocking_spheres':
+                                int(parsed.get_content().split()[0])
+                            })
 
                 else:
                     # else parse and add keys to output_parameters
@@ -86,6 +99,11 @@ class NetworkParser(Parser):
                         self.logger.error(
                             'Error parsing file {} with parser {}'.format(
                                 fname, parser))
+
+                    # add unit if not present
+                    for key in UNIT_DICT:
+                        if key in output_parameters.get_dict():
+                            parsed_dict['{}_unit'.format(key)] = UNIT_DICT[key]
 
                     output_parameters.update_dict(parsed_dict)
 
