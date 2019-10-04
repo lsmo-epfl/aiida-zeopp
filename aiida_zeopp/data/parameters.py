@@ -1,3 +1,4 @@
+"""Input parameter class for network executable."""
 from __future__ import absolute_import
 from voluptuous import Schema, ExactSequence, Any
 from aiida.orm import Dict
@@ -6,7 +7,7 @@ from six.moves import map
 
 # These options allow specifying the name of the output file
 # key : [ accepted values, label ]
-output_options = {
+OUTPUT_OPTIONS = {
     'cssr': (bool, 'structure_cssr'),
     'v1': (bool, 'structure_v1'),
     'xyz': (bool, 'structure_xyz'),
@@ -31,56 +32,56 @@ output_options = {
 # Currently NOT implemented
 # These options produce an output file with a hardcoded name
 # key : [ accepted values, [ output file name(s) ], label ]
-#fixed_output_options = {
+#fixed_OUTPUT_OPTIONS = {
 #    'gridBOV': (bool, ['{}_f.bov', '{}_f.distances'], 'grid_bov'),
 #}
 
-ha_options = [
-    "OCC",
-    "FCC",
-    "ACC",
-    "AQC",
-    "DDH",
-    "TIH",
-    "ICH",
-    "ICC",
-    "RIH",
-    "S4",
-    "S10",
-    "S20",
-    "S30",
-    "S40",
-    "S50",
-    "S100",
-    "S500",
-    "S1000",
-    "S10000",
-    "DEF",
-    "HI",
-    "MED",
-    "LOW",
+HA_OPTIONS = [
+    'OCC',
+    'FCC',
+    'ACC',
+    'AQC',
+    'DDH',
+    'TIH',
+    'ICH',
+    'ICC',
+    'RIH',
+    'S4',
+    'S10',
+    'S20',
+    'S30',
+    'S40',
+    'S50',
+    'S100',
+    'S500',
+    'S1000',
+    'S10000',
+    'DEF',
+    'HI',
+    'MED',
+    'LOW',
 ]
 
 # These options modify the output of other options
 # key : [ accepted values, label ]
-modifier_options = {
-    'ha': (Any(*ha_options), 'high_accuracy'),
+MODIFIER_OPTIONS = {
+    'ha': (Any(*HA_OPTIONS), 'high_accuracy'),
     'stripatomnames': (bool, 'strip_atom_names'),
     'nor': (bool, 'no_radial'),
 }
 
-all_options = dict(
-    list(output_options.items()) + list(modifier_options.items()))
+ALL_OPTIONS = dict(
+    list(OUTPUT_OPTIONS.items()) + list(MODIFIER_OPTIONS.items()))
 
 
 class NetworkParameters(Dict):
     """ Command line parameters for zeo++ network binary
     """
 
-    _schema = Schema({k: all_options[k][0] for k in all_options})
+    _schema = Schema({k: ALL_OPTIONS[k][0] for k in ALL_OPTIONS})
     schema = _schema.schema  # alias for easier printing
 
-    _OUTPUT_FILE_PREFIX = "out.{}"
+    _OUTPUT_FILE_PREFIX = 'out.{}'
 
     # pylint: disable=redefined-builtin, too-many-function-args
     def __init__(self, dict=None, **kwargs):
@@ -94,13 +95,14 @@ class NetworkParameters(Dict):
         dict = self.validate(dict)
         super(NetworkParameters, self).__init__(dict=dict, **kwargs)
 
-    def validate(self, parameters_dict):
+    @classmethod
+    def validate(cls, parameters_dict):
         """validate parameters"""
-        return NetworkParameters._schema(parameters_dict)
+        return cls._schema(parameters_dict)
 
     def cmdline_params(self, structure_file_name=None, radii_file_name=None):
         """Synthesize command line parameters
-        
+
         e.g. [ '-axs', '0.4', 'out.axs', 'structure.cif']
         """
         parameters = []
@@ -110,17 +112,17 @@ class NetworkParameters(Dict):
 
         pm_dict = self.get_dict()
         output_keys = self.output_keys
-        for k, v in six.iteritems(pm_dict):
+        for k, val in six.iteritems(pm_dict):
 
             parameter = ['-{}'.format(k)]
-            if isinstance(v, bool):
+            if isinstance(val, bool):
                 # if boolean is false, no parameter to add
-                if not v:
+                if not val:
                     continue
-            elif isinstance(v, list):
-                parameter += v
+            elif isinstance(val, list):
+                parameter += val
             else:
-                parameter += [v]
+                parameter += [val]
 
             # add output file name
             if k in output_keys:
@@ -142,13 +144,13 @@ class NetworkParameters(Dict):
         """
         return {
             k: self._OUTPUT_FILE_PREFIX.format(k)
-            for k in self.get_dict() if k in list(output_options.keys())
+            for k in self.get_dict() if k in list(OUTPUT_OPTIONS.keys())
         }
 
     @property
     def output_keys(self):
         """Return subset of specified options requiring an output file name.
-        
+
         Out of the selected options, return those that you need to specify an
         output file name for.
         """
@@ -203,6 +205,6 @@ class NetworkParameters(Dict):
         """Return list of output link names"""
         output_links = []
         for k in self.output_keys:
-            output_links += [output_options[k][1]]
+            output_links += [OUTPUT_OPTIONS[k][1]]
 
         return output_links

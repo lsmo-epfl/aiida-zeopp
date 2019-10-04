@@ -8,7 +8,7 @@ __all__ = ('PluginTestCase', 'get_backend', 'get_path_to_executable',
            'get_computer', 'get_code')
 
 TEST_DIR = os.path.dirname(os.path.realpath(__file__))
-executables = {
+EXECUTABLES = {
     'zeopp.network': 'network',
 }
 
@@ -33,7 +33,7 @@ def get_path_to_executable(executable):
     import distutils.spawn  # pylint: disable=no-name-in-module,import-error
     path = distutils.spawn.find_executable(executable)
     if path is None:
-        raise ValueError("{} executable not found in PATH.".format(executable))
+        raise ValueError('{} executable not found in PATH.'.format(executable))
 
     return os.path.abspath(path)
 
@@ -68,7 +68,7 @@ def get_code(entry_point, computer_name='localhost-test'):
     from aiida.common import NotExistent
 
     computer = get_computer(computer_name)
-    executable = executables[entry_point]
+    executable = EXECUTABLES[entry_point]
 
     try:
         code = Code.objects.get(  # pylint: disable=no-member
@@ -87,7 +87,7 @@ def get_code(entry_point, computer_name='localhost-test'):
 
 def get_temp_folder():
     """Returns AiiDA folder object.
-    
+
     Useful for calculation.submit_test()
     """
     from aiida.common.folders import Folder

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-
+"""Parser classes."""
 from __future__ import absolute_import
+from six.moves import zip
+
 from aiida.parsers.parser import Parser
 from aiida.orm import Dict
-from six.moves import zip
 from aiida.common import exceptions
 
 
@@ -11,14 +12,13 @@ class NetworkParser(Parser):
     """
     Parser class for output of zeo++ network binary
     """
-
     def parse(self, **kwargs):
         """
         Parse output data folder, store results in database.
 
         :param retrieved: a dictionary of retrieved nodes, where
           the key is the link name
-        :returns: a tuple with two values ``(bool, node_list)``, 
+        :returns: a tuple with two values ``(bool, node_list)``,
           where:
 
           * ``bool``: variable to tell if the parsing succeeded
@@ -44,9 +44,9 @@ class NetworkParser(Parser):
         if set(output_files) <= set(list_of_files):
             pass
         else:
-            s = "Expected output files {}; found only {}."\
+            msg = 'Expected output files {}; found only {}.'\
                 .format(output_files, list_of_files)
-            self.logger.error(s)
+            self.logger.error(msg)
             return self.exit_codes.ERROR_OUTPUT_FILES_MISSING
 
         # Parse output files
@@ -61,22 +61,20 @@ class NetworkParser(Parser):
 
             with self.retrieved.open(fname, 'rb') as handle:
                 if parser is None:
-                    
+
                     # just add file, if no parser implemented
                     parsed = SinglefileData(file=handle)
                     self.out(link, parsed)
-                    
+
                     # workaround: if block pocket file is empty, raise an error
                     # (it indicates the calculation did not finish)
                     if link == 'block':
                         if not parsed.get_content().strip():
                             self.logger.error(
-                                "Empty block file. This indicates the calculation of blocked pockets did not finish."
+                                'Empty block file. This indicates the calculation of blocked pockets did not finish.'
                             )
                             empty_block = True
 
-
-                            
                 else:
                     # else parse and add keys to output_parameters
                     try:
@@ -86,7 +84,7 @@ class NetworkParser(Parser):
                             handle.read().decode('utf8'))
                     except ValueError:
                         self.logger.error(
-                            "Error parsing file {} with parser {}".format(
+                            'Error parsing file {} with parser {}'.format(
                                 fname, parser))
 
                     output_parameters.update_dict(parsed_dict)

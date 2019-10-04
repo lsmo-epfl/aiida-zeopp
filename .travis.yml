@@ -1,7 +1,14 @@
 language: python
+dist: trusty
+sudo: required
 python:
 - "3.6"
 - "2.7"
+
+# caching for singularity hub: you are allowed only 10 pulls per day!
+cache:
+  directories:
+  - zeopp
 
 services:
   - postgresql
@@ -12,12 +19,10 @@ addons:
 
 env:
   global:
-  - AIIDA_VERSION: develop
-  - AIIDA_DEVELOP_GIT_HASH: 409a90d7c8ac8f26792c0f0fbc1f8567f2feb89a
   # add network executable to PATH
-  #- PATH=${PATH}:${TRAVIS_BUILD_DIR}
-  # use 'network' script from .ci
-  - PATH=${PATH}:${TRAVIS_BUILD_DIR}/.ci
+  - PATH=${PATH}:${TRAVIS_BUILD_DIR}/zeoplusplus
+  ## use 'network' script from .ci
+  #- PATH=${PATH}:${TRAVIS_BUILD_DIR}/.ci
   matrix:
   - TEST_AIIDA_BACKEND: django
     TEST_TYPE: tests
@@ -30,24 +35,25 @@ before_install:
   # Upgrade pip setuptools and wheel
   - pip install -U wheel setuptools coveralls
   - pip install pip==18.1
-  # install singularity
-  - wget -O- http://neuro.debian.net/lists/trusty.us-nh.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list
-  - sudo apt-key add .travis.singularity_key.txt
-  - sudo apt-get update
-  - sudo apt-get install -y singularity-container
-  - singularity pull shub://ltalirz/singularity-recipe-zeopp:ansible
+  - pip install numpy==1.16.4  # needed for pymatgen
+  # build zeopp (and cache results)
+  - >
+    if [ ! -f "./zeoplusplus/network" ]; then
+      git clone https://github.com/ltalirz/zeoplusplus zeoplusplus
+      cd zeoplusplus
+      cd voro++/src; make; cd -
+      make
+      cd ..
+    fi
 
 install:
-- if [ "$AIIDA_VERSION" == "develop" ]; then .ci/install_aiida_github.sh ; fi  # installs develop branch
+- network
 - pip install -e .[testing,pre-commit]
 - reentry scan -r aiida
-# add fake network executable
-#- cat "#!/bin/bash\necho 'network'" > network; chmod +x network
-#- echo -e '#!/bin/bash\nset -e\nsingularity exec ./ltalirz-singularity-recipe-zeopp-master-ansible.simg /usr/local/bin/network "$@"' > network; chmod +x network
 
 
 script:
-  - if [ "$TEST_TYPE" == "tests" ] ; then py.test --cov aiida_zeopp --cov-append . ; fi  # runs unit tests
+  - if [ "$TEST_TYPE" == "tests" ] ; then py.test --ignore zeoplusplus/ --cov aiida_zeopp --cov-append . ; fi  # runs unit tests
   - if [ "$TEST_TYPE" == "pre-commit" ] ; then pre-commit install; pre-commit run --all-files || ( git status --short; git diff ; exit 1 ); fi
 
 after_success:

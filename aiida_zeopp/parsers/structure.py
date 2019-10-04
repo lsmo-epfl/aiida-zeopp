@@ -1,8 +1,10 @@
+"""Atomic structure parsers."""
 from __future__ import absolute_import
 import pymatgen
 
 
 class CssrParser(object):
+    """Parser class for CSSR structure format."""
     @classmethod
     def parse(cls, string):
         """ Parse .cssr string using pymatgen
@@ -11,7 +13,7 @@ class CssrParser(object):
         ----------
         string: string
           string in cssr file format
-        
+
         return
         ------
         results: structure

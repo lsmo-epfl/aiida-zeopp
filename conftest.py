@@ -1,12 +1,12 @@
 """
-For pytest 
+For pytest
 initialise a test database and profile
 """
 from __future__ import absolute_import
+import os
 import tempfile
 import shutil
 import pytest
-import os
 
 from aiida.manage.fixtures import fixture_manager
 import aiida_zeopp.tests as zt
@@ -35,7 +35,7 @@ def aiida_profile():
 
 
 @pytest.fixture(scope='function')
-def clear_database(aiida_profile):
+def clear_database(aiida_profile):  # pylint: disable=redefined-outer-name
     """clear the database after each test"""
     yield
     aiida_profile.reset_db()
@@ -50,13 +50,14 @@ def new_workdir():
 
 
 @pytest.fixture(scope='function')
-def network_code(aiida_profile):  # pylint: disable=unused-argument
+def network_code(aiida_profile):  # pylint: disable=redefined-outer-name,unused-argument
     return zt.get_code(entry_point='zeopp.network')
 
 
 @pytest.fixture(scope='function')
 def basic_options():
+    """Return basic calculation options."""
     options = {
-        "max_wallclock_seconds": 120,
+        'max_wallclock_seconds': 120,
     }
     return options

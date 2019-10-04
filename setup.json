@@ -24,7 +24,6 @@
             "zeopp-submit = aiida_zeopp.console_scripts.data_cli:cli"
         ],
         "aiida.workflows": [
-            "zeopp.blockpockets = aiida_zeopp.workflows:ZeoppBlockPocketsWorkChain"
         ]
     },
     "setup_requires": [
@@ -34,6 +33,7 @@
     "install_requires": [
         "aiida-core >=1.0.0b3,<2.0.0",
         "pycifrw >= 4.2",
+        "numpy < 1.17",
         "pymatgen <= 2018.12.12",
         "voluptuous",
         "six"
@@ -46,10 +46,14 @@
             "coverage"
         ],
         "pre-commit": [
-            "pre-commit==1.11.0",
-            "yapf==0.26.0",
-            "prospector==0.12.11",
-            "pylint==1.9.4"
+            "astroid==1.6.6; python_version<'3.0'",
+            "astroid==2.2.5; python_version>='3.0'",
+            "pre-commit==1.17.0",
+            "yapf==0.28.0",
+            "prospector==1.1.7",
+            "pylint-django==0.11.1; python_version<'3.0'",
+            "pylint==1.9.4; python_version<'3.0'",
+            "pylint==2.3.1; python_version>='3.0'"
         ]
     }
 }
