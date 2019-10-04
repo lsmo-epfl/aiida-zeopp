@@ -35,6 +35,7 @@
         "pycifrw >= 4.2",
         "numpy < 1.17",
         "pymatgen <= 2018.12.12",
+        "monty==2.0.4",
         "voluptuous",
         "six"
     ],
