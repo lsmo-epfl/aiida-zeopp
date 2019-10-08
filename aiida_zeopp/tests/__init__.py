@@ -65,19 +65,17 @@ def get_computer(name):
 def get_code(entry_point, computer_name='localhost-test'):
     """Set up code on provided computer"""
     from aiida.orm import Code
-    from aiida.common import NotExistent
 
-    computer = get_computer(computer_name)
     executable = EXECUTABLES[entry_point]
 
     try:
-        code = Code.objects.get(  # pylint: disable=no-member
-            label='{}@{}'.format(executable, computer_name))
-    except NotExistent:
+        codes = Code.objects.find(filters={'label': executable})  # pylint: disable=no-member
+        code = codes[0]
+    except IndexError:
         path = get_path_to_executable(executable)
         code = Code(
             input_plugin_name=entry_point,
-            remote_computer_exec=[computer, path],
+            remote_computer_exec=[get_computer(computer_name), path],
         )
         code.label = executable
         code.store()
