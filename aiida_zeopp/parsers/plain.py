@@ -15,8 +15,8 @@ class KeywordParser(object):
     """
 
     keywords = {
-        'keyword1': float,
-        'keyword2': int,
+        'keyword1': [float, 'unit1'],
+        'keyword2': [int, 'unit2'],
     }
 
     @classmethod
@@ -40,7 +40,8 @@ class KeywordParser(object):
         results = {}
 
         regex = r'{}:\s?([\d\.]*)'
-        for keyword, ktype in six.iteritems(cls.keywords):
+        for keyword, val in six.iteritems(cls.keywords):
+            ktype, kunit = val
             regex_rep = regex.format(re.escape(keyword))
             match = re.search(regex_rep, string)
             if match is None:
@@ -54,6 +55,7 @@ class KeywordParser(object):
                 #    "No value specified for keyword {}".format(keyword))
 
             results[keyword] = ktype(value)
+            results[keyword + '_unit'] = kunit
 
         return results
 
@@ -68,14 +70,14 @@ class PoreVolumeParser(KeywordParser):
     """Parse PoreVolume output of network executable."""
 
     keywords = {
-        'Unitcell_volume': float,
-        'Density': float,
-        'POAV_A^3': float,
-        'POAV_Volume_fraction': float,
-        'POAV_cm^3/g': float,
-        'PONAV_A^3': float,
-        'PONAV_Volume_fraction': float,
-        'PONAV_cm^3/g': float,
+        'Unitcell_volume': [float, 'A^3'],
+        'Density': [float, 'g/cm^3'],
+        'POAV_A^3': [float, 'A^3'],
+        'POAV_Volume_fraction': [float, None],
+        'POAV_cm^3/g': [float, 'cm^3/g'],
+        'PONAV_A^3': [float, 'A^3'],
+        'PONAV_Volume_fraction': [float, None],
+        'PONAV_cm^3/g': [float, 'cm^3/g'],
     }
 
     @classmethod
@@ -105,14 +107,14 @@ class AVolumeParser(KeywordParser):
     """Parse AVolume output of network executable."""
 
     keywords = {
-        'Unitcell_volume': float,
-        'Density': float,
-        'AV_A^3': float,
-        'AV_Volume_fraction': float,
-        'AV_cm^3/g': float,
-        'NAV_A^3': float,
-        'NAV_Volume_fraction': float,
-        'NAV_cm^3/g': float,
+        'Unitcell_volume': [float, 'A^3'],
+        'Density': [float, 'g/cm^3'],
+        'AV_A^3': [float, 'A^3'],
+        'AV_Volume_fraction': [float, None],
+        'AV_cm^3/g': [float, 'cm^3/g'],
+        'NAV_A^3': [float, 'A^3'],
+        'NAV_Volume_fraction': [float, None],
+        'NAV_cm^3/g': [float, 'cm^3/g'],
     }
 
     @classmethod
@@ -142,18 +144,17 @@ class SurfaceAreaParser(KeywordParser):
     """Parse surface area output of network executable."""
 
     keywords = {
-        'Unitcell_volume': float,
-        'Density': float,
-        'ASA_A^2': float,
-        'ASA_m^2/cm^3': float,
-        'ASA_m^2/g': float,
-        'NASA_A^2': float,
-        'NASA_m^2/cm^3': float,
-        'NASA_m^2/g': float,
-        'Number_of_channels': int,
-        'Channel_surface_area_A^2': float,
-        'Number_of_pockets': int,
-        'Pocket_surface_area_A^2': float,
+        'Unitcell_volume': [float, 'A^3'],
+        'Density': [float, 'g/cm^3'],
+        'ASA_A^2': [float, 'A^2'],
+        'ASA_m^2/g': [float, 'm^2/g'],
+        'NASA_A^2': [float, 'A^2'],
+        'NASA_m^2/cm^3': [float, 'm^2/cm^3'],
+        'NASA_m^2/g': [float, 'm^2/g'],
+        'Number_of_channels': [int, None],
+        'Channel_surface_area_A^2': [float, 'A^2'],
+        'Number_of_pockets': [int, None],
+        'Pocket_surface_area_A^2': [float, 'A^2'],
     }
 
     @classmethod
