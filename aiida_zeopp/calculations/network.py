@@ -58,6 +58,10 @@ class NetworkCalculation(CalcJob):
         spec.output('output_parameters',
                     valid_type=Dict,
                     help='key-value pairs parsed from zeo++ output file(s).')
+        spec.output('block',
+                    valid_type=SinglefileData,
+                    help='Blocked pockets fileoutput file.',
+                    required=False)
 
         spec.default_output_node = 'output_parameters'
 
