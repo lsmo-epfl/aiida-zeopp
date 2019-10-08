@@ -112,7 +112,7 @@ class NetworkParameters(Dict):
             parameters += ['-r', radii_file_name]
 
         pm_dict = self.get_dict()
-        output_dict = self.output_dict
+        output_keys = self.output_keys
 
         for k, val in six.iteritems(pm_dict):
 
@@ -127,8 +127,9 @@ class NetworkParameters(Dict):
                 parameter += [val]
 
             # add output file name(s)
-            if k in output_dict:
-                parameter += output_dict[k]
+            # Note: For visVoro option, only one (prefix) can be specified
+            if k in output_keys:
+                parameter += [self._OUTPUT_FILE_PREFIX.format(k)]
 
             parameters += parameter
 
