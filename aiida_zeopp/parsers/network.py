@@ -12,7 +12,7 @@ class NetworkParser(Parser):
     """
     Parser class for output of zeo++ network binary
     """
-    def parse(self, **kwargs):
+    def parse(self, **kwargs):  #pylint: disable=too-many-branches
         """
         Parse output data folder, store results in database.
 
@@ -27,6 +27,14 @@ class NetworkParser(Parser):
         """
         # pylint: disable=too-many-locals
         from aiida.orm.nodes.data.singlefile import SinglefileData
+
+        unit_dict = {
+            'Largest_free_sphere': 'A',
+            'Largest_included_free_sphere': 'A',
+            'Largest_included_sphere': 'A',
+            'Density': 'g/cm^3',
+            'Unitcell_volume': 'A^3'
+        }
 
         # Check that the retrieved folder is there
         try:
@@ -74,6 +82,11 @@ class NetworkParser(Parser):
                                 'Empty block file. This indicates the calculation of blocked pockets did not finish.'
                             )
                             empty_block = True
+                        else:
+                            output_parameters.update_dict({
+                                'Number_of_blocking_spheres':
+                                int(parsed.get_content().split()[0])
+                            })
 
                 else:
                     # else parse and add keys to output_parameters
@@ -86,6 +99,11 @@ class NetworkParser(Parser):
                         self.logger.error(
                             'Error parsing file {} with parser {}'.format(
                                 fname, parser))
+
+                    # add unit if not present
+                    for key in unit_dict:
+                        if key in output_parameters.get_dict():
+                            parsed_dict['{}_unit'.format(key)] = unit_dict[key]
 
                     output_parameters.update_dict(parsed_dict)
 
