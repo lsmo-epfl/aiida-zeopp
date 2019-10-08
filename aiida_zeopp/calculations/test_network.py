@@ -56,7 +56,7 @@ def test_submit_MgO(clear_database, network_code, basic_options):  # pylint: dis
         'vsa': [1.82, 1.82, 5000],
         'volpo': [1.82, 1.82, 5000],
         'chan': 1.2,
-        'ha': 'LOW',
+        'ha': False,
         'strinfo': True,
         'gridG': True,
     })
