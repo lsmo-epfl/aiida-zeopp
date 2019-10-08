@@ -71,7 +71,7 @@ def get_code(entry_point, computer_name='localhost-test'):
     try:
         codes = Code.objects.find(filters={'label': executable})  # pylint: disable=no-member
         code = codes[0]
-    except KeyError:
+    except IndexError:
         path = get_path_to_executable(executable)
         code = Code(
             input_plugin_name=entry_point,
