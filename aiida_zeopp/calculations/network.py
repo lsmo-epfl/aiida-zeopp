@@ -48,7 +48,7 @@ class NetworkCalculation(CalcJob):
                        message='Not all expected output files were found.')
         spec.exit_code(
             102,
-            'WARNING_EMPTY_BLOCK_FILE',
+            'ERROR_EMPTY_BLOCK',
             message=
             'Empty block file. This indicates the calculation of blocked pockets did not finish.'
         )
