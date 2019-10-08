@@ -73,18 +73,30 @@ def main(network_code_string):
     print('Computed output_parameters Dict<{}>'.format(
         node.outputs.output_parameters.pk))
     print()
+
     print('Density ({}): {:.3f}'.format(
         node.outputs.output_parameters.get_attribute('Density_unit'),
         node.outputs.output_parameters.get_attribute('Density')))
-    print('Largest free sphere (A): {:.3f}'.format(
+
+    print('Largest free sphere ({}): {:.3f}'.format(
+        node.outputs.output_parameters.get_attribute(
+            'Largest_free_sphere_unit'),
         node.outputs.output_parameters.get_attribute('Largest_free_sphere')))
-    print('Largest included sphere (A): {:.3f}'.format(
+
+    print('Largest included sphere ({}): {:.3f}'.format(
+        node.outputs.output_parameters.get_attribute(
+            'Largest_included_sphere_unit'),
         node.outputs.output_parameters.get_attribute(
             'Largest_included_sphere')))
-    print('Nitrogen accessible surface area (m^2/g): {:.3f}'.format(
+
+    print('Nitrogen accessible surface area ({}): {:.3f}'.format(
+        node.outputs.output_parameters.get_attribute('ASA_m^2/g_unit'),
         node.outputs.output_parameters.get_attribute('ASA_m^2/g')))
-    print('Geometric pore volume (cm^3/g): {:.3f}'.format(
+
+    print('Geometric pore volume ({}): {:.3f}'.format(
+        node.outputs.output_parameters.get_attribute('AV_cm^3/g_unit'),
         node.outputs.output_parameters.get_attribute('AV_cm^3/g')))
+
     print('Number of blocking spheres needed for probe radius of {:.2f}A: {}'.
           format(
               node.outputs.output_parameters.get_attribute('Input_block')[0],
@@ -92,6 +104,7 @@ def main(network_code_string):
                   'Number_of_blocking_spheres')))
     print('Blocking spheres file: SinglefileData<{}>'.format(
         node.outputs.block.pk))
+
     print('CSSR structure: SinglefileData<{}>'.format(
         node.outputs.structure_cssr.pk))
 

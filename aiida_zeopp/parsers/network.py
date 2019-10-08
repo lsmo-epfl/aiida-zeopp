@@ -29,10 +29,30 @@ class NetworkParser(Parser):
         from aiida.orm.nodes.data.singlefile import SinglefileData
 
         unit_dict = {
+            'ASA_A^2': 'A^2',
+            'ASA_m^2/cm^3': 'm^2/cm^3',
+            'ASA_m^2/g': 'm^2/g',
+            'AV_A^3': 'A^3',
+            'AV_Volume_fraction': '-',
+            'AV_cm^3/g': 'cm^3/g',
+            'Channel_surface_area_A^2': 'A^2',
+            'Density': 'g/cm^3',
             'Largest_free_sphere': 'A',
             'Largest_included_free_sphere': 'A',
             'Largest_included_sphere': 'A',
-            'Density': 'g/cm^3',
+            'NASA_A^2': 'A^2',
+            'NASA_m^2/cm^3': 'm^2/cm^3',
+            'NASA_m^2/g': 'm^2/g',
+            'NAV_A^3': 'A^3',
+            'NAV_Volume_fraction': '-',
+            'NAV_cm^3/g': 'cm^3/g',
+            'POAV_A^3': 'A^3',
+            'POAV_Volume_fraction': '-',
+            'POAV_cm^3/g': 'cm^3/g',
+            'PONAV_A^3': 'A^3',
+            'PONAV_Volume_fraction': '-',
+            'PONAV_cm^3/g': 'cm^3/g',
+            'Pocket_surface_area_A^2': 'A^2',
             'Unitcell_volume': 'A^3'
         }
 
@@ -100,11 +120,6 @@ class NetworkParser(Parser):
                             'Error parsing file {} with parser {}'.format(
                                 fname, parser))
 
-                    # add unit if not present
-                    for key in unit_dict:
-                        if key in output_parameters.get_dict():
-                            parsed_dict['{}_unit'.format(key)] = unit_dict[key]
-
                     output_parameters.update_dict(parsed_dict)
 
         # add name of input structures as parameter
@@ -116,6 +131,11 @@ class NetworkParser(Parser):
         for k in inp_params.keys():
             output_parameters.set_attribute('Input_{}'.format(k),
                                             inp_params.get_attribute(k))
+        # add unit
+        for key in unit_dict:
+            if key in output_parameters.get_dict():
+                output_parameters.update_dict(
+                    {'{}_unit'.format(key): unit_dict[key]})
 
         self.out('output_parameters', output_parameters)
 
