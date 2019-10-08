@@ -65,7 +65,7 @@ HA_OPTIONS = [
 # These options modify the output of other options
 # key : [ accepted values, label ]
 MODIFIER_OPTIONS = {
-    'ha': (Any(*HA_OPTIONS), 'high_accuracy'),
+    'ha': (Any(*HA_OPTIONS, bool), 'high_accuracy'),
     'stripatomnames': (bool, 'strip_atom_names'),
     'nor': (bool, 'no_radial'),
 }
