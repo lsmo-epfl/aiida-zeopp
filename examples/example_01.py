@@ -94,12 +94,14 @@ def test_submit(network_code):
 @click.command()
 @cmdline.utils.decorators.with_dbenv()
 @cmdline.params.options.CODE()
-@click.help_option()
 def cli(code):
-    """Example usage:
-    $ ./example_01.py --code network@localhost
-    Alternative use (creates network@localhost-test code):
-    $ ./example_01.py
+    """Run example.
+
+    Example usage: $ ./example_01.py --code network@localhost
+
+    Alternative (creates network@localhost-test code): $ ./example_01.py
+
+    Help: $ ./example_01.py --help
     """
     test_submit(code)
 

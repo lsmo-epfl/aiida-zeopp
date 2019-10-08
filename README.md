@@ -43,12 +43,12 @@ verdi calculation plugins  # should now show your calclulation plugins
 
 ## Examples
 
-See `examples` folder for complete examples of setting up a calculation or workflow.
+See `examples` folder for complete examples of setting up a calculation.
 
 ```shell
 verdi daemon start         # make sure the daemon is running
 cd examples
-verdi run submit.py        # runs test calculation
+verdi run examples/example_01.py  # runs test calculatio
 ```
 
 ## Tests
