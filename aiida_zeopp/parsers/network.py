@@ -12,7 +12,7 @@ class NetworkParser(Parser):
     """
     Parser class for output of zeo++ network binary
     """
-    def parse(self, **kwargs):
+    def parse(self, **kwargs):  #pylint: disable=too-many-branches
         """
         Parse output data folder, store results in database.
 
@@ -74,6 +74,11 @@ class NetworkParser(Parser):
                                 'Empty block file. This indicates the calculation of blocked pockets did not finish.'
                             )
                             empty_block = True
+                        else:
+                            output_parameters.update_dict({
+                                'Number_of_blocking_spheres':
+                                int(parsed.get_content().split()[0])
+                            })
 
                 else:
                     # else parse and add keys to output_parameters
@@ -98,7 +103,6 @@ class NetworkParser(Parser):
         for k in inp_params.keys():
             output_parameters.set_attribute('Input_{}'.format(k),
                                             inp_params.get_attribute(k))
-
         self.out('output_parameters', output_parameters)
 
         if empty_block:

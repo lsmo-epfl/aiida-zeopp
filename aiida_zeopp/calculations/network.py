@@ -48,7 +48,7 @@ class NetworkCalculation(CalcJob):
                        message='Not all expected output files were found.')
         spec.exit_code(
             102,
-            'WARNING_EMPTY_BLOCK_FILE',
+            'ERROR_EMPTY_BLOCK',
             message=
             'Empty block file. This indicates the calculation of blocked pockets did not finish.'
         )
@@ -58,6 +58,10 @@ class NetworkCalculation(CalcJob):
         spec.output('output_parameters',
                     valid_type=Dict,
                     help='key-value pairs parsed from zeo++ output file(s).')
+        spec.output('block',
+                    valid_type=SinglefileData,
+                    help='Blocked pockets fileoutput file.',
+                    required=False)
 
         spec.default_output_node = 'output_parameters'
 
