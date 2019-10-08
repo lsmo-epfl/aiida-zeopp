@@ -66,42 +66,35 @@ def main(network_code_string):
     }
 
     # or use aiida.engine.submit
-    print('Running NetworkCalculation: wait...')
+    print('Running NetworkCalculation: please wait...')
     result, node = run_get_node(NetworkCalculation, **inputs)  # pylint: disable=unused-variable
 
-    print()
-    print('Computed output_parameters Dict<{}>'.format(
-        node.outputs.output_parameters.pk))
-    print()
+    output = node.outputs.output_parameters
 
-    print('Density ({}): {:.3f}'.format(
-        node.outputs.output_parameters.get_attribute('Density_unit'),
-        node.outputs.output_parameters.get_attribute('Density')))
+    print('\nComputed output_parameters {}\n'.format(str(output)))
+    print('Density ({}): {:.3f}'.format(output.get_attribute('Density_unit'),
+                                        output.get_attribute('Density')))
 
     print('Largest free sphere ({}): {:.3f}'.format(
-        node.outputs.output_parameters.get_attribute(
-            'Largest_free_sphere_unit'),
-        node.outputs.output_parameters.get_attribute('Largest_free_sphere')))
+        output.get_attribute('Largest_free_sphere_unit'),
+        output.get_attribute('Largest_free_sphere')))
 
     print('Largest included sphere ({}): {:.3f}'.format(
-        node.outputs.output_parameters.get_attribute(
-            'Largest_included_sphere_unit'),
-        node.outputs.output_parameters.get_attribute(
-            'Largest_included_sphere')))
+        output.get_attribute('Largest_included_sphere_unit'),
+        output.get_attribute('Largest_included_sphere')))
 
     print('Nitrogen accessible surface area ({}): {:.3f}'.format(
-        node.outputs.output_parameters.get_attribute('ASA_m^2/g_unit'),
-        node.outputs.output_parameters.get_attribute('ASA_m^2/g')))
+        output.get_attribute('ASA_m^2/g_unit'),
+        output.get_attribute('ASA_m^2/g')))
 
     print('Geometric pore volume ({}): {:.3f}'.format(
-        node.outputs.output_parameters.get_attribute('AV_cm^3/g_unit'),
-        node.outputs.output_parameters.get_attribute('AV_cm^3/g')))
+        output.get_attribute('AV_cm^3/g_unit'),
+        output.get_attribute('AV_cm^3/g')))
 
     print('Number of blocking spheres needed for probe radius of {:.2f}A: {}'.
           format(
-              node.outputs.output_parameters.get_attribute('Input_block')[0],
-              node.outputs.output_parameters.get_attribute(
-                  'Number_of_blocking_spheres')))
+              output.get_attribute('Input_block')[0],
+              output.get_attribute('Number_of_blocking_spheres')))
     print('Blocking spheres file: SinglefileData<{}>'.format(
         node.outputs.block.pk))
 
