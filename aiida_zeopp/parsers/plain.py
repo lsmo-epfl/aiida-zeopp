@@ -222,7 +222,9 @@ class ResParser(KeywordParser):
             raise ValueError('Found more than 4 fields in .res format')
 
         for i in (0, 1, 2):
-            res[cls.keywords[i]] = float(values[i + 1])
+            keyword = cls.keywords[i]
+            res[keyword] = float(values[i + 1])
+            res[keyword + '_unit'] = 'A'
 
         return res
 
