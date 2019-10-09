@@ -147,8 +147,13 @@ class NetworkParameters(Dict):
         """
         output_dict = {}
 
-        for k in self.get_dict():
+        parameters_dict = self.get_dict()
+
+        for k in parameters_dict:
             if k not in OUTPUT_OPTIONS:
+                continue
+
+            if parameters_dict[k] is False:
                 continue
 
             nfiles = len(OUTPUT_OPTIONS[k][1])
