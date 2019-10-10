@@ -4,7 +4,7 @@ AiiDA Zeo++ Plugin
 """
 
 from __future__ import absolute_import
-__version__ = '1.0.0b1'
+__version__ = '1.0.0'
 
 # disable psycopg2 warning
 import warnings
