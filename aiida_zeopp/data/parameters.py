@@ -6,27 +6,28 @@ import six
 from six.moves import map
 
 # These options allow specifying the name of the output file
-# key : [ accepted values, label ]
+# key : [ accepted values, labels ]
 OUTPUT_OPTIONS = {
-    'cssr': (bool, 'structure_cssr'),
-    'v1': (bool, 'structure_v1'),
-    'xyz': (bool, 'structure_xyz'),
-    'nt2': (bool, 'network_nt2'),
-    'res': (bool, 'free_sphere_res'),
-    'zvis': (bool, 'network_zvis'),
-    'axs': (float, 'nodes_axs'),
-    'sa': (ExactSequence([float, float, int]), 'surface_area_sa'),
-    'vsa': (ExactSequence([float, float, int]), 'surface_sample_vsa'),
-    'vol': (ExactSequence([float, float, int]), 'volume_vol'),
-    'volpo': (ExactSequence([float, float, int]), 'pore_volume_volpo'),
-    'ray_atom': (ExactSequence([float, float, int]), 'ray_atom'),
-    'block': (ExactSequence([float, int]), 'block'),
-    'psd': (ExactSequence([float, float, int]), 'psd'),
-    'chan': (float, 'channels_chan'),
-    'gridG': (bool, 'grid_gaussian'),
-    'gridGBohr': (bool, 'grid_gaussian_bohr'),
-    'strinfo': (bool, 'str_info'),
-    'oms': (bool, 'open_metal_sites'),
+    'cssr': (bool, ['structure_cssr']),
+    'v1': (bool, ['structure_v1']),
+    'xyz': (bool, ['structure_xyz']),
+    'nt2': (bool, ['network_nt2']),
+    'res': (bool, ['free_sphere_res']),
+    'zvis': (bool, ['network_zvis']),
+    'axs': (float, ['nodes_axs']),
+    'visVoro': (float, ['voro', 'voro_accessible', 'voro_nonaccessible']),
+    'sa': (ExactSequence([float, float, int]), ['surface_area_sa']),
+    'vsa': (ExactSequence([float, float, int]), ['surface_sample_vsa']),
+    'vol': (ExactSequence([float, float, int]), ['volume_vol']),
+    'volpo': (ExactSequence([float, float, int]), ['pore_volume_volpo']),
+    'ray_atom': (ExactSequence([float, float, int]), ['ray_atom']),
+    'block': (ExactSequence([float, int]), ['block']),
+    'psd': (ExactSequence([float, float, int]), ['psd']),
+    'chan': (float, ['channels_chan']),
+    'gridG': (bool, ['grid_gaussian']),
+    'gridGBohr': (bool, ['grid_gaussian_bohr']),
+    'strinfo': (bool, ['str_info']),
+    'oms': (bool, ['open_metal_sites']),
 }
 
 # Currently NOT implemented
@@ -65,9 +66,9 @@ HA_OPTIONS = [
 # These options modify the output of other options
 # key : [ accepted values, label ]
 MODIFIER_OPTIONS = {
-    'ha': (Any(bool, *HA_OPTIONS), 'high_accuracy'),
-    'stripatomnames': (bool, 'strip_atom_names'),
-    'nor': (bool, 'no_radial'),
+    'ha': (Any(bool, *HA_OPTIONS), ['high_accuracy']),
+    'stripatomnames': (bool, ['strip_atom_names']),
+    'nor': (bool, ['no_radial']),
 }
 
 ALL_OPTIONS = dict(
@@ -112,6 +113,7 @@ class NetworkParameters(Dict):
 
         pm_dict = self.get_dict()
         output_keys = self.output_keys
+
         for k, val in six.iteritems(pm_dict):
 
             parameter = ['-{}'.format(k)]
@@ -124,7 +126,8 @@ class NetworkParameters(Dict):
             else:
                 parameter += [val]
 
-            # add output file name
+            # add output file name(s)
+            # Note: For visVoro option, only one (prefix) can be specified
             if k in output_keys:
                 parameter += [self._OUTPUT_FILE_PREFIX.format(k)]
 
@@ -142,10 +145,29 @@ class NetworkParameters(Dict):
         Keys are the selected options that require an output file name,
         values are the file names.
         """
-        return {
-            k: self._OUTPUT_FILE_PREFIX.format(k)
-            for k in self.get_dict() if k in list(OUTPUT_OPTIONS.keys())
-        }
+        output_dict = {}
+
+        parameters_dict = self.get_dict()
+
+        for k in parameters_dict:
+            if k not in OUTPUT_OPTIONS:
+                continue
+
+            if parameters_dict[k] is False:
+                continue
+
+            nfiles = len(OUTPUT_OPTIONS[k][1])
+            if nfiles == 1:
+                output_dict[k] = [self._OUTPUT_FILE_PREFIX.format(k)]
+            else:
+                # if multiple files, append link labels
+                labels = OUTPUT_OPTIONS[k][1]
+                output_dict[k] = [
+                    self._OUTPUT_FILE_PREFIX.format(k) + '.{}'.format(label)
+                    for label in labels
+                ]
+
+        return output_dict
 
     @property
     def output_keys(self):
@@ -159,7 +181,8 @@ class NetworkParameters(Dict):
     @property
     def output_files(self):
         """Return list of output files to be retrieved"""
-        return list(self.output_dict.values())
+        # Note: This flattens list(self.output_dict.values())
+        return [item for files in self.output_dict.values() for item in files]
 
     @property
     def output_parsers(self):
@@ -180,7 +203,7 @@ class NetworkParameters(Dict):
         #import aiida_zeopp.parsers.structure as sp
 
         parsers = []
-        for k in self.output_keys:
+        for k in self.output_dict:
             if k == 'vol':
                 parsers += [pp.AVolumeParser]
             elif k == 'volpo':
@@ -193,6 +216,8 @@ class NetworkParameters(Dict):
                 parsers += [pp.ChannelParser]
             elif k == 'psd':
                 parsers += [pp.PoresSizeDistParser]
+            elif k == 'visVoro':
+                parsers += [None for _f in OUTPUT_OPTIONS[k][1]]
             #elif k == 'cssr':
             #    parsers += [sp.CssrParser]
             else:
@@ -205,6 +230,5 @@ class NetworkParameters(Dict):
         """Return list of output link names"""
         output_links = []
         for k in self.output_keys:
-            output_links += [OUTPUT_OPTIONS[k][1]]
-
+            output_links += OUTPUT_OPTIONS[k][1]
         return output_links

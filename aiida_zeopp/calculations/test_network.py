@@ -59,6 +59,7 @@ def test_submit_MgO(clear_database, network_code, basic_options):  # pylint: dis
         'ha': False,
         'strinfo': True,
         'gridG': True,
+        'oms': False,
     })
 
     structure = DataFactory('cif')(file=os.path.join(TEST_DIR, 'MgO.cif'),
