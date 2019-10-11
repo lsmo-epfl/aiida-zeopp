@@ -246,6 +246,10 @@ class PoresSizeDistParser(object):
         results: dict
             dictionary of output values
         """
+        def isnan(numstr):
+            """Returns True if numstr is 'nan' or '-nan' and False for any other numerical string value."""
+            return float(numstr) != float(numstr)
+
         lines = string.splitlines()
         # remove empty lines
         lines = [l for l in lines if l.strip()]
@@ -264,8 +268,9 @@ class PoresSizeDistParser(object):
             bin, count, cumulative, derivative = line.split()  # pylint: disable=redefined-builtin
             bins.append(float(bin))
             counts.append(int(count))
-            cumulatives.append(float(cumulative))
-            derivatives.append(float(derivative))
+            # Append 0 if Zeo++ is printing nan/-nan: this happens when all the count values are zero
+            cumulatives.append([float(cumulative), 0][isnan(cumulative)])
+            derivatives.append([float(derivative), 0][isnan(derivative)])
 
         psd_dict = {
             'psd': {
