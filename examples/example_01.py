@@ -60,6 +60,8 @@ def test_submit(network_code):
     result, node = run_get_node(NetworkCalculation,
                                 **inputs)  # or use aiida.engine.submit
 
+    print('NetworkCalculation<{}> terminated.'.format(node.pk))
+
     print('\nComputed output_parameters {}\n'.format(
         str(result['output_parameters'])))
     outputs = result['output_parameters'].get_dict()

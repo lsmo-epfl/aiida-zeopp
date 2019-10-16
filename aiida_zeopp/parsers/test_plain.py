@@ -102,3 +102,46 @@ class PoresSizeDistParserTestCase(unittest.TestCase):
         self.assertEqual(counts, histogram['psd']['counts'])
         self.assertEqual(cumulatives, histogram['psd']['cumulatives'])
         self.assertEqual(derivatives, histogram['psd']['derivatives'])
+
+    def test_parse_nonporous(self):
+        """Test parsing pore size distribution of non-porous materials.
+
+        In this case, zeo++ prints "nan"s.
+        """
+        string = """
+Pore size distribution histogram
+Bin size (A): 0.1
+Number of bins: 1000
+From: 0
+To: 100
+Total samples: 10000
+Accessible samples: 0
+Fraction of sample points in node spheres: 0
+Fraction of sample points outside node spheres: 0
+
+Bin Count Cumulative_dist Derivative_dist
+0 0 -nan 0
+0.1 0 -nan nan
+0.2 0 -nan nan
+0.3 0 -nan nan
+0.4 0 -nan nan
+0.5 0 -nan nan
+0.6 0 -nan nan
+0.7 0 -nan nan
+0.8 0 -nan nan
+0.9 0 -nan nan
+1 0 -nan nan """
+
+        parser = parsers.PoresSizeDistParser
+        histogram = parser.parse(string)
+
+        n = 11
+        bins = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        counts = [0] * n
+        cumulatives = [0] * n
+        derivatives = [0] * n
+
+        self.assertEqual(bins, histogram['psd']['bins'])
+        self.assertEqual(counts, histogram['psd']['counts'])
+        self.assertEqual(cumulatives, histogram['psd']['cumulatives'])
+        self.assertEqual(derivatives, histogram['psd']['derivatives'])

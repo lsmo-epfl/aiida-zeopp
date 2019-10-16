@@ -27,7 +27,7 @@ def test_submit(network_code):
     # For allowed keys, print(NetworkParameters.schema)
     parameters = NetworkParameters(
         dict={
-            'ha': 'DEF',  #just for speed; use 'DEF' for prodution!
+            'ha': 'LOW',  #just for speed; use 'DEF' for prodution!
             'psd': [1.2, 1.2, 1000],  #compute pore size distribution
         })
 

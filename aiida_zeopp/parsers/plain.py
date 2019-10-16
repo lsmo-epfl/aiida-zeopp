@@ -246,9 +246,16 @@ class PoresSizeDistParser(object):
         results: dict
             dictionary of output values
         """
-        def isnan(numstr):
-            """Returns True if numstr is 'nan' or '-nan' and False for any other numerical string value."""
-            return float(numstr) != float(numstr)
+        def clean_values(float_list):
+            """Removes NaN and Inf from list of floats.
+
+            Those are not JSON-serializable:
+            https://www.postgresql.org/docs/current/datatype-json.html#JSON-TYPE-MAPPING-TABLE
+            """
+            import math
+            return [
+                0 if math.isnan(f) or math.isinf(f) else f for f in float_list
+            ]
 
         lines = string.splitlines()
         # remove empty lines
@@ -268,16 +275,16 @@ class PoresSizeDistParser(object):
             bin, count, cumulative, derivative = line.split()  # pylint: disable=redefined-builtin
             bins.append(float(bin))
             counts.append(int(count))
-            # Append 0 if Zeo++ is printing nan/-nan: this happens when all the count values are zero
-            cumulatives.append([float(cumulative), 0][isnan(cumulative)])
-            derivatives.append([float(derivative), 0][isnan(derivative)])
+            cumulatives.append(float(cumulative))
+            derivatives.append(float(derivative))
 
         psd_dict = {
             'psd': {
                 'bins': bins,
                 'counts': counts,
-                'cumulatives': cumulatives,
-                'derivatives': derivatives
+                # these can be nan /-nan when the counts are zero
+                'cumulatives': clean_values(cumulatives),
+                'derivatives': clean_values(derivatives)
             }
         }
 
