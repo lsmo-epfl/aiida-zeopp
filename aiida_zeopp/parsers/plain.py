@@ -246,6 +246,17 @@ class PoresSizeDistParser(object):
         results: dict
             dictionary of output values
         """
+        def clean_values(float_list):
+            """Removes NaN and Inf from list of floats.
+
+            Those are not JSON-serializable:
+            https://www.postgresql.org/docs/current/datatype-json.html#JSON-TYPE-MAPPING-TABLE
+            """
+            import math
+            return [
+                0 if math.isnan(f) or math.isinf(f) else f for f in float_list
+            ]
+
         lines = string.splitlines()
         # remove empty lines
         lines = [l for l in lines if l.strip()]
@@ -271,8 +282,9 @@ class PoresSizeDistParser(object):
             'psd': {
                 'bins': bins,
                 'counts': counts,
-                'cumulatives': cumulatives,
-                'derivatives': derivatives
+                # these can be nan /-nan when the counts are zero
+                'cumulatives': clean_values(cumulatives),
+                'derivatives': clean_values(derivatives)
             }
         }
 

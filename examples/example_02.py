@@ -28,11 +28,7 @@ def test_submit(network_code):
     parameters = NetworkParameters(
         dict={
             'ha': 'LOW',  #just for speed; use 'DEF' for prodution!
-            'cssr': True,  #converting to cssr
-            'res': True,
-            'sa': [1.86, 1.86, 1000],  #compute surface area
-            'vol': [0.0, 0.0, 1000],  #compute gemetric pore volume
-            #'block': [2.0, 100]  #compute blocking spheres for a big molecule
+            'psd': [1.2, 1.2, 1000],  #compute pore size distribution
         })
 
     CifData = DataFactory('cif')
@@ -48,15 +44,13 @@ def test_submit(network_code):
             'options': {
                 'max_wallclock_seconds': 1 * 60,
             },
-            'label':
-            'aiida_zeopp example calculation',
-            'description':
-            'Converts .cif to .cssr format, computes surface area, and pore volume',
+            'label': 'aiida_zeopp example calculation',
+            'description': 'Compute PSD',
         },
     }
 
     NetworkCalculation = CalculationFactory('zeopp.network')
-    print('Running NetworkCalculation: please wait...')
+    print('Running NetworkCalculation: computing PSD ...')
     result, node = run_get_node(NetworkCalculation,
                                 **inputs)  # or use aiida.engine.submit
 
@@ -64,33 +58,6 @@ def test_submit(network_code):
 
     print('\nComputed output_parameters {}\n'.format(
         str(result['output_parameters'])))
-    outputs = result['output_parameters'].get_dict()
-
-    print('Density ({}): {:.3f}'.format(outputs['Density_unit'],
-                                        outputs['Density']))
-
-    print('Largest free sphere ({}): {:.3f}'.format(
-        outputs['Largest_free_sphere_unit'], outputs['Largest_free_sphere']))
-
-    print('Largest included sphere ({}): {:.3f}'.format(
-        outputs['Largest_included_sphere_unit'],
-        outputs['Largest_included_sphere']))
-
-    print('Nitrogen accessible surface area ({}): {:.3f}'.format(
-        outputs['ASA_m^2/g_unit'], outputs['ASA_m^2/g']))
-
-    print('Geometric pore volume ({}): {:.3f}'.format(
-        outputs['AV_cm^3/g_unit'], outputs['AV_cm^3/g']))
-
-    # print('Number of blocking spheres needed for probe radius of {:.2f}A: {}'.
-    #       format(
-    #           outputs['Input_block'][0],
-    #           outputs['Number_of_blocking_spheres']))
-    # print('Blocking spheres file: SinglefileData<{}>'.format(
-    #     node.outputs.block.pk))
-
-    print('CSSR structure: SinglefileData<{}>'.format(
-        node.outputs.structure_cssr.pk))
 
 
 @click.command()
@@ -99,11 +66,11 @@ def test_submit(network_code):
 def cli(code):
     """Run example.
 
-    Example usage: $ ./example_01.py --code network@localhost
+    Example usage: $ ./example_02.py --code network@localhost
 
-    Alternative (creates network@localhost-test code): $ ./example_01.py
+    Alternative (creates network@localhost-test code): $ ./example_02.py
 
-    Help: $ ./example_01.py --help
+    Help: $ ./example_02.py --help
     """
     test_submit(code)
 
