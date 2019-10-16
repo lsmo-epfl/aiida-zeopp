@@ -1,3 +1,9 @@
+## v1.0.1
+
+### Bug fixes
+
+ * fix PSD parser for non-porous materials [[#48]](https://github.com/ltalirz/aiida-zeopp/pull/48)
+
 ## v1.0.0
 
 ### Improvements
