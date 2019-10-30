@@ -147,6 +147,7 @@ class SurfaceAreaParser(KeywordParser):
         'Unitcell_volume': [float, 'A^3'],
         'Density': [float, 'g/cm^3'],
         'ASA_A^2': [float, 'A^2'],
+        'ASA_m^2/cm^3': [float, 'm^2/cm^3'],
         'ASA_m^2/g': [float, 'm^2/g'],
         'NASA_A^2': [float, 'A^2'],
         'NASA_m^2/cm^3': [float, 'm^2/cm^3'],
