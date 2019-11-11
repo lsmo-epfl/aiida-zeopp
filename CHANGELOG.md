@@ -1,3 +1,17 @@
+## v1.0.3
+
+### Bug fixes
+
+ * make sure input file has .cif extension [[#50]](https://github.com/ltalirz/aiida-zeopp/pull/50)
+
+
+## v1.0.2
+
+### Bug fixes
+
+ * reintroduce parsing of ASA output [[#49]](https://github.com/ltalirz/aiida-zeopp/pull/49)
+
+
 ## v1.0.1
 
 ### Bug fixes
