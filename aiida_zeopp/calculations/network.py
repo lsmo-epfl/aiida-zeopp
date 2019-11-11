@@ -78,13 +78,12 @@ class NetworkCalculation(CalcJob):
         calcinfo = CalcInfo()
         calcinfo.uuid = self.uuid
 
-        structure = self.inputs.structure
-
         # network infers file format from file extension
-        input_file = structure.filename if structure.filename.endswith(
-            '.cif') else structure.filename + '.cif'
+        structure = self.inputs.structure
+        structure_filename = self.inputs.parameters.get_structure_file_name(
+            structure)
         calcinfo.local_copy_list = [(structure.uuid, structure.filename,
-                                     input_file)]
+                                     structure_filename)]
 
         if 'atomic_radii' in self.inputs:
             atomic_radii = self.inputs.atomic_radii
@@ -100,7 +99,7 @@ class NetworkCalculation(CalcJob):
 
         codeinfo = CodeInfo()
         codeinfo.cmdline_params = self.inputs.parameters.cmdline_params(
-            structure_file_name=self.inputs.structure.filename,
+            structure_file_name=structure_filename,
             radii_file_name=radii_file_name)
         codeinfo.code_uuid = self.inputs.code.uuid
         codeinfo.withmpi = False

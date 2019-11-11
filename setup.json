@@ -31,7 +31,7 @@
     ],
     "reentry_register": true,
     "install_requires": [
-        "aiida-core >=1.0.0b6,<2.0.0",
+        "aiida-core >=1.0.0,<2.0.0",
         "pycifrw >= 4.2",
         "numpy < 1.17",
         "pymatgen <= 2018.12.12",
@@ -44,7 +44,9 @@
             "pgtest==1.2.0",
             "pytest>=4.4,<5.0.0",
             "pytest-cov>=2.6.1,<3.0.0",
-            "coverage"
+            "coverage",
+            "ase; python_version>='3.0'",
+            "ase<3.18; python_version<'3.0'"
         ],
         "pre-commit": [
             "astroid==1.6.6; python_version<'3.0'",
