@@ -77,10 +77,13 @@ class NetworkCalculation(CalcJob):
         # Prepare CalcInfo to be returned to aiida
         calcinfo = CalcInfo()
         calcinfo.uuid = self.uuid
-        calcinfo.local_copy_list = [
-            (self.inputs.structure.uuid, self.inputs.structure.filename,
-             self.inputs.structure.filename)
-        ]
+
+        # network infers file format from file extension
+        structure = self.inputs.structure
+        structure_filename = self.inputs.parameters.get_structure_file_name(
+            structure)
+        calcinfo.local_copy_list = [(structure.uuid, structure.filename,
+                                     structure_filename)]
 
         if 'atomic_radii' in self.inputs:
             atomic_radii = self.inputs.atomic_radii
@@ -96,7 +99,7 @@ class NetworkCalculation(CalcJob):
 
         codeinfo = CodeInfo()
         codeinfo.cmdline_params = self.inputs.parameters.cmdline_params(
-            structure_file_name=self.inputs.structure.filename,
+            structure_file_name=structure_filename,
             radii_file_name=radii_file_name)
         codeinfo.code_uuid = self.inputs.code.uuid
         codeinfo.withmpi = False

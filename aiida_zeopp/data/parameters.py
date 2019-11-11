@@ -188,16 +188,12 @@ class NetworkParameters(Dict):
     def output_parsers(self):
         """Return list of output parsers to use.
 
-        parameters
-        ----------
-        parameters: aiida_zeopp.data.parameters.NetworkParameters object
-            the parameters object used to generate the cmdline parameters
+        :param parameters:  the parameters object used to generate the cmdline parameters
+        :type parameters: aiida_zeopp.data.parameters.NetworkParameters
 
-        returns
-        -------
-        parsers: list
-            List of parsers to be used for each output file.
+        :returns: List of parsers to be used for each output file.
             List element is None, if parser is not implemented.
+        :rtype: list
         """
         import aiida_zeopp.parsers.plain as pp
         #import aiida_zeopp.parsers.structure as sp
@@ -232,3 +228,24 @@ class NetworkParameters(Dict):
         for k in self.output_keys:
             output_links += OUTPUT_OPTIONS[k][1]
         return output_links
+
+    def get_structure_file_name(self, structure):  # pylint: disable=no-self-use
+        """Get file name of input structure.
+
+        The 'network;  binary detects file formats by file extension.
+        We therefore need to make sure that the file extension of the input file matches its format.
+
+        :param structure: Structure input of plugin
+        :returns: input file name
+        :rtype: str
+
+        """
+        from aiida.plugins import DataFactory
+
+        # treating only CifData for the moment - could extend to other formats in the future
+        if isinstance(structure, DataFactory('cif')):
+            return structure.filename if structure.filename.endswith(
+                '.cif') else structure.filename + '.cif'
+
+        raise ValueError('Input structure has unknown type {}'.format(
+            type(structure)))

@@ -95,8 +95,9 @@ class NetworkParser(Parser):
                     output_parameters.update_dict(parsed_dict)
 
         # add name of input structures as parameter
-        output_parameters.set_attribute('Input_structure_filename',
-                                        self.node.inputs.structure.filename)
+        output_parameters.set_attribute(
+            'Input_structure_filename',
+            inp_params.get_structure_file_name(self.node.inputs.structure))
         # add input parameters for convenience
         # note: should be added at top-level in order to allow tab completion
         # of <calcnode>.res.Input_...

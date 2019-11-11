@@ -2,7 +2,7 @@
 """
 from __future__ import absolute_import
 import os
-from aiida.manage.fixtures import PluginTestCase
+from aiida.manage.tests.unittest_classes import PluginTestCase
 
 __all__ = ('PluginTestCase', 'get_backend', 'get_path_to_executable',
            'get_computer', 'get_code')
