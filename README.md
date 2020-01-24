@@ -158,3 +158,12 @@ MIT
 
 ## Contact
 leopold.talirz@gmail.com
+
+
+## Acknowledgements
+This work is supported by:
+* the [MARVEL National Centre for Competency in Research](<http://nccr-marvel.ch>) funded by the [Swiss National Science Foundation](<http://www.snf.ch/en>);
+* the [swissuniversities P-5 project "Materials Cloud"](<https://www.materialscloud.org/swissuniversities>).
+
+<img src="miscellaneous/logos/MARVEL.png" alt="MARVEL" style="padding:10px;" width="150"/>
+<img src="miscellaneous/logos/swissuniversities.png" alt="swissuniversities" style="padding:10px;" width="250"/>
