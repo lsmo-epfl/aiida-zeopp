@@ -1,10 +1,8 @@
 """AiiDA calculation class for network executable."""
-from __future__ import absolute_import
 from aiida.engine import CalcJob
 from aiida.common import (CalcInfo, CodeInfo)
 from aiida.plugins import DataFactory
 from aiida.orm import Data
-import six
 
 NetworkParameters = DataFactory('zeopp.parameters')  # pylint: disable=invalid-name
 CifData = DataFactory('cif')  # pylint: disable=invalid-name
@@ -28,7 +26,7 @@ class NetworkCalculation(CalcJob):
                        'tot_num_mpiprocs': 1,
                    })
         spec.input('metadata.options.parser_name',
-                   valid_type=six.string_types,
+                   valid_type=str,
                    default='zeopp.network')
         spec.input('parameters',
                    valid_type=NetworkParameters,

@@ -1,13 +1,11 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """Submit a zeo++ test calculation."""
-# pylint: disable=invalid-name,import-outside-toplevel
-from __future__ import absolute_import
-from __future__ import print_function
 
 import os
 import click
-from aiida import cmdline
+from aiida import cmdline, engine
+from aiida.plugins import DataFactory, CalculationFactory
+from aiida_zeopp import tests
 
 
 def test_submit(network_code, submit=True):
@@ -15,17 +13,12 @@ def test_submit(network_code, submit=True):
 
     Simply copy the contents of this function into a script.
     """
-    from aiida.plugins import DataFactory, CalculationFactory
-    from aiida import engine
 
     if not network_code:
-        from aiida_zeopp import tests
         network_code = tests.get_code(entry_point='zeopp.network')
 
-    # Prepare input parameters
-    NetworkParameters = DataFactory('zeopp.parameters')
     # For allowed keys, print(NetworkParameters.schema)
-    parameters = NetworkParameters(
+    parameters = DataFactory('zeopp.parameters')(
         dict={
             'ha': 'LOW',  #just for speed; use 'DEF' for prodution!
             'cssr': True,  #converting to cssr
@@ -35,9 +28,8 @@ def test_submit(network_code, submit=True):
             #'block': [2.0, 100]  #compute blocking spheres for a big molecule
         })
 
-    CifData = DataFactory('cif')
     this_dir = os.path.dirname(os.path.realpath(__file__))
-    structure = CifData(file=os.path.join(this_dir, 'HKUST-1.cif'))
+    structure = DataFactory('cif')(file=os.path.join(this_dir, 'HKUST-1.cif'))
 
     # set up calculation
     inputs = {
@@ -55,7 +47,7 @@ def test_submit(network_code, submit=True):
         },
     }
 
-    NetworkCalculation = CalculationFactory('zeopp.network')
+    NetworkCalculation = CalculationFactory('zeopp.network')  # pylint: disable=invalid-name
     print('Running NetworkCalculation: please wait...')
     if submit:
         engine.submit(NetworkCalculation, **inputs)

@@ -1,6 +1,6 @@
 """Atomic structure parsers."""
-from __future__ import absolute_import
 import pymatgen
+from aiida.orm import StructureData
 
 
 class CssrParser(object):
@@ -23,6 +23,5 @@ class CssrParser(object):
 
     @classmethod
     def parse_aiida(cls, string):
-        from aiida.orm.nodes.data.structure import StructureData
         pym_struct = cls.parse(string)
         return StructureData(pymatgen_structure=pym_struct)

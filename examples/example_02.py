@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """Submit a zeo++ test calculation."""
 # pylint: disable=invalid-name
-from __future__ import absolute_import
-from __future__ import print_function
 
 import os
 import click
 from aiida import cmdline
+from aiida.plugins import DataFactory, CalculationFactory
+from aiida.engine import run_get_node
+from aiida_zeopp import tests
 
 
 def test_submit(network_code):
@@ -15,11 +15,8 @@ def test_submit(network_code):
 
     Simply copy the contents of this function into a script.
     """
-    from aiida.plugins import DataFactory, CalculationFactory
-    from aiida.engine import run_get_node
 
     if not network_code:
-        from aiida_zeopp import tests
         network_code = tests.get_code(entry_point='zeopp.network')
 
     # Prepare input parameters

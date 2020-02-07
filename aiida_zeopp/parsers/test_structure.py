@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import os
 import aiida_zeopp.parsers.structure as parsers
 import aiida_zeopp.tests as zt

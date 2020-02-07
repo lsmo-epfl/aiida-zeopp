@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
 """Parser classes."""
-from __future__ import absolute_import
-from six.moves import zip
-
 from aiida.parsers.parser import Parser
-from aiida.orm import Dict
+from aiida.orm import Dict, SinglefileData
 from aiida.common import exceptions
 
 
@@ -26,7 +22,6 @@ class NetworkParser(Parser):
             (as a list of tuples ``(link_name, node)``)
         """
         # pylint: disable=too-many-locals
-        from aiida.orm.nodes.data.singlefile import SinglefileData
 
         # Check that the retrieved folder is there
         try:
