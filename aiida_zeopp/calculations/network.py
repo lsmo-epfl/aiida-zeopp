@@ -24,7 +24,8 @@ class NetworkCalculation(CalcJob):
                    valid_type=dict,
                    default={
                        'num_machines': 1,
-                       'num_mpiprocs_per_machine': 1
+                       'num_mpiprocs_per_machine': 1,
+                       'tot_num_mpiprocs': 1,
                    })
         spec.input('metadata.options.parser_name',
                    valid_type=six.string_types,
