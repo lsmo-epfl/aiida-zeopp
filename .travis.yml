@@ -2,8 +2,7 @@ language: python
 dist: trusty
 sudo: required
 python:
-- "3.6"
-- "2.7"
+- "3.7"
 
 # caching for singularity hub: you are allowed only 10 pulls per day!
 cache:
@@ -33,9 +32,7 @@ env:
 
 before_install:
   # Upgrade pip setuptools and wheel
-  - pip install -U wheel setuptools coveralls
-  - pip install pip==18.1
-  - pip install numpy==1.16.4  # needed for pymatgen
+  - pip install -U pip wheel setuptools coveralls
   # build zeopp (and cache results)
   - >
     if [ ! -f "./zeoplusplus/network" ]; then

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Submit a zeo++ test calculation."""
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,import-outside-toplevel
 from __future__ import absolute_import
 from __future__ import print_function
 
@@ -10,13 +10,13 @@ import click
 from aiida import cmdline
 
 
-def test_submit(network_code):
+def test_submit(network_code, submit=True):
     """Example of how to submit a zeo++ calculation.
 
     Simply copy the contents of this function into a script.
     """
     from aiida.plugins import DataFactory, CalculationFactory
-    from aiida.engine import run_get_node
+    from aiida import engine
 
     if not network_code:
         from aiida_zeopp import tests
@@ -57,40 +57,44 @@ def test_submit(network_code):
 
     NetworkCalculation = CalculationFactory('zeopp.network')
     print('Running NetworkCalculation: please wait...')
-    result, node = run_get_node(NetworkCalculation,
-                                **inputs)  # or use aiida.engine.submit
+    if submit:
+        engine.submit(NetworkCalculation, **inputs)
+    else:
+        result, node = engine.run_get_node(
+            NetworkCalculation, **inputs)  # or use aiida.engine.submit
 
-    print('NetworkCalculation<{}> terminated.'.format(node.pk))
+        print('NetworkCalculation<{}> terminated.'.format(node.pk))
 
-    print('\nComputed output_parameters {}\n'.format(
-        str(result['output_parameters'])))
-    outputs = result['output_parameters'].get_dict()
+        print('\nComputed output_parameters {}\n'.format(
+            str(result['output_parameters'])))
+        outputs = result['output_parameters'].get_dict()
 
-    print('Density ({}): {:.3f}'.format(outputs['Density_unit'],
-                                        outputs['Density']))
+        print('Density ({}): {:.3f}'.format(outputs['Density_unit'],
+                                            outputs['Density']))
 
-    print('Largest free sphere ({}): {:.3f}'.format(
-        outputs['Largest_free_sphere_unit'], outputs['Largest_free_sphere']))
+        print('Largest free sphere ({}): {:.3f}'.format(
+            outputs['Largest_free_sphere_unit'],
+            outputs['Largest_free_sphere']))
 
-    print('Largest included sphere ({}): {:.3f}'.format(
-        outputs['Largest_included_sphere_unit'],
-        outputs['Largest_included_sphere']))
+        print('Largest included sphere ({}): {:.3f}'.format(
+            outputs['Largest_included_sphere_unit'],
+            outputs['Largest_included_sphere']))
 
-    print('Nitrogen accessible surface area ({}): {:.3f}'.format(
-        outputs['ASA_m^2/g_unit'], outputs['ASA_m^2/g']))
+        print('Nitrogen accessible surface area ({}): {:.3f}'.format(
+            outputs['ASA_m^2/g_unit'], outputs['ASA_m^2/g']))
 
-    print('Geometric pore volume ({}): {:.3f}'.format(
-        outputs['AV_cm^3/g_unit'], outputs['AV_cm^3/g']))
+        print('Geometric pore volume ({}): {:.3f}'.format(
+            outputs['AV_cm^3/g_unit'], outputs['AV_cm^3/g']))
 
-    # print('Number of blocking spheres needed for probe radius of {:.2f}A: {}'.
-    #       format(
-    #           outputs['Input_block'][0],
-    #           outputs['Number_of_blocking_spheres']))
-    # print('Blocking spheres file: SinglefileData<{}>'.format(
-    #     node.outputs.block.pk))
+        # print('Number of blocking spheres needed for probe radius of {:.2f}A: {}'.
+        #       format(
+        #           outputs['Input_block'][0],
+        #           outputs['Number_of_blocking_spheres']))
+        # print('Blocking spheres file: SinglefileData<{}>'.format(
+        #     node.outputs.block.pk))
 
-    print('CSSR structure: SinglefileData<{}>'.format(
-        node.outputs.structure_cssr.pk))
+        print('CSSR structure: SinglefileData<{}>'.format(
+            node.outputs.structure_cssr.pk))
 
 
 @click.command()
