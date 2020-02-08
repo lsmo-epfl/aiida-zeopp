@@ -71,6 +71,7 @@ jobs:
       env: ignore
       before_deploy:
         - echo "About to deploy $TRAVIS_TAG to PyPI"
+        - .ci/check_tag.sh
       after_deploy:
         - echo "Deployed $TRAVIS_TAG to PyPI"
       deploy: &pypi

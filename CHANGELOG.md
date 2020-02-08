@@ -1,3 +1,11 @@
+## v1.1.0
+
+### Improvements
+
+ * Drop python2 support in view of upcoming aiida 1.1.0 [[#54]](https://github.com/ltalirz/aiida-zeopp/pull/54)
+ * Add default value for `tot_num_mpiprocs` [[#54]](https://github.com/ltalirz/aiida-zeopp/pull/54)
+
+
 ## v1.0.3
 
 ### Bug fixes
