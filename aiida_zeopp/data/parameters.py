@@ -1,9 +1,8 @@
 """Input parameter class for network executable."""
-from __future__ import absolute_import
 from voluptuous import Schema, ExactSequence, Any
 from aiida.orm import Dict
-import six
-from six.moves import map
+from aiida.plugins import DataFactory
+import aiida_zeopp.parsers.plain as pp
 
 # These options allow specifying the name of the output file
 # key : [ accepted values, labels ]
@@ -114,7 +113,7 @@ class NetworkParameters(Dict):
         pm_dict = self.get_dict()
         output_keys = self.output_keys
 
-        for k, val in six.iteritems(pm_dict):
+        for k, val in pm_dict.items():
 
             parameter = ['-{}'.format(k)]
             if isinstance(val, bool):
@@ -195,9 +194,6 @@ class NetworkParameters(Dict):
             List element is None, if parser is not implemented.
         :rtype: list
         """
-        import aiida_zeopp.parsers.plain as pp
-        #import aiida_zeopp.parsers.structure as sp
-
         parsers = []
         for k in self.output_dict:
             if k == 'vol':
@@ -240,7 +236,6 @@ class NetworkParameters(Dict):
         :rtype: str
 
         """
-        from aiida.plugins import DataFactory
 
         # treating only CifData for the moment - could extend to other formats in the future
         if isinstance(structure, DataFactory('cif')):

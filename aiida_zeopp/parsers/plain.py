@@ -1,11 +1,9 @@
 """AiiDA parsers for output of network executable."""
 # pylint: disable=useless-super-delegation
-from __future__ import absolute_import
-from __future__ import print_function
 import re
-import six
-from six.moves import map
-from six.moves import range
+import math
+
+from aiida.orm import Dict
 
 
 class KeywordParser(object):
@@ -40,7 +38,7 @@ class KeywordParser(object):
         results = {}
 
         regex = r'{}:\s?([\d\.]*)'
-        for keyword, val in six.iteritems(cls.keywords):
+        for keyword, val in cls.keywords.items():
             ktype, kunit = val
             regex_rep = regex.format(re.escape(keyword))
             match = re.search(regex_rep, string)
@@ -62,7 +60,6 @@ class KeywordParser(object):
     @classmethod
     def parse_aiida(cls, string):
         """Parses string and returns AiiDA Dict."""
-        from aiida.orm import Dict
         return Dict(dict=cls.parse(string))
 
 
@@ -253,7 +250,6 @@ class PoresSizeDistParser(object):
             Those are not JSON-serializable:
             https://www.postgresql.org/docs/current/datatype-json.html#JSON-TYPE-MAPPING-TABLE
             """
-            import math
             return [
                 0 if math.isnan(f) or math.isinf(f) else f for f in float_list
             ]
@@ -366,5 +362,4 @@ class ChannelParser(object):
 
     @classmethod
     def parse_aiida(cls, string):
-        from aiida.orm import Dict
         return Dict(dict=cls.parse(string))

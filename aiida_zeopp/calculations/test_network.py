@@ -1,7 +1,6 @@
 """ Tests for calculations
 
 """
-from __future__ import absolute_import
 import os
 import io
 import pytest

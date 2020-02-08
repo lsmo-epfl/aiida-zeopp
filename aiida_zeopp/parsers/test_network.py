@@ -3,7 +3,6 @@
 Currently not strictly needed due to full integration tests.
 Might reactivate this when testing parsers becomes easier.
 """
-# from __future__ import absolute_import
 # import os
 
 # import aiida_zeopp.tests as zt

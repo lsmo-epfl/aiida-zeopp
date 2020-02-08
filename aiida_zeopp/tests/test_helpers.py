@@ -1,7 +1,5 @@
 """Testing zeo++ test helpers."""
 
-from __future__ import absolute_import
-
 
 def test_get_code():
     """Test helper for setting up a code."""
