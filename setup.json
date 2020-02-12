@@ -46,8 +46,7 @@
             "ase~=3.15"
         ],
         "pre-commit": [
-            "astroid==2.3.3",
-            "pre-commit==1.18.3",
+            "pre-commit==2.0.1",
             "yapf==0.28.0",
             "prospector==1.2.0",
             "pylint==2.4.4"
