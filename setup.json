@@ -47,7 +47,7 @@
         ],
         "pre-commit": [
             "pre-commit==2.0.1",
-            "virtualenv<20",
+            "six>=1.12.0",
             "yapf==0.28.0",
             "prospector==1.2.0",
             "pylint==2.4.4"
