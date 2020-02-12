@@ -1,3 +1,10 @@
+## v1.1.1
+
+### Improvements
+
+ * Bump `aiida-core` dependency to 1.1.0 and fix use of deprecated API
+ * Drop `monty` dependency
+
 ## v1.1.0
 
 ### Improvements

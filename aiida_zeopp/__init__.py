@@ -3,7 +3,7 @@ AiiDA Zeo++ Plugin
 
 """
 
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
 # disable psycopg2 warning
 import warnings
