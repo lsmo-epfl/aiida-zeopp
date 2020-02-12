@@ -7,7 +7,7 @@ import tempfile
 import distutils.spawn
 
 from aiida.manage.tests.unittest_classes import PluginTestCase
-from aiida.backends.profile import BACKEND_DJANGO, BACKEND_SQLA
+from aiida.backends import BACKEND_DJANGO, BACKEND_SQLA
 from aiida.orm import Computer, Code
 from aiida.common import NotExistent
 from aiida.common.folders import Folder
