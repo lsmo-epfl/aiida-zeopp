@@ -34,8 +34,7 @@
         "aiida-core~=1.1",
         "pycifrw~=4.2",
         "pymatgen",
-        "voluptuous",
-        "six"
+        "voluptuous"
     ],
     "extras_require": {
         "testing": [

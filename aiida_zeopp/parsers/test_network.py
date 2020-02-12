@@ -6,7 +6,6 @@ Might reactivate this when testing parsers becomes easier.
 # import os
 
 # import aiida_zeopp.tests as zt
-# import six
 
 # class TestNetwork(zt.PluginTestCase):
 #     def setUp(self):
@@ -58,7 +57,7 @@ Might reactivate this when testing parsers becomes easier.
 #             'block': 'HKUST-1.block',
 #         }
 
-#         for out_key, out_file in six.iteritems(parameters.output_dict):
+#         for out_key, out_file in parameters.output_dict.items():
 #             shutil.copyfile(
 #                 os.path.join(zt.TEST_DIR, test_files[out_key]),
 #                 os.path.join(tmp_dir, out_file))
