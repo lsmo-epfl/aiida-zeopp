@@ -34,7 +34,6 @@
         "aiida-core~=1.0",
         "pycifrw~=4.2",
         "pymatgen",
-        "monty~=2.0.4",
         "voluptuous",
         "six"
     ],
