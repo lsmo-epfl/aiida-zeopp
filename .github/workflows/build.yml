@@ -33,12 +33,6 @@ jobs:
         backend: ['django','sqlalchemy']
     steps:
     - uses: actions/checkout@v1
-    - uses: harmon758/postgresql-action@v1
-      with:
-        postgresql version: '11'
-        postgresql db: test_${{ matrix.backend }}
-        postgresql user: 'postgres'
-        postgresql password: ''
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
