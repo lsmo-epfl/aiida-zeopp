@@ -1,7 +1,8 @@
-[![Build Status](https://travis-ci.org/ltalirz/aiida-zeopp.svg?branch=master)](https://travis-ci.org/ltalirz/aiida-zeopp)
-[![Coverage Status](https://coveralls.io/repos/github/ltalirz/aiida-zeopp/badge.svg?branch=master)](https://coveralls.io/github/ltalirz/aiida-zeopp?branch=master)
+[![Build Status](https://github.com/pzarabadip/aiida-zeopp/workflows/Build/badge.svg)](https://github.com/pzarabadip/aiida-zeopp/actions)
+[![Coverage Status](https://codecov.io/gh/pzarabadip/aiida-zeopp/branch/enable_github_actions/graph/badge.svg)](https://codecov.io/gh/pzarabadip/aiida-zeopp)
 [![Docs status](https://readthedocs.org/projects/aiida-zeopp/badge)](http://aiida-zeopp.readthedocs.io/)
 [![PyPI version](https://badge.fury.io/py/aiida-zeopp.svg)](https://badge.fury.io/py/aiida-zeopp)
+[![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/pzarabadip/aiida-zeopp/blob/master/LICENSE)
 
 # aiida-zeopp
 

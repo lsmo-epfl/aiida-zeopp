@@ -1,6 +1,0 @@
-#!/bin/bash
-# piping through to singularity
-set -e
-SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
-singularity exec "${SCRIPT_PATH}/../singularity-files/zeopp.simg" /usr/local/bin/network "$@"
-

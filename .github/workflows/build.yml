@@ -1,0 +1,81 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Zeo++
+      run: |
+        git clone https://github.com/pzarabadip/zeoplusplus -b develop zeoplusplus
+        cd zeoplusplus
+        cd voro++/src
+        make
+        cd ../..
+        make
+        mkdir bin
+        cp network bin
+    - name: Upload network executable
+      uses: actions/upload-artifact@v1
+      with:
+        name: zeo
+        path: ./zeoplusplus/bin
+  tests:
+    needs: compile
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        python-version: [3.6,3.7,3.8]
+        backend: ['django','sqlalchemy']
+    steps:
+    - uses: actions/checkout@v1
+    - uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '11'
+        postgresql db: test_${{ matrix.backend }}
+        postgresql user: 'postgres'
+        postgresql password: ''
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install system dependencies
+      run: |
+        wget -O - "https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc" | sudo apt-key add -
+        echo 'deb https://dl.bintray.com/rabbitmq-erlang/debian bionic erlang' | sudo tee -a /etc/apt/sources.list.d/bintray.rabbitmq.list
+        echo 'deb https://dl.bintray.com/rabbitmq/debian bionic main' | sudo tee -a /etc/apt/sources.list.d/bintray.rabbitmq.list
+        sudo rm -f /etc/apt/sources.list.d/dotnetdev.list /etc/apt/sources.list.d/microsoft-prod.list
+        sudo apt update
+        sudo apt install postgresql postgresql-server-dev-all postgresql-client rabbitmq-server graphviz
+        sudo systemctl status rabbitmq-server.service 
+    - name: Install python dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -e .[testing,pre-commit]
+        pip install wrapt==1.11.2
+        reentry scan -r aiida
+    - name: Run pre-commit
+      run: |
+        pre-commit install
+        pre-commit run --all-files || ( git status --short ; git diff ; exit 1 )
+    - name: Download network executable
+      uses: actions/download-artifact@v1
+      with:
+        name: zeo
+        path: ./zeoplusplus
+    - name: Append to the path
+      run: |
+        chmod +x zeoplusplus/network
+        echo "::add-path::${{ github.workspace }}/zeoplusplus"
+    - name: Run pytest
+      run: |
+        pytest --cov-report=xml --cov=./aiida_zeopp
+    - name: Upload coverage to codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
+        file: ./coverage.xml
