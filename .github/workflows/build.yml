@@ -8,7 +8,14 @@ jobs:
     timeout-minutes: 30
     steps:
     - uses: actions/checkout@v1
+    - name: Get network binary from cache (or start caching)
+      id: zeopp-cache
+      uses: actions/cache@v1
+      with:
+        path: ./zeoplusplus/bin
+        key: zeopp
     - name: Install Zeo++
+      if: steps.zeopp-cache.outputs.cache-hit != 'true'
       run: |
         git clone https://github.com/pzarabadip/zeoplusplus -b develop zeoplusplus
         cd zeoplusplus
@@ -18,19 +25,14 @@ jobs:
         make
         mkdir bin
         cp network bin
-    - name: Upload network executable
-      uses: actions/upload-artifact@v1
-      with:
-        name: zeo
-        path: ./zeoplusplus/bin
   tests:
     needs: compile
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       matrix:
-        python-version: [3.6,3.7,3.8]
-        backend: ['django','sqlalchemy']
+        python-version: [3.6,3.8]
+        backend: ['django']
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python ${{ matrix.python-version }}
@@ -56,15 +58,16 @@ jobs:
       run: |
         pre-commit install
         pre-commit run --all-files || ( git status --short ; git diff ; exit 1 )
-    - name: Download network executable
-      uses: actions/download-artifact@v1
+    - name: Get network binary from cache (or start caching)
+      id: zeopp-cache
+      uses: actions/cache@v1
       with:
-        name: zeo
-        path: ./zeoplusplus
+        path: ./zeoplusplus/bin
+        key: zeopp
     - name: Append to the path
       run: |
-        chmod +x zeoplusplus/network
-        echo "::add-path::${{ github.workspace }}/zeoplusplus"
+        chmod +x zeoplusplus/bin/network
+        echo "::add-path::${{ github.workspace }}/zeoplusplus/bin"
     - name: Run pytest
       run: |
         pytest --cov-report=xml --cov=./aiida_zeopp
