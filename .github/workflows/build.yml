@@ -66,8 +66,8 @@ jobs:
         key: zeopp
     - name: Append to the path
       run: |
-        chmod +x zeoplusplus/network
-        echo "::add-path::${{ github.workspace }}/zeoplusplus"
+        chmod +x zeoplusplus/bin/network
+        echo "::add-path::${{ github.workspace }}/zeoplusplus/bin"
     - name: Run pytest
       run: |
         pytest --cov-report=xml --cov=./aiida_zeopp
