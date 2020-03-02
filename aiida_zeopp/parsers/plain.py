@@ -6,7 +6,7 @@ import math
 from aiida.orm import Dict
 
 
-class KeywordParser(object):
+class KeywordParser():
     """Generic keyword-value parser class.
 
     Reused by more specific parsers.
@@ -227,7 +227,7 @@ class ResParser(KeywordParser):
         return res
 
 
-class PoresSizeDistParser(object):
+class PoresSizeDistParser():
     """Parse pore size distribution output of network executable."""
     @classmethod
     def parse(cls, string):  # pylint: disable=too-many-locals
@@ -288,7 +288,7 @@ class PoresSizeDistParser(object):
         return psd_dict
 
 
-class ChannelParser(object):
+class ChannelParser():
     """Parse pore channel output of network executable."""
     @classmethod
     def parse(cls, string):  # pylint: disable=too-many-locals

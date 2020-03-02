@@ -3,7 +3,7 @@ import pymatgen
 from aiida.orm import StructureData
 
 
-class CssrParser(object):
+class CssrParser():
     """Parser class for CSSR structure format."""
     @classmethod
     def parse(cls, string):
