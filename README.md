@@ -1,5 +1,5 @@
 [![Build Status](https://github.com/ltalirz/aiida-zeopp/workflows/Build/badge.svg)](https://github.com/ltalirz/aiida-zeopp/actions)
-[![Coverage Status](https://codecov.io/gh/ltalirz/aiida-zeopp/branch/enable_github_actions/graph/badge.svg)](https://codecov.io/gh/ltalirz/aiida-zeopp)
+[![Coverage Status](https://codecov.io/gh/ltalirz/aiida-zeopp/branch/master/graph/badge.svg)](https://codecov.io/gh/ltalirz/aiida-zeopp)
 [![Docs status](https://readthedocs.org/projects/aiida-zeopp/badge)](http://aiida-zeopp.readthedocs.io/)
 [![PyPI version](https://badge.fury.io/py/aiida-zeopp.svg)](https://badge.fury.io/py/aiida-zeopp)
 [![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/ltalirz/aiida-zeopp/blob/master/LICENSE)
