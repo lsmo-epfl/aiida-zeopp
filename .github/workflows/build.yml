@@ -17,8 +17,10 @@ jobs:
     - name: Install Zeo++
       if: steps.zeopp-cache.outputs.cache-hit != 'true'
       run: |
-        git clone https://github.com/pzarabadip/zeoplusplus -b develop zeoplusplus
+        git clone https://github.com/lsmo-epfl/zeopp-lsmo -b master zeoplusplus
         cd zeoplusplus
+        wget https://gitlab.com/libeigen/eigen/-/archive/3.2.7/eigen-3.2.7.tar.bz2
+        tar xf eigen-3.2.7.tar.bz2
         cd voro++/src
         make
         cd ../..

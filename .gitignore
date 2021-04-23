@@ -15,4 +15,3 @@ dist/
 test-results.xml
 .coverage
 .pytest_cache/
-setup.py
