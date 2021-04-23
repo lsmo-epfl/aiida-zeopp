@@ -68,6 +68,7 @@ MODIFIER_OPTIONS = {
     'ha': (Any(bool, *HA_OPTIONS), ['high_accuracy']),
     'stripatomnames': (bool, ['strip_atom_names']),
     'nor': (bool, ['no_radial']),
+    'allowAdjustCoordsAndCell': (bool, ['allow_adjust_coords_and_cell']),
 }
 
 ALL_OPTIONS = dict(

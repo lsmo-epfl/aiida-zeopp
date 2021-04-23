@@ -48,18 +48,20 @@ def test_submit_MgO(network_code, basic_options):  # pylint: disable=unused-argu
     """
 
     # Prepare input parameters
-    parameters = DataFactory('zeopp.parameters')(dict={
-        'cssr': True,
-        'res': True,
-        'sa': [1.82, 1.82, 5000],
-        'vsa': [1.82, 1.82, 5000],
-        'volpo': [1.82, 1.82, 5000],
-        'chan': 1.2,
-        'ha': False,
-        'strinfo': True,
-        'gridG': True,
-        'oms': False,
-    })
+    parameters = DataFactory('zeopp.parameters')(
+        dict={
+            'cssr': True,
+            'res': True,
+            'sa': [1.82, 1.82, 5000],
+            'vsa': [1.82, 1.82, 5000],
+            'volpo': [1.82, 1.82, 5000],
+            'chan': 1.2,
+            'ha': False,
+            'strinfo': True,
+            'gridG': True,
+            'oms': False,
+            'allowAdjustCoordsAndCell': True,
+        })
 
     structure = CifData(file=os.path.join(TEST_DIR, 'MgO.cif'),
                         parse_policy='lazy')
