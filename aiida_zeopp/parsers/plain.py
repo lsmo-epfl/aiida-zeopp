@@ -227,7 +227,7 @@ class ResParser(KeywordParser):
         return res
 
 
-class PoresSizeDistParser():
+class PoresSizeDistParser():  # pylint: disable=too-few-public-methods
     """Parse pore size distribution output of network executable."""
     @classmethod
     def parse(cls, string):  # pylint: disable=too-many-locals
@@ -362,4 +362,5 @@ class ChannelParser():
 
     @classmethod
     def parse_aiida(cls, string):
+        """Return AiiDA dictionary."""
         return Dict(dict=cls.parse(string))

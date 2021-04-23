@@ -19,9 +19,10 @@ class CssrParser():
         results: structure
           corresponding AiiDA structure
         """
-        return pymatgen.Structure.from_str(string, fmt='cssr')
+        return pymatgen.core.Structure.from_str(string, fmt='cssr')
 
     @classmethod
     def parse_aiida(cls, string):
+        """Parse .cssr string to AiiDA StructureData"""
         pym_struct = cls.parse(string)
         return StructureData(pymatgen_structure=pym_struct)
