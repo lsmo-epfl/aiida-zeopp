@@ -1,3 +1,9 @@
+## v1.1.2
+
+### Improvements
+
+ * Add support for undocumented `-allowAdjustCoordsAndCell` flag  [[#54]](https://github.com/ltalirz/aiida-zeopp/pull/54)
+
 ## v1.1.1
 
 ### Improvements
