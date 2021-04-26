@@ -4,23 +4,6 @@ on: [push, pull_request]
 
 jobs:
 
-  conda-install:
-
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - uses: conda-incubator/setup-miniconda@v2
-      with:
-        auto-activate-base: true
-        #auto-update-conda: true
-
-    - name: Install zeo++
-      run: |
-        conda install -y -c conda-forge zeopp-lsmo
-
   #compile:
   #  runs-on: ubuntu-latest
   #  timeout-minutes: 30
@@ -47,13 +30,8 @@ jobs:
   #      cp network bin
 
   tests:
-    needs: conda-install
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    strategy:
-      matrix:
-        python-version: [3.6,3.8]
-        backend: ['django']
+    timeout-minutes: 15
     services:
       postgres:
         image: postgres:12
@@ -74,15 +52,22 @@ jobs:
           - 5672:5672
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+
+    - uses: conda-incubator/setup-miniconda@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        auto-activate-base: true
+        #auto-update-conda: true
+
+    - name: Install zeo++
+      run: |
+        conda install -y -c conda-forge zeopp-lsmo
+
     - name: Install python dependencies
       run: |
         pip install --upgrade pip
         pip install -e .[testing]
         reentry scan -r aiida
+
     - name: Run pytest
       run: |
         pytest --cov-report=xml --cov=./aiida_zeopp
