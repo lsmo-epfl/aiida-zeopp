@@ -1,5 +1,9 @@
 """Atomic structure parsers."""
-import pymatgen
+try:
+    from pymatgen import Structure
+except ImportError:
+    from pymatgen.core import Structure
+
 from aiida.orm import StructureData
 
 
@@ -19,7 +23,7 @@ class CssrParser():
         results: structure
           corresponding AiiDA structure
         """
-        return pymatgen.core.Structure.from_str(string, fmt='cssr')
+        return Structure.from_str(string, fmt='cssr')
 
     @classmethod
     def parse_aiida(cls, string):
