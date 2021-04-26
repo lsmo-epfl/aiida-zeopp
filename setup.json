@@ -32,6 +32,7 @@
     "reentry_register": true,
     "install_requires": [
         "aiida-core~=1.1",
+        "sqlalchemy<1.4",
         "pycifrw~=4.2",
         "pymatgen",
         "voluptuous"
