@@ -1,0 +1,23 @@
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.messages_control]
+disable = [
+    "too-many-ancestors",
+]
+module-naming-style="any"
+
+[tool.pytest.ini_options]
+addopts = "--durations=0 --cov=aiida_zeopp"
+python_files = "test_*.py example_*.py"
+filterwarnings = [
+    "ignore::DeprecationWarning:aiida:",
+    "ignore::DeprecationWarning:babel:",
+    "ignore::DeprecationWarning:plumpy:",
+    "ignore::DeprecationWarning:django:",
+    "ignore::DeprecationWarning:frozendict:",
+    "ignore::DeprecationWarning:sqlalchemy:",
+    "ignore::DeprecationWarning:yaml:",
+    "ignore::DeprecationWarning:pymatgen:",
+]
+

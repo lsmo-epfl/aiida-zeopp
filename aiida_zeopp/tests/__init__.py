@@ -22,6 +22,7 @@ EXECUTABLES = {
 
 
 def get_backend():
+    """Get AiiDA backend from environment variable."""
     if os.environ.get('TEST_AIIDA_BACKEND') == BACKEND_SQLA:
         return BACKEND_SQLA
     return BACKEND_DJANGO
