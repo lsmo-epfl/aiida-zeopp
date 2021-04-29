@@ -48,11 +48,11 @@ def get_computer(name):
     """Set up localhost computer"""
 
     try:
-        computer = Computer.objects.get(name=name)
+        computer = Computer.objects.get(label=name)
     except NotExistent:
 
         computer = Computer(
-            name=name,
+            label=name,
             description='localhost computer set up by aiida_zeopp tests',
             hostname=name,
             workdir=tempfile.mkdtemp(),

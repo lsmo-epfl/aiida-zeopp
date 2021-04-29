@@ -28,7 +28,7 @@ jobs:
   #      make
   #      mkdir bin
   #      cp network bin
-
+  
   tests:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -36,6 +36,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8]
+        aiida-version: ['stable', 'develop']
 
     services:
       postgres:
@@ -59,20 +60,22 @@ jobs:
     - uses: actions/checkout@v2
 
     - uses: conda-incubator/setup-miniconda@v2
-      #with:
-      #auto-activate-base: true
-      #auto-update-conda: true
+    - name: Install zeo++
+      run: conda install -y -c conda-forge zeopp-lsmo
+    - name: add network binary to PATH
+      run: |
+        ls /usr/share/miniconda/bin
+        echo /usr/share/miniconda/bin >> $GITHUB_PATH
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install zeo++
+    - name: Install aiida develop version
       run: |
-        conda install -y -c conda-forge zeopp-lsmo
-        ls /usr/share/miniconda/bin
-        echo /usr/share/miniconda/bin >> $GITHUB_PATH
+        pip install git+git://github.com/aiidateam/aiida-core
+      if: ${{ matrix.aiida-version == 'develop' }}
 
     - name: Install python dependencies
       run: |
@@ -87,6 +90,7 @@ jobs:
       with:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./coverage.xml
+      continue-on-error: ${{ matrix.aiida-version == 'develop' }}  # allow failures against develop
 
 
   pre-commit:
@@ -95,7 +99,6 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8]
-        backend: ['django']
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
