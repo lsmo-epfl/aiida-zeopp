@@ -4,14 +4,10 @@ import aiida_zeopp.tests as zt
 """Test CSSR parser"""
 
 
-class CssrParserTestCase(zt.PluginTestCase):
+def test_parse_hkust():
 
-    BACKEND = zt.get_backend()
+    with open(os.path.join(zt.TEST_DIR, 'MgO.cssr'), 'r') as f:
+        string = f.read()
 
-    def test_parse_hkust(self):
-
-        with open(os.path.join(zt.TEST_DIR, 'MgO.cssr'), 'r') as f:
-            string = f.read()
-
-        parser = parsers.CssrParser
-        parser.parse(string)
+    parser = parsers.CssrParser
+    parser.parse(string)

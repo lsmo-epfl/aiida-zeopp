@@ -25,12 +25,12 @@ class NetworkParser(Parser):
 
         # Check that the retrieved folder is there
         try:
-            output_folder = self.retrieved
+            self.retrieved
         except exceptions.NotExistent:
             return self.exit_codes.ERROR_NO_RETRIEVED_FOLDER
 
         # Check the folder content is as expected
-        list_of_files = output_folder.list_object_names()
+        list_of_files = self.retrieved.list_object_names()
 
         # pylint: disable=protected-access
         inp_params = self.node.inputs.parameters
