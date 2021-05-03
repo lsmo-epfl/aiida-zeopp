@@ -6,14 +6,12 @@ import tempfile
 # import distutils.spawn  # pylint: disable=no-name-in-module,import-error
 import distutils.spawn
 
-from aiida.manage.tests.unittest_classes import PluginTestCase
 from aiida.backends import BACKEND_DJANGO, BACKEND_SQLA
 from aiida.orm import Computer, Code
 from aiida.common import NotExistent
 from aiida.common.folders import Folder
 
-__all__ = ('PluginTestCase', 'get_backend', 'get_path_to_executable',
-           'get_computer', 'get_code')
+__all__ = ('get_backend', 'get_path_to_executable', 'get_computer', 'get_code')
 
 TEST_DIR = os.path.dirname(os.path.realpath(__file__))
 EXECUTABLES = {
