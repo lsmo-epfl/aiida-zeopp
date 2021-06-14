@@ -4,7 +4,7 @@
     "author_email": "leopold.talirz@epfl.ch",
     "description": "AiiDA plugin for zeo++",
     "url": "https://github.com/ltalirz/aiida-zeopp",
-    "license": "Creative Commons",
+    "license": "MIT",
     "classifiers": [
         "Programming Language :: Python",
         "Framework :: AiiDA"
