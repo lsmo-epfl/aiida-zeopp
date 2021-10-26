@@ -80,7 +80,11 @@ jobs:
     - name: Install python dependencies
       run: |
         pip install -e .[testing]
+
+    - name: Populate reentry cache
+      run: |
         reentry scan -r aiida
+      if: ${{ matrix.aiida-version == 'stable' }}
 
     - name: Run pytest
       run: |

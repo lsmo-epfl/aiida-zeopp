@@ -26,7 +26,6 @@
         "aiida.workflows": [
         ]
     },
-    "reentry_register": true,
     "install_requires": [
         "aiida-core>=1.1,<3",
         "pycifrw~=4.2",
