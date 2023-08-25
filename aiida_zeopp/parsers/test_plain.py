@@ -1,10 +1,10 @@
 import unittest
+
 import aiida_zeopp.parsers.plain as parsers
 
 
 class VolpoParserTestCase(unittest.TestCase):
     def test_parse_hkust(self):
-
         string = """
         @ EDI.volpo Unitcell_volume: 307.484   Density: 1.62239
         POAV_A^3: 131.284 POAV_Volume_fraction: 0.42696 POAV_cm^3/g: 0.263168
@@ -31,7 +31,6 @@ class SaParserTestCase(unittest.TestCase):
 
 class ResParserTestCase(unittest.TestCase):
     def test_parse_hkust(self):
-
         string = """
         HKUST-1.res    13.19937 6.74621  13.19937
         """
@@ -52,11 +51,10 @@ class ChannelParserTestCase(unittest.TestCase):
         """
 
         parser = parsers.ChannelParser
-        channels = parser.parse(string)['Channels']
+        channels = parser.parse(string)["Channels"]
 
-        self.assertEqual(channels['Dimensionalities'][1], 3)
-        self.assertAlmostEqual(channels['Largest_included_spheres'][1],
-                               9.92222)
+        self.assertEqual(channels["Dimensionalities"][1], 3)
+        self.assertAlmostEqual(channels["Largest_included_spheres"][1], 9.92222)
 
     def test_parse_IPO3_no_channel(self):
         """Test case with zero channels."""
@@ -67,27 +65,29 @@ class ChannelParserTestCase(unittest.TestCase):
         """
 
         parser = parsers.ChannelParser
-        channels = parser.parse(string)['Channels']
+        channels = parser.parse(string)["Channels"]
 
-        self.assertEqual(len(channels['Dimensionalities']), 0)
+        self.assertEqual(len(channels["Dimensionalities"]), 0)
 
 
 class PoresSizeDistParserTestCase(unittest.TestCase):
     def test_parse_hkust_psd(self):
-        string = ('Pore size distribution histogram\n'
-                  'Bin size (A): 0.1\n'
-                  'Number of bins: 1000\n'
-                  'From: 0\n'
-                  'To: 100\n'
-                  'Total samples: 100000\n'
-                  'Accessible samples: 33376\n'
-                  'Fraction of sample points in node spheres: 0.33376\n'
-                  'Fraction of sample points outside node spheres: 0\n'
-                  '\n'
-                  'Bin Count Cumulative_dist Derivative_dist\n'
-                  '0 0 1 0\n'
-                  '0.1 0 1 0\n'
-                  '0.2 0 1 0\n')
+        string = (
+            "Pore size distribution histogram\n"
+            "Bin size (A): 0.1\n"
+            "Number of bins: 1000\n"
+            "From: 0\n"
+            "To: 100\n"
+            "Total samples: 100000\n"
+            "Accessible samples: 33376\n"
+            "Fraction of sample points in node spheres: 0.33376\n"
+            "Fraction of sample points outside node spheres: 0\n"
+            "\n"
+            "Bin Count Cumulative_dist Derivative_dist\n"
+            "0 0 1 0\n"
+            "0.1 0 1 0\n"
+            "0.2 0 1 0\n"
+        )
 
         parser = parsers.PoresSizeDistParser
         histogram = parser.parse(string)
@@ -97,10 +97,10 @@ class PoresSizeDistParserTestCase(unittest.TestCase):
         cumulatives = [1.0, 1.0, 1.0]
         derivatives = [0.0, 0.0, 0.0]
 
-        self.assertEqual(bins, histogram['psd']['bins'])
-        self.assertEqual(counts, histogram['psd']['counts'])
-        self.assertEqual(cumulatives, histogram['psd']['cumulatives'])
-        self.assertEqual(derivatives, histogram['psd']['derivatives'])
+        self.assertEqual(bins, histogram["psd"]["bins"])
+        self.assertEqual(counts, histogram["psd"]["counts"])
+        self.assertEqual(cumulatives, histogram["psd"]["cumulatives"])
+        self.assertEqual(derivatives, histogram["psd"]["derivatives"])
 
     def test_parse_nonporous(self):
         """Test parsing pore size distribution of non-porous materials.
@@ -140,7 +140,7 @@ Bin Count Cumulative_dist Derivative_dist
         cumulatives = [0] * n
         derivatives = [0] * n
 
-        self.assertEqual(bins, histogram['psd']['bins'])
-        self.assertEqual(counts, histogram['psd']['counts'])
-        self.assertEqual(cumulatives, histogram['psd']['cumulatives'])
-        self.assertEqual(derivatives, histogram['psd']['derivatives'])
+        self.assertEqual(bins, histogram["psd"]["bins"])
+        self.assertEqual(counts, histogram["psd"]["counts"])
+        self.assertEqual(cumulatives, histogram["psd"]["cumulatives"])
+        self.assertEqual(derivatives, histogram["psd"]["derivatives"])

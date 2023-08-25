@@ -3,9 +3,10 @@ AiiDA Zeo++ Plugin
 
 """
 
-__version__ = '1.1.2'
+__version__ = "1.1.2"
 
 # disable psycopg2 warning
 import warnings
-warnings.filterwarnings('ignore', category=UserWarning, module='psycopg2')
-warnings.filterwarnings('ignore', category=UserWarning, module='pymatgen')
+
+warnings.filterwarnings("ignore", category=UserWarning, module="psycopg2")
+warnings.filterwarnings("ignore", category=UserWarning, module="pymatgen")

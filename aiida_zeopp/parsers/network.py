@@ -1,14 +1,15 @@
 """Parser classes."""
-from aiida.parsers.parser import Parser
-from aiida.orm import Dict, SinglefileData
 from aiida.common import exceptions
+from aiida.orm import Dict, SinglefileData
+from aiida.parsers.parser import Parser
 
 
 class NetworkParser(Parser):
     """
     Parser class for output of zeo++ network binary
     """
-    def parse(self, **kwargs):  #pylint: disable=too-many-branches
+
+    def parse(self, **kwargs):  # pylint: disable=too-many-branches
         """
         Parse output data folder, store results in database.
 
@@ -39,67 +40,58 @@ class NetworkParser(Parser):
         if set(output_files) <= set(list_of_files):
             pass
         else:
-            msg = 'Expected output files {}; found only {}.'\
-                .format(output_files, list_of_files)
-            self.logger.error(msg)
+            self.logger.error(f"Expected output files {output_files}; found only {list_of_files}.")
             return self.exit_codes.ERROR_OUTPUT_FILES_MISSING
 
         # Parse output files
         output_parsers = inp_params.output_parsers
         output_links = inp_params.output_links
-        output_parameters = Dict(dict={})
+        output_parameters = Dict({})
 
         empty_block = False
 
-        for fname, parser, link in list(
-                zip(output_files, output_parsers, output_links)):
-
-            with self.retrieved.open(fname, 'rb') as handle:
+        for fname, parser, link in list(zip(output_files, output_parsers, output_links)):
+            with self.retrieved.open(fname, "rb") as handle:
                 if parser is None:
-
                     # just add file, if no parser implemented
                     parsed = SinglefileData(file=handle)
                     self.out(link, parsed)
 
                     # workaround: if block pocket file is empty, raise an error
                     # (it indicates the calculation did not finish)
-                    if link == 'block':
+                    if link == "block":
                         if not parsed.get_content().strip():
                             self.logger.error(
-                                'Empty block file. This indicates the calculation of blocked pockets did not finish.'
+                                "Empty block file. This indicates the calculation of blocked pockets did not finish."
                             )
                             empty_block = True
                         else:
-                            output_parameters.update_dict({
-                                'Number_of_blocking_spheres':
-                                int(parsed.get_content().split()[0])
-                            })
+                            output_parameters.update_dict(
+                                {"Number_of_blocking_spheres": int(parsed.get_content().split()[0])}
+                            )
 
                 else:
                     # else parse and add keys to output_parameters
                     try:
                         # Note: We join it to the output_params
-                        #parsed = parser.parse_aiida(f.read())
-                        parsed_dict = parser.parse(
-                            handle.read().decode('utf8'))
+                        # parsed = parser.parse_aiida(f.read())
+                        parsed_dict = parser.parse(handle.read().decode("utf8"))
                     except ValueError:
-                        self.logger.error(
-                            'Error parsing file {} with parser {}'.format(
-                                fname, parser))
+                        self.logger.error(f"Error parsing file {fname} with parser {parser}")
 
                     output_parameters.update_dict(parsed_dict)
 
         # add name of input structures as parameter
         output_parameters.set_attribute(
-            'Input_structure_filename',
-            inp_params.get_structure_file_name(self.node.inputs.structure))
+            "Input_structure_filename",
+            inp_params.get_structure_file_name(self.node.inputs.structure),
+        )
         # add input parameters for convenience
         # note: should be added at top-level in order to allow tab completion
         # of <calcnode>.res.Input_...
         for k in inp_params.keys():
-            output_parameters.set_attribute('Input_{}'.format(k),
-                                            inp_params.get_attribute(k))
-        self.out('output_parameters', output_parameters)
+            output_parameters.set_attribute(f"Input_{k}", inp_params.get_attribute(k))
+        self.out("output_parameters", output_parameters)
 
         if empty_block:
             return self.exit_codes.ERROR_EMPTY_BLOCK

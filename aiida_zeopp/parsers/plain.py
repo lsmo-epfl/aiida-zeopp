@@ -1,25 +1,25 @@
 """AiiDA parsers for output of network executable."""
 # pylint: disable=useless-super-delegation
-import re
 import math
+import re
 
 from aiida.orm import Dict
 
 
-class KeywordParser():
+class KeywordParser:
     """Generic keyword-value parser class.
 
     Reused by more specific parsers.
     """
 
     keywords = {
-        'keyword1': [float, 'unit1'],
-        'keyword2': [int, 'unit2'],
+        "keyword1": [float, "unit1"],
+        "keyword2": [int, "unit2"],
     }
 
     @classmethod
     def parse(cls, string):
-        """ Parse zeo++ keyword format
+        """Parse zeo++ keyword format
 
         Example string:
 
@@ -37,49 +37,49 @@ class KeywordParser():
         """
         results = {}
 
-        regex = r'{}:\s?([\d\.]*)'
+        regex = r"{}:\s?([\d\.]*)"
         for keyword, val in cls.keywords.items():
             ktype, kunit = val
             regex_rep = regex.format(re.escape(keyword))
             match = re.search(regex_rep, string)
             if match is None:
-                raise ValueError('Keyword {} not specified'.format(keyword))
+                raise ValueError(f"Keyword {keyword} not specified")
 
             value = match.group(1)
-            if value == '':
+            if value == "":
                 value = 0
                 # uncomment this when #1 is fixed
-                #raise ValueError(
+                # raise ValueError(
                 #    "No value specified for keyword {}".format(keyword))
 
             results[keyword] = ktype(value)
-            results[keyword + '_unit'] = kunit
+            results[keyword + "_unit"] = kunit
 
         return results
 
     @classmethod
     def parse_aiida(cls, string):
         """Parses string and returns AiiDA Dict."""
-        return Dict(dict=cls.parse(string))
+        return Dict(cls.parse(string))
 
 
 class PoreVolumeParser(KeywordParser):
     """Parse PoreVolume output of network executable."""
 
     keywords = {
-        'Unitcell_volume': [float, 'A^3'],
-        'Density': [float, 'g/cm^3'],
-        'POAV_A^3': [float, 'A^3'],
-        'POAV_Volume_fraction': [float, None],
-        'POAV_cm^3/g': [float, 'cm^3/g'],
-        'PONAV_A^3': [float, 'A^3'],
-        'PONAV_Volume_fraction': [float, None],
-        'PONAV_cm^3/g': [float, 'cm^3/g'],
+        "Unitcell_volume": [float, "A^3"],
+        "Density": [float, "g/cm^3"],
+        "POAV_A^3": [float, "A^3"],
+        "POAV_Volume_fraction": [float, None],
+        "POAV_cm^3/g": [float, "cm^3/g"],
+        "PONAV_A^3": [float, "A^3"],
+        "PONAV_Volume_fraction": [float, None],
+        "PONAV_cm^3/g": [float, "cm^3/g"],
     }
 
     @classmethod
     def parse(cls, string):
-        """ Parse zeo++ .volpo format
+        """Parse zeo++ .volpo format
 
         Example volpo string:
 
@@ -97,26 +97,26 @@ class PoreVolumeParser(KeywordParser):
         results: dict
           dictionary of output values
         """
-        return super(PoreVolumeParser, cls).parse(string)
+        return super().parse(string)
 
 
 class AVolumeParser(KeywordParser):
     """Parse AVolume output of network executable."""
 
     keywords = {
-        'Unitcell_volume': [float, 'A^3'],
-        'Density': [float, 'g/cm^3'],
-        'AV_A^3': [float, 'A^3'],
-        'AV_Volume_fraction': [float, None],
-        'AV_cm^3/g': [float, 'cm^3/g'],
-        'NAV_A^3': [float, 'A^3'],
-        'NAV_Volume_fraction': [float, None],
-        'NAV_cm^3/g': [float, 'cm^3/g'],
+        "Unitcell_volume": [float, "A^3"],
+        "Density": [float, "g/cm^3"],
+        "AV_A^3": [float, "A^3"],
+        "AV_Volume_fraction": [float, None],
+        "AV_cm^3/g": [float, "cm^3/g"],
+        "NAV_A^3": [float, "A^3"],
+        "NAV_Volume_fraction": [float, None],
+        "NAV_cm^3/g": [float, "cm^3/g"],
     }
 
     @classmethod
     def parse(cls, string):
-        """ Parse zeo++ .vol format
+        """Parse zeo++ .vol format
 
         Example vol string:
 
@@ -134,30 +134,30 @@ class AVolumeParser(KeywordParser):
         results: dict
           dictionary of output values
         """
-        return super(AVolumeParser, cls).parse(string)
+        return super().parse(string)
 
 
 class SurfaceAreaParser(KeywordParser):
     """Parse surface area output of network executable."""
 
     keywords = {
-        'Unitcell_volume': [float, 'A^3'],
-        'Density': [float, 'g/cm^3'],
-        'ASA_A^2': [float, 'A^2'],
-        'ASA_m^2/cm^3': [float, 'm^2/cm^3'],
-        'ASA_m^2/g': [float, 'm^2/g'],
-        'NASA_A^2': [float, 'A^2'],
-        'NASA_m^2/cm^3': [float, 'm^2/cm^3'],
-        'NASA_m^2/g': [float, 'm^2/g'],
-        'Number_of_channels': [int, None],
-        'Channel_surface_area_A^2': [float, 'A^2'],
-        'Number_of_pockets': [int, None],
-        'Pocket_surface_area_A^2': [float, 'A^2'],
+        "Unitcell_volume": [float, "A^3"],
+        "Density": [float, "g/cm^3"],
+        "ASA_A^2": [float, "A^2"],
+        "ASA_m^2/cm^3": [float, "m^2/cm^3"],
+        "ASA_m^2/g": [float, "m^2/g"],
+        "NASA_A^2": [float, "A^2"],
+        "NASA_m^2/cm^3": [float, "m^2/cm^3"],
+        "NASA_m^2/g": [float, "m^2/g"],
+        "Number_of_channels": [int, None],
+        "Channel_surface_area_A^2": [float, "A^2"],
+        "Number_of_pockets": [int, None],
+        "Pocket_surface_area_A^2": [float, "A^2"],
     }
 
     @classmethod
     def parse(cls, string):
-        """ Parse zeo++ .sa format
+        """Parse zeo++ .sa format
 
         Example sa string:
 
@@ -177,21 +177,21 @@ class SurfaceAreaParser(KeywordParser):
         results: dict
           dictionary of output values
         """
-        return super(SurfaceAreaParser, cls).parse(string)
+        return super().parse(string)
 
 
 class ResParser(KeywordParser):
     """Parse .res output of network executable."""
 
     keywords = (
-        'Largest_included_sphere',
-        'Largest_free_sphere',
-        'Largest_included_free_sphere',
+        "Largest_included_sphere",
+        "Largest_free_sphere",
+        "Largest_included_free_sphere",
     )
 
     @classmethod
     def parse(cls, string):
-        """ Parse zeo++ .res format
+        """Parse zeo++ .res format
 
         Example res string:
 
@@ -217,18 +217,19 @@ class ResParser(KeywordParser):
         values = string.split()
 
         if len(values) != 4:
-            raise ValueError('Found more than 4 fields in .res format')
+            raise ValueError("Found more than 4 fields in .res format")
 
         for i in (0, 1, 2):
             keyword = cls.keywords[i]
             res[keyword] = float(values[i + 1])
-            res[keyword + '_unit'] = 'A'
+            res[keyword + "_unit"] = "A"
 
         return res
 
 
-class PoresSizeDistParser():  # pylint: disable=too-few-public-methods
+class PoresSizeDistParser:  # pylint: disable=too-few-public-methods
     """Parse pore size distribution output of network executable."""
+
     @classmethod
     def parse(cls, string):  # pylint: disable=too-many-locals
         """
@@ -244,55 +245,60 @@ class PoresSizeDistParser():  # pylint: disable=too-few-public-methods
         results: dict
             dictionary of output values
         """
+
         def clean_values(float_list):
             """Removes NaN and Inf from list of floats.
 
             Those are not JSON-serializable:
             https://www.postgresql.org/docs/current/datatype-json.html#JSON-TYPE-MAPPING-TABLE
             """
-            return [
-                0 if math.isnan(f) or math.isinf(f) else f for f in float_list
-            ]
+            return [0 if math.isnan(f) or math.isinf(f) else f for f in float_list]
 
         lines = string.splitlines()
         # remove empty lines
         lines = [l for l in lines if l.strip()]
 
         # find line where histogram data begins
-        header_line = 'Bin Count'
+        header_line = "Bin Count"
         i = 0
         for i, line in enumerate(lines):
             if header_line in line:
                 break
         else:
-            raise ValueError('Did not find header line in data')
+            raise ValueError("Did not find header line in data")
         # extract histogram data
         bins, counts, cumulatives, derivatives = [], [], [], []
-        for line in lines[i + 1:]:
-            bin, count, cumulative, derivative = line.split()  # pylint: disable=redefined-builtin
-            bins.append(float(bin))
+        for line in lines[i + 1 :]:
+            (
+                bin_,
+                count,
+                cumulative,
+                derivative,
+            ) = line.split()  # pylint: disable=redefined-builtin
+            bins.append(float(bin_))
             counts.append(int(count))
             cumulatives.append(float(cumulative))
             derivatives.append(float(derivative))
 
         psd_dict = {
-            'psd': {
-                'bins': bins,
-                'counts': counts,
+            "psd": {
+                "bins": bins,
+                "counts": counts,
                 # these can be nan /-nan when the counts are zero
-                'cumulatives': clean_values(cumulatives),
-                'derivatives': clean_values(derivatives)
+                "cumulatives": clean_values(cumulatives),
+                "derivatives": clean_values(derivatives),
             }
         }
 
         return psd_dict
 
 
-class ChannelParser():
+class ChannelParser:
     """Parse pore channel output of network executable."""
+
     @classmethod
     def parse(cls, string):  # pylint: disable=too-many-locals
-        """ Parse zeo++ .chan format
+        """Parse zeo++ .chan format
 
         Example chan string::
 
@@ -318,12 +324,11 @@ class ChannelParser():
         nlines = len(lines)
 
         # parse header line
-        match = re.search(
-            r'(\d+) channels identified of dimensionality([\d\s]*)', lines[0])
+        match = re.search(r"(\d+) channels identified of dimensionality([\d\s]*)", lines[0])
         if not match:
             raise ValueError(
-                'The following string was not recognized as a valid header of the .chan format:\n'
-                + lines[0])
+                "The following string was not recognized as a valid header of the .chan format:\n" + lines[0]
+            )
 
         nchannels = int(match.group(1))
 
@@ -334,13 +339,11 @@ class ChannelParser():
 
         if nchannels != len(dimensionalities):
             raise ValueError(
-                'Number of channels {} does not match number of dimensionalities {}'
-                .format(nchannels, len(dimensionalities)))
+                f"Number of channels {nchannels} does not match number of dimensionalities {len(dimensionalities)}"
+            )
 
         if nchannels != nlines - 2:
-            raise ValueError(
-                'Number of lines in file {} does not equal number of channels {}+2'
-                .format(nlines, nchannels))
+            raise ValueError(f"Number of lines in file {nlines} does not equal number of channels {nchannels}+2")
 
         # parse remaining lines (last line is discarded)
         dis, dfs, difs = [], [], []
@@ -351,11 +354,11 @@ class ChannelParser():
             difs.append(float(dif))
 
         pm_dict = {
-            'Channels': {
-                'Largest_included_spheres': dis,
-                'Largest_free_spheres': dfs,
-                'Largest_included_free_spheres': difs,
-                'Dimensionalities': dimensionalities,
+            "Channels": {
+                "Largest_included_spheres": dis,
+                "Largest_free_spheres": dfs,
+                "Largest_included_free_spheres": difs,
+                "Dimensionalities": dimensionalities,
             }
         }
         return pm_dict
@@ -363,4 +366,4 @@ class ChannelParser():
     @classmethod
     def parse_aiida(cls, string):
         """Return AiiDA dictionary."""
-        return Dict(dict=cls.parse(string))
+        return Dict(cls.parse(string))

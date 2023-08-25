@@ -4,40 +4,10 @@ on: [push, pull_request]
 
 jobs:
 
-  #compile:
-  #  runs-on: ubuntu-latest
-  #  timeout-minutes: 30
-  #  steps:
-  #  - uses: actions/checkout@v1
-  #  - name: Get network binary from cache (or start caching)
-  #    id: zeopp-cache
-  #    uses: actions/cache@v1
-  #    with:
-  #      path: ./zeoplusplus/bin
-  #      key: zeopp
-  #  - name: Install Zeo++
-  #    if: steps.zeopp-cache.outputs.cache-hit != 'true'
-  #    run: |
-  #      git clone https://github.com/lsmo-epfl/zeopp-lsmo -b master zeoplusplus
-  #      cd zeoplusplus
-  #      wget https://gitlab.com/libeigen/eigen/-/archive/3.2.7/eigen-3.2.7.tar.bz2
-  #      tar xf eigen-3.2.7.tar.bz2
-  #      cd voro++/src
-  #      make
-  #      cd ../..
-  #      make
-  #      mkdir bin
-  #      cp network bin
-  
   tests:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     continue-on-error: true
-
-    strategy:
-      matrix:
-        python-version: [3.8]
-        aiida-version: ['stable', 'develop']
 
     services:
       postgres:
@@ -68,53 +38,39 @@ jobs:
         ls /usr/share/miniconda/bin
         echo /usr/share/miniconda/bin >> $GITHUB_PATH
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.10
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
-
-    - name: Install aiida develop version
-      run: |
-        pip install git+git://github.com/aiidateam/aiida-core
-      if: ${{ matrix.aiida-version == 'develop' }}
+        python-version: '3.10'
 
     - name: Install python dependencies
       run: |
-        pip install -e .[testing]
-
-    - name: Populate reentry cache
-      run: |
-        reentry scan -r aiida
-      if: ${{ matrix.aiida-version == 'stable' }}
+        pip install -e .[tests]
 
     - name: Run pytest
       run: |
-        pytest --cov-report=xml --cov=./aiida_zeopp
-    - name: Upload coverage to codecov
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{secrets.CODECOV_TOKEN}}
-        file: ./coverage.xml
-      continue-on-error: ${{ matrix.aiida-version == 'develop' }}  # allow failures against develop
-
+        pytest 
+    #     --cov-report=xml --cov=./aiida_zeopp
+    # - name: Upload coverage to codecov
+    #   uses: codecov/codecov-action@v1
+    #   with:
+    #     token: ${{secrets.CODECOV_TOKEN}}
+    #     file: ./coverage.xml
+    #   continue-on-error: ${{ matrix.aiida-version == 'develop' }}  # allow failures against develop
 
   pre-commit:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    strategy:
-      matrix:
-        python-version: [3.8]
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: '3.10'
     - name: Install python dependencies
       run: |
         pip install --upgrade pip
-        pip install -e .[pre-commit,testing]
-        reentry scan -r aiida
+        pip install -e .[pre-commit,tests]
     - name: Run pre-commit
       run: |
         pre-commit install

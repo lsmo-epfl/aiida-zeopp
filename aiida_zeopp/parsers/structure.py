@@ -7,11 +7,12 @@ except ImportError:
 from aiida.orm import StructureData
 
 
-class CssrParser():
+class CssrParser:
     """Parser class for CSSR structure format."""
+
     @classmethod
     def parse(cls, string):
-        """ Parse .cssr string using pymatgen
+        """Parse .cssr string using pymatgen
 
         parameters
         ----------
@@ -23,7 +24,7 @@ class CssrParser():
         results: structure
           corresponding AiiDA structure
         """
-        return Structure.from_str(string, fmt='cssr')
+        return Structure.from_str(string, fmt="cssr")
 
     @classmethod
     def parse_aiida(cls, string):

@@ -1,11 +1,79 @@
+[build-system]
+requires = ['flit_core >=3.4,<4']
+build-backend = 'flit_core.buildapi'
+
+[project]
+name = "aiida-zeopp"
+dynamic = ['version']
+description = "AiiDA plugin for zeo++"
+authors = [
+    { name = 'Leopold Talirz', email = 'leopold.talirz@epfl.ch' },
+    { name = "Miriam Pougin", email = "miriam.pougin@epfl.ch" },
+]
+readme = 'README.md'
+license = {file = 'LICENSE'}
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Framework :: AiiDA',
+    'License :: OSI Approved :: MIT License',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+]
+keywords = ['aiida', 'workflows']
+requires-python = '>=3.8'
+dependencies = [
+    'aiida_core[atomic_tools]~=2.3',
+]
+
+[project.urls]
+Home = 'https://github.com/ltalirz/aiida-zeopp'
+
+[project.optional-dependencies]
+tests = [
+    'pgtest~=1.3,>=1.3.1',
+    'pytest~=6.0'
+]
+pre-commit = [
+    'pre-commit~=3.3',
+    'black~=23.7',
+    'isort~=5.12',
+    'pylint~=2.17',
+]
+dev = [
+    'aiida-zeopp[tests,pre-commit]'
+]
+
+[project.entry-points.'aiida.calculations']
+'zeopp.network' = 'aiida_zeopp.calculations.network:NetworkCalculation'
+
+[project.entry-points.'aiida.parsers']
+'zeopp.network' = 'aiida_zeopp.parsers.network:NetworkParser'
+
+[project.entry-points.'aiida.data']
+'zeopp.parameters' = 'aiida_zeopp.data.parameters:NetworkParameters'
+
+[tool.black]
+line-length = 120
+target-version = ['py310']
+include = '\.pyi?$'
+
 [tool.pylint.format]
 max-line-length = 120
 
 [tool.pylint.messages_control]
 disable = [
+    "invalid-name",
     "too-many-ancestors",
+    "no-member",
+    "duplicate-code",
 ]
 module-naming-style="any"
+
+[tool.isort]
+profile = "black"
 
 [tool.pytest.ini_options]
 addopts = "--durations=0 --cov=aiida_zeopp"
@@ -20,4 +88,3 @@ filterwarnings = [
     "ignore::DeprecationWarning:yaml:",
     "ignore::DeprecationWarning:pymatgen:",
 ]
-
