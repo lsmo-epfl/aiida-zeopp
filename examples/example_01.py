@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 """Submit a zeo++ test calculation."""
 
-import os
 import click
-from aiida import cmdline, engine
-from aiida.plugins import DataFactory, CalculationFactory
+from aiida import cmdline, engine, orm
+from aiida.plugins import CalculationFactory, DataFactory
+from importlib_resources import files
+
+import aiida_zeopp
 from aiida_zeopp import tests
 
 
@@ -15,68 +17,58 @@ def test_submit(network_code, submit=True):
     """
 
     if not network_code:
-        network_code = tests.get_code(entry_point='zeopp.network')
+        network_code = tests.get_code(entry_point="zeopp.network")
 
     # For allowed keys, print(NetworkParameters.schema)
-    parameters = DataFactory('zeopp.parameters')(
+    parameters = DataFactory("zeopp.parameters")(
         dict={
-            'ha': 'LOW',  #just for speed; use 'DEF' for prodution!
-            'cssr': True,  #converting to cssr
-            'res': True,
-            'sa': [1.86, 1.86, 1000],  #compute surface area
-            'vol': [0.0, 0.0, 1000],  #compute gemetric pore volume
+            "ha": "LOW",  # just for speed; use 'DEF' for prodution!
+            "cssr": True,  # converting to cssr
+            "res": True,
+            "sa": [1.86, 1.86, 1000],  # compute surface area
+            "vol": [0.0, 0.0, 1000],  # compute gemetric pore volume
             #'block': [2.0, 100]  #compute blocking spheres for a big molecule
-        })
-
-    this_dir = os.path.dirname(os.path.realpath(__file__))
-    structure = DataFactory('cif')(file=os.path.join(this_dir, 'HKUST-1.cif'))
+        }
+    )
+    structure = orm.CifData(file=(files(aiida_zeopp).parent / "examples" / "HKUST-1.cif").as_posix())
 
     # set up calculation
     inputs = {
-        'code': network_code,
-        'parameters': parameters,
-        'structure': structure,
-        'metadata': {
-            'options': {
-                'max_wallclock_seconds': 1 * 60,
+        "code": network_code,
+        "parameters": parameters,
+        "structure": structure,
+        "metadata": {
+            "options": {
+                "max_wallclock_seconds": 1 * 60,
             },
-            'label':
-            'aiida_zeopp example calculation',
-            'description':
-            'Converts .cif to .cssr format, computes surface area, and pore volume',
+            "label": "aiida_zeopp example calculation",
+            "description": "Converts .cif to .cssr format, computes surface area, and pore volume",
         },
     }
 
-    NetworkCalculation = CalculationFactory('zeopp.network')  # pylint: disable=invalid-name
-    print('Running NetworkCalculation: please wait...')
+    NetworkCalculation = CalculationFactory("zeopp.network")  # pylint: disable=invalid-name
+    print("Running NetworkCalculation: please wait...")
     if submit:
         engine.submit(NetworkCalculation, **inputs)
     else:
-        result, node = engine.run_get_node(
-            NetworkCalculation, **inputs)  # or use aiida.engine.submit
+        result, node = engine.run_get_node(NetworkCalculation, **inputs)
 
-        print('NetworkCalculation<{}> terminated.'.format(node.pk))
+        print(f"NetworkCalculation<{node.pk}> terminated.")
 
-        print('\nComputed output_parameters {}\n'.format(
-            str(result['output_parameters'])))
-        outputs = result['output_parameters'].get_dict()
+        print(f"\nComputed output_parameters {result['output_parameters']}\n")
+        outputs = result["output_parameters"].get_dict()
 
-        print('Density ({}): {:.3f}'.format(outputs['Density_unit'],
-                                            outputs['Density']))
+        print(f"Density ({outputs['Density_unit']}): {outputs['Density']:.3f}")
 
-        print('Largest free sphere ({}): {:.3f}'.format(
-            outputs['Largest_free_sphere_unit'],
-            outputs['Largest_free_sphere']))
+        print(f"Largest free sphere ({outputs['Largest_free_sphere_unit']}): {outputs['Largest_free_sphere']:.3f}")
 
-        print('Largest included sphere ({}): {:.3f}'.format(
-            outputs['Largest_included_sphere_unit'],
-            outputs['Largest_included_sphere']))
+        print(
+            f"Largest included sphere ({outputs['Largest_included_sphere_unit']}): "
+            f"{outputs['Largest_included_sphere']:.3f}"
+        )
 
-        print('Nitrogen accessible surface area ({}): {:.3f}'.format(
-            outputs['ASA_m^2/g_unit'], outputs['ASA_m^2/g']))
-
-        print('Geometric pore volume ({}): {:.3f}'.format(
-            outputs['AV_cm^3/g_unit'], outputs['AV_cm^3/g']))
+        print(f"Nitrogen accessible surface area ({outputs['ASA_m^2/g_unit']}): {outputs['ASA_m^2/g']:.3f}")
+        print(f"Geometric pore volume ({outputs['AV_cm^3/g_unit']}): {outputs['AV_cm^3/g']:.3f}")
 
         # print('Number of blocking spheres needed for probe radius of {:.2f}A: {}'.
         #       format(
@@ -85,8 +77,7 @@ def test_submit(network_code, submit=True):
         # print('Blocking spheres file: SinglefileData<{}>'.format(
         #     node.outputs.block.pk))
 
-        print('CSSR structure: SinglefileData<{}>'.format(
-            node.outputs.structure_cssr.pk))
+        print(f"CSSR structure: SinglefileData<{node.outputs.structure_cssr.pk}>")
 
 
 @click.command()
@@ -101,8 +92,8 @@ def cli(code):
 
     Help: $ ./example_01.py --help
     """
-    test_submit(code)
+    test_submit(code, submit=False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()  # pylint: disable=no-value-for-parameter

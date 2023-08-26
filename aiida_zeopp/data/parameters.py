@@ -1,88 +1,87 @@
 """Input parameter class for network executable."""
-from voluptuous import Schema, ExactSequence, Any
 from aiida.orm import Dict
 from aiida.plugins import DataFactory
+from voluptuous import Any, ExactSequence, Schema
+
 import aiida_zeopp.parsers.plain as pp
 
 # These options allow specifying the name of the output file
 # key : [ accepted values, labels ]
 OUTPUT_OPTIONS = {
-    'cssr': (bool, ['structure_cssr']),
-    'v1': (bool, ['structure_v1']),
-    'xyz': (bool, ['structure_xyz']),
-    'nt2': (bool, ['network_nt2']),
-    'res': (bool, ['free_sphere_res']),
-    'zvis': (bool, ['network_zvis']),
-    'axs': (float, ['nodes_axs']),
-    'visVoro': (float, ['voro', 'voro_accessible', 'voro_nonaccessible']),
-    'sa': (ExactSequence([float, float, int]), ['surface_area_sa']),
-    'vsa': (ExactSequence([float, float, int]), ['surface_sample_vsa']),
-    'vol': (ExactSequence([float, float, int]), ['volume_vol']),
-    'volpo': (ExactSequence([float, float, int]), ['pore_volume_volpo']),
-    'ray_atom': (ExactSequence([float, float, int]), ['ray_atom']),
-    'block': (ExactSequence([float, int]), ['block']),
-    'psd': (ExactSequence([float, float, int]), ['psd']),
-    'chan': (float, ['channels_chan']),
-    'gridG': (bool, ['grid_gaussian']),
-    'gridGBohr': (bool, ['grid_gaussian_bohr']),
-    'strinfo': (bool, ['str_info']),
-    'oms': (bool, ['open_metal_sites']),
+    "cssr": (bool, ["structure_cssr"]),
+    "v1": (bool, ["structure_v1"]),
+    "xyz": (bool, ["structure_xyz"]),
+    "nt2": (bool, ["network_nt2"]),
+    "res": (bool, ["free_sphere_res"]),
+    "zvis": (bool, ["network_zvis"]),
+    "axs": (float, ["nodes_axs"]),
+    "visVoro": (float, ["voro", "voro_accessible", "voro_nonaccessible"]),
+    "sa": (ExactSequence([float, float, int]), ["surface_area_sa"]),
+    "vsa": (ExactSequence([float, float, int]), ["surface_sample_vsa"]),
+    "vol": (ExactSequence([float, float, int]), ["volume_vol"]),
+    "volpo": (ExactSequence([float, float, int]), ["pore_volume_volpo"]),
+    "ray_atom": (ExactSequence([float, float, int]), ["ray_atom"]),
+    "block": (ExactSequence([float, int]), ["block"]),
+    "psd": (ExactSequence([float, float, int]), ["psd"]),
+    "chan": (float, ["channels_chan"]),
+    "gridG": (bool, ["grid_gaussian"]),
+    "gridGBohr": (bool, ["grid_gaussian_bohr"]),
+    "strinfo": (bool, ["str_info"]),
+    "oms": (bool, ["open_metal_sites"]),
 }
 
 # Currently NOT implemented
 # These options produce an output file with a hardcoded name
 # key : [ accepted values, [ output file name(s) ], label ]
-#fixed_OUTPUT_OPTIONS = {
+# fixed_OUTPUT_OPTIONS = {
 #    'gridBOV': (bool, ['{}_f.bov', '{}_f.distances'], 'grid_bov'),
-#}
+# }
 
 HA_OPTIONS = [
-    'OCC',
-    'FCC',
-    'ACC',
-    'AQC',
-    'DDH',
-    'TIH',
-    'ICH',
-    'ICC',
-    'RIH',
-    'S4',
-    'S10',
-    'S20',
-    'S30',
-    'S40',
-    'S50',
-    'S100',
-    'S500',
-    'S1000',
-    'S10000',
-    'DEF',
-    'HI',
-    'MED',
-    'LOW',
+    "OCC",
+    "FCC",
+    "ACC",
+    "AQC",
+    "DDH",
+    "TIH",
+    "ICH",
+    "ICC",
+    "RIH",
+    "S4",
+    "S10",
+    "S20",
+    "S30",
+    "S40",
+    "S50",
+    "S100",
+    "S500",
+    "S1000",
+    "S10000",
+    "DEF",
+    "HI",
+    "MED",
+    "LOW",
 ]
 
 # These options modify the output of other options
 # key : [ accepted values, label ]
 MODIFIER_OPTIONS = {
-    'ha': (Any(bool, *HA_OPTIONS), ['high_accuracy']),
-    'stripatomnames': (bool, ['strip_atom_names']),
-    'nor': (bool, ['no_radial']),
-    'allowAdjustCoordsAndCell': (bool, ['allow_adjust_coords_and_cell']),
+    "ha": (Any(bool, *HA_OPTIONS), ["high_accuracy"]),
+    "stripatomnames": (bool, ["strip_atom_names"]),
+    "nor": (bool, ["no_radial"]),
+    "allowAdjustCoordsAndCell": (bool, ["allow_adjust_coords_and_cell"]),
 }
 
-ALL_OPTIONS = dict(
-    list(OUTPUT_OPTIONS.items()) + list(MODIFIER_OPTIONS.items()))
+ALL_OPTIONS = dict(list(OUTPUT_OPTIONS.items()) + list(MODIFIER_OPTIONS.items()))
 
 
 class NetworkParameters(Dict):
-    """ Command line parameters for zeo++ network binary
-    """
+    """Command line parameters for zeo++ network binary"""
 
-    _schema = Schema({k: ALL_OPTIONS[k][0] for k in ALL_OPTIONS})
+    _schema = Schema({k: v[0] for k, v in ALL_OPTIONS.items()})
     schema = _schema.schema  # alias for easier printing
 
-    _OUTPUT_FILE_PREFIX = 'out.{}'
+    _OUTPUT_FILE_PREFIX = "out.{}"
 
     # pylint: disable=redefined-builtin, too-many-function-args
     def __init__(self, dict=None, **kwargs):
@@ -94,7 +93,7 @@ class NetworkParameters(Dict):
         Usage: ``NetworkParameters(dict={'cssr': True})``
         """
         dict = self.validate(dict)
-        super(NetworkParameters, self).__init__(dict=dict, **kwargs)
+        super().__init__(dict=dict, **kwargs)
 
     @classmethod
     def validate(cls, parameters_dict):
@@ -109,14 +108,13 @@ class NetworkParameters(Dict):
         parameters = []
 
         if radii_file_name is not None:
-            parameters += ['-r', radii_file_name]
+            parameters += ["-r", radii_file_name]
 
         pm_dict = self.get_dict()
         output_keys = self.output_keys
 
         for k, val in pm_dict.items():
-
-            parameter = ['-{}'.format(k)]
+            parameter = [f"-{k}"]
             if isinstance(val, bool):
                 # if boolean is false, no parameter to add
                 if not val:
@@ -162,10 +160,7 @@ class NetworkParameters(Dict):
             else:
                 # if multiple files, append link labels
                 labels = OUTPUT_OPTIONS[k][1]
-                output_dict[k] = [
-                    self._OUTPUT_FILE_PREFIX.format(k) + '.{}'.format(label)
-                    for label in labels
-                ]
+                output_dict[k] = [self._OUTPUT_FILE_PREFIX.format(k) + f".{label}" for label in labels]
 
         return output_dict
 
@@ -197,21 +192,21 @@ class NetworkParameters(Dict):
         """
         parsers = []
         for k in self.output_dict:
-            if k == 'vol':
+            if k == "vol":
                 parsers += [pp.AVolumeParser]
-            elif k == 'volpo':
+            elif k == "volpo":
                 parsers += [pp.PoreVolumeParser]
-            elif k == 'sa':
+            elif k == "sa":
                 parsers += [pp.SurfaceAreaParser]
-            elif k == 'res':
+            elif k == "res":
                 parsers += [pp.ResParser]
-            elif k == 'chan':
+            elif k == "chan":
                 parsers += [pp.ChannelParser]
-            elif k == 'psd':
+            elif k == "psd":
                 parsers += [pp.PoresSizeDistParser]
-            elif k == 'visVoro':
+            elif k == "visVoro":
                 parsers += [None for _f in OUTPUT_OPTIONS[k][1]]
-            #elif k == 'cssr':
+            # elif k == 'cssr':
             #    parsers += [sp.CssrParser]
             else:
                 parsers += [None]
@@ -226,7 +221,7 @@ class NetworkParameters(Dict):
             output_links += OUTPUT_OPTIONS[k][1]
         return output_links
 
-    def get_structure_file_name(self, structure):  # pylint: disable=no-self-use
+    def get_structure_file_name(self, structure):
         """Get file name of input structure.
 
         The 'network;  binary detects file formats by file extension.
@@ -239,9 +234,7 @@ class NetworkParameters(Dict):
         """
 
         # treating only CifData for the moment - could extend to other formats in the future
-        if isinstance(structure, DataFactory('cif')):
-            return structure.filename if structure.filename.endswith(
-                '.cif') else structure.filename + '.cif'
+        if isinstance(structure, DataFactory("cif")):
+            return structure.filename if structure.filename.endswith(".cif") else structure.filename + ".cif"
 
-        raise ValueError('Input structure has unknown type {}'.format(
-            type(structure)))
+        raise ValueError(f"Input structure has unknown type {type(structure)}")
