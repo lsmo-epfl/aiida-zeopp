@@ -5,6 +5,9 @@ on: [push, pull_request]
 jobs:
 
   tests:
+    strategy:
+      matrix:
+        python: ['3.8', '3.9', '3.10', '3.11']
     runs-on: ubuntu-latest
     timeout-minutes: 15
     continue-on-error: true
@@ -38,10 +41,10 @@ jobs:
         ls /usr/share/miniconda/bin
         echo /usr/share/miniconda/bin >> $GITHUB_PATH
 
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v2
+    - name: Set up Python ${{ matrix.python }}
+      uses: actions/setup-python@v3
       with:
-        python-version: '3.10'
+        python-version: ${{ matrix.python }}
 
     - name: Install python dependencies
       run: |
