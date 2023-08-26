@@ -26,6 +26,8 @@ keywords = ['aiida', 'workflows']
 requires-python = '>=3.8'
 dependencies = [
     'aiida_core[atomic_tools]~=2.3',
+    'importlib_resources',
+    'voluptuous',
 ]
 
 [project.urls]
@@ -76,7 +78,6 @@ module-naming-style="any"
 profile = "black"
 
 [tool.pytest.ini_options]
-addopts = "--durations=0 --cov=aiida_zeopp"
 python_files = "test_*.py example_*.py"
 filterwarnings = [
     "ignore::DeprecationWarning:aiida:",

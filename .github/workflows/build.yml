@@ -50,13 +50,6 @@ jobs:
     - name: Run pytest
       run: |
         pytest 
-    #     --cov-report=xml --cov=./aiida_zeopp
-    # - name: Upload coverage to codecov
-    #   uses: codecov/codecov-action@v1
-    #   with:
-    #     token: ${{secrets.CODECOV_TOKEN}}
-    #     file: ./coverage.xml
-    #   continue-on-error: ${{ matrix.aiida-version == 'develop' }}  # allow failures against develop
 
   pre-commit:
     runs-on: ubuntu-latest
