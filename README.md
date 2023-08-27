@@ -1,12 +1,11 @@
-[![Build Status](https://github.com/lsmo-epfl/aiida-zeopp/workflows/Build/badge.svg)](https://github.com/lsmo-epfl/aiida-zeopp/actions)
-[![PyPI version](https://badge.fury.io/py/aiida-zeopp.svg)](https://badge.fury.io/py/aiida-zeopp)
-[![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/ltalirz/aiida-zeopp/blob/master/LICENSE)
+[![Build Status](https://github.com/lsmo-epfl/aiida-zeopp/workflows/CI/badge.svg)](https://github.com/lsmo-epfl/aiida-zeopp/actions)
+[![PyPI - Version](https://img.shields.io/pypi/v/aiida-zeopp)](https://pypi.org/project/aiida-zeopp/)
+[![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/lsmo-epfl/aiida-zeopp/blob/master/LICENSE)
 
 | Plugin | AiiDA | Python |
 |-|-|-|
 | `2.0.0` | ![Compatibility for v2.0][AiiDA v2.0] |  [![PyPI pyversions](https://img.shields.io/pypi/pyversions/aiida-zeopp.svg)](https://pypi.org/project/aiida-zeopp) |
 | `1.1.0` | ![Compatibility for v1.1][AiiDA v1.1] |  ![PyPI pyversions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue) |
-
 
 # aiida-zeopp
 
